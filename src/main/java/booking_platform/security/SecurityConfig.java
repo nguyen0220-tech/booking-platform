@@ -77,8 +77,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextRepository repo) {
         http.csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // Lưu token vào Cookie để Frontend đọc được
-                        .ignoringRequestMatchers("/auth/**", "/graphql")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // save token vào Cookie để Frontend đọc được
+                        .ignoringRequestMatchers("/auth/**", "/graphql", "/graphiql/**")
                 )
                 .sessionManagement(s -> {
                     s.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
@@ -100,7 +100,7 @@ public class SecurityConfig {
                                         "/*.png", "/*.jpg", "/*.svg",
                                         "/icon/**", "/media/**").permitAll()
                                 .requestMatchers("/graphiql", "/graphiql/**").permitAll()
-                                .requestMatchers("/graphql").permitAll() // Cho phép gọi GraphQL (dev)
+                                .requestMatchers("/graphql").permitAll() // GraphQL (dev)
                                 .anyRequest()
                                 .authenticated()
                 );

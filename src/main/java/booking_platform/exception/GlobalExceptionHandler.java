@@ -1,6 +1,6 @@
 package booking_platform.exception;
 
-import booking_platform.dto.ApiResponse;
+import booking_platform.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

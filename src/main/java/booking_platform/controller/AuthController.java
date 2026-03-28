@@ -1,8 +1,8 @@
 package booking_platform.controller;
 
-import booking_platform.dto.ApiResponse;
+import booking_platform.dto.response.ApiResponse;
 import booking_platform.dto.LoginRequest;
-import booking_platform.dto.LoginResponse;
+import booking_platform.dto.response.LoginResponse;
 import booking_platform.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

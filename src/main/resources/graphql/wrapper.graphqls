@@ -1,0 +1,5 @@
+type PageInfo{
+    page:Int!
+    size:Int!
+    hasNext:Boolean!
+}

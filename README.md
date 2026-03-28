@@ -8,7 +8,7 @@ REST API 및 GraphQL을 동시에 활용하는 구조를 학습하기 위해 개
 
 ## 🛠 Tech Stack
 - Java (LTS-Long-Term Support)
-- Spring Boot 3 + Spring Security (JWT) + Hibernate
+- Spring Boot 3 + Spring Security (Session) + Hibernate
 - PostgreSQL
 - Hybrid API architecture: REST (Auth, Upload) + GraphQL (Feed, Query) + WebSocket (Notify)
 
@@ -37,7 +37,6 @@ REST API 및 GraphQL을 동시에 활용하는 구조를 학습하기 위해 개
 Client → API Gateway → Service Layer → Database
 
 ## 🛡️ Security Flow
-Login → JWT 발급 → Authorization Header → API 인증
 
 ## 🧩 Project Structure
 ```

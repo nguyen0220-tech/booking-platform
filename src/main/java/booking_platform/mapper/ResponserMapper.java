@@ -1,6 +1,6 @@
 package booking_platform.mapper;
 
-import booking_platform.dto.LoginResponse;
+import booking_platform.dto.response.LoginResponse;
 import booking_platform.dto.RoleDTO;
 import booking_platform.security.userdetails.UserDetailsImpl;
 

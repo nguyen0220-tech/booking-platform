@@ -42,7 +42,7 @@ public class User {
     @Column(nullable = false)
     private String phone;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_role", // table name
             joinColumns = @JoinColumn(name = "user_id"),// FK user

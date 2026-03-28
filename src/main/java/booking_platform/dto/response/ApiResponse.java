@@ -1,4 +1,4 @@
-package booking_platform.dto;
+package booking_platform.dto.response;
 
 
 import lombok.AllArgsConstructor;

@@ -1,0 +1,24 @@
+type Query{
+    users(me:ID!,page:Int!, size:Int):ListUser
+}
+
+type ListUser{
+    data:[User]
+    pageInfo:PageInfo
+}
+
+type User{
+    id:ID!
+    infoDetails:InfoDetails
+    roles:[String]
+}
+
+type InfoDetails{
+    username:String!
+    fullName:String!
+    phone:String!
+    email:String!
+    avatarUrl:String
+    enabled:Boolean!
+    createdAt:String!
+}
