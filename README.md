@@ -36,8 +36,6 @@ REST API 및 GraphQL을 동시에 활용하는 구조를 학습하기 위해 개
 ## ➣ Architecture
 Client → API Gateway → Service Layer → Database
 
-## 🛡️ Security Flow
-
 ## 🧩 Project Structure
 ```
 backend
