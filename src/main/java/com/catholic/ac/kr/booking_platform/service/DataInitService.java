@@ -1,10 +1,10 @@
-//package booking_platform.service;
+//package com.catholic.ac.kr.booking_platform.service;
 //
-//import booking_platform.enumdef.RoleName;
-//import booking_platform.model.Role;
-//import booking_platform.model.User;
-//import booking_platform.repository.RoleRepository;
-//import booking_platform.repository.UserRepository;
+//import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
+//import com.catholic.ac.kr.booking_platform.model.Role;
+//import com.catholic.ac.kr.booking_platform.model.User;
+//import com.catholic.ac.kr.booking_platform.repository.RoleRepository;
+//import com.catholic.ac.kr.booking_platform.repository.UserRepository;
 //import jakarta.annotation.PostConstruct;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.stereotype.Component;
@@ -29,14 +29,14 @@
 //
 //    @PostConstruct
 //    public void initAdmin() {
-//        Role userRole =  roleRepository.findByName(RoleName.USER)
+//        Role userRole = roleRepository.findByName(RoleName.USER)
 //                .orElseGet(() -> {
 //                    Role role = new Role();
 //                    role.setName(RoleName.USER);
 //                    return roleRepository.save(role);
 //                });
 //
-//        Role providerRole =  roleRepository.findByName(RoleName.PROVIDER)
+//        Role providerRole = roleRepository.findByName(RoleName.PROVIDER)
 //                .orElseGet(() -> {
 //                    Role role = new Role();
 //                    role.setName(RoleName.PROVIDER);
@@ -51,7 +51,7 @@
 //                });
 //
 //
-//        User admin = createBaseUser(Set.of(adminRole,userRole,providerRole));
+//        User admin = createBaseUser(Set.of(adminRole, userRole, providerRole), 1);
 //        admin.setUsername("admin");
 //        admin.setEmail("test@gmail.com");
 //        admin.setPhone("123456789");
@@ -70,7 +70,7 @@
 //                });
 //
 //        for (int i = 0; i < 50; i++) {
-//            User user = createBaseUser(Set.of(userRole));
+//            User user = createBaseUser(Set.of(userRole), i);
 //
 //            user.setUsername("user_" + i);
 //            user.setEmail("test_" + i + "@gmail.com");
@@ -81,13 +81,15 @@
 //        }
 //    }
 //
-//    private User createBaseUser(Set<Role> roles) {
+//    private User createBaseUser(Set<Role> roles, int num) {
 //        User user = new User();
 //
 //        user.setPassword(passwordEncoder.encode("123456"));
 //        user.setEnabled(true);
 //        user.setAvatarUrl(null);
 //        user.setRoles(roles);
+//
+//        user.setBlocked(num % 2 == 0);
 //
 //        return user;
 //    }

@@ -42,7 +42,6 @@ public class AuthService {
             AuthenticationManager -> DaoAuthenticationProvider ->  UserDetailsService.loadUserByUsername()
              -> query DB -> PasswordEncoder.matches() -> return Authentication
          */
-        System.out.println("Auth principal: " + auth.getPrincipal());
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(auth);
         SecurityContextHolder.setContext(context);

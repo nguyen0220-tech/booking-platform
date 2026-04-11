@@ -28,11 +28,10 @@ public class UserResolver {
 
     @QueryMapping
     public ListResponse<UserDTO> users(
-            @Argument Long me,
             @Argument int page,
             @Argument int size) {
 
-        return userService.getUsers(me, page, size);
+        return userService.getUsers(page, size);
     }
 
     @BatchMapping(typeName = "User", field = "infoDetails")

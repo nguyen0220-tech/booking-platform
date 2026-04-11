@@ -1,5 +1,5 @@
 type Query{
-    users(me:ID!,page:Int!, size:Int):ListUser
+    users(page:Int!, size:Int):ListUser
 }
 
 type ListUser{
@@ -20,5 +20,6 @@ type InfoDetails{
     email:String!
     avatarUrl:String
     enabled:Boolean!
+    blocked:Boolean!
     createdAt:String!
 }

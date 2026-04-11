@@ -14,5 +14,6 @@ public class UserInfoDetailsDTO {
     private String email;
     private String avatarUrl;
     private boolean enabled;
+    private boolean blocked;
     private LocalDateTime createdAt;
 }

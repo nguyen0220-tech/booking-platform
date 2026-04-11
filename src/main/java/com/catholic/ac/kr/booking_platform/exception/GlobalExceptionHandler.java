@@ -81,11 +81,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ApiResponse<Void>> handBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handBadCredentialsException(WebRequest request) {
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.UNAUTHORIZED.value(),
                 HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                "비밀번호가 잘못 됩: " + ex.getMessage(),
+                "로그인 정보가 일치하지 않습니다.",
                 request.getDescription(false).replace("uri=", "")
         );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception);

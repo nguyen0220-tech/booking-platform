@@ -21,9 +21,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableMethodSecurity
@@ -79,7 +81,9 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // save token vào Cookie để Frontend đọc được
                         .ignoringRequestMatchers("/auth/**", "/graphql", "/graphiql/**")
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 )
+//                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .sessionManagement(s -> {
                     s.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
                     s.maximumSessions(1);

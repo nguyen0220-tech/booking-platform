@@ -20,6 +20,7 @@ public class UserDetailsImpl implements UserDetails {
     private final String username;
     private final String password;
     private final boolean enabled;
+    private final boolean blocked;
     private final Collection<? extends GrantedAuthority> authorities;
     @Getter
     private final String fullName;
@@ -29,6 +30,7 @@ public class UserDetailsImpl implements UserDetails {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.enabled = user.isEnabled();
+        this.blocked = user.isBlocked();
         this.authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().toString()))
                 .toList();
@@ -46,6 +48,11 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
+    public boolean isAccountNonLocked() {
+        return !blocked;
+    }
+
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -57,11 +64,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
         return true;
     }
 

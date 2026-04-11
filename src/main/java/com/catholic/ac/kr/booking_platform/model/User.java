@@ -56,6 +56,9 @@ public class User {
     private boolean enabled;
 
     @Column(nullable = false)
+    private boolean blocked;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
