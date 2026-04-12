@@ -6,6 +6,7 @@ import com.catholic.ac.kr.booking_platform.dto.response.LoginResponse;
 import com.catholic.ac.kr.booking_platform.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,7 @@ public class AuthController {
 
     @PostMapping("login")
     public ApiResponse<LoginResponse> login(
-            @RequestBody LoginRequest request,
+            @RequestBody @Valid LoginRequest request,
             HttpServletRequest httpRequest,
             HttpServletResponse httpResponse) {
 

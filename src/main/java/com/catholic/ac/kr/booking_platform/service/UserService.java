@@ -4,6 +4,9 @@ import com.catholic.ac.kr.booking_platform.dto.PageInfo;
 import com.catholic.ac.kr.booking_platform.dto.UserDTO;
 import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
+import com.catholic.ac.kr.booking_platform.enumdef.AdminActive;
+import com.catholic.ac.kr.booking_platform.exception.BadRequestException;
+import com.catholic.ac.kr.booking_platform.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.mapper.UserMapper;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.projection.UserProjection;
@@ -15,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,14 +47,37 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<String> blockUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+    public ApiResponse<String> blockUser(Long currentUserId, Long userId, AdminActive active) {
+        if (currentUserId.equals(userId)) {
+            throw new BadRequestException("You cannot active yourself.");
+        }
 
-        user.setBlocked(true);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        switch (active) {
+            case BLOCK -> {
+                if (user.isBlocked()) {
+                    return ApiResponse.success(HttpStatus.OK.value(), "ALREADY_BLOCKED", "User is already blocked");
+                }
+                user.setBlocked(true);
+
+            }
+
+            case UNBLOCK -> {
+                if (!user.isBlocked()) {
+                    return ApiResponse.success(HttpStatus.OK.value(), "ALREADY_UNBLOCKED", "User is already unblocked");
+                }
+                user.setBlocked(false);
+
+            }
+        }
 
         userRepository.save(user);
 
-        return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), "User blocked");
+        return ApiResponse.success(
+                HttpStatus.OK.value(),
+                HttpStatus.OK.getReasonPhrase(),
+                active + " 성공");
     }
 }

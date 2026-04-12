@@ -53,6 +53,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception);
     }
 
+    //400
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBadRequestException(BadRequestException e, WebRequest request) {
+        ApiResponse<Void> exception = ApiResponse.exception(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "REQUEST_FAIL: " + e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception);
+    }
+
     /*
      401 - Chưa đăng nhập hoặc token sai  (Đã custom riêng)
 
