@@ -47,8 +47,6 @@ public class SecurityConfig {
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("user not found"));
 
-            System.out.println("Query db:" + user.getFullName());
-
             if (!user.isEnabled()) {
                 throw new DisabledException("활성화되지 않음");
             }
