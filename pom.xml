@@ -95,6 +95,20 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--Bucket-->
+        <dependency>
+            <groupId>com.github.vladimir-bukhtoyarov</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>7.6.0</version>
+        </dependency>
+
+        <!--Caffeine Cache for RateLimit-->
+        <!--thư viện hỗ trợ lưu trữ bộ nhớ đệm (in-memory cache) hiệu năng rất cao dành cho Java-->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
