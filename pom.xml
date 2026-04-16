@@ -95,6 +95,17 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <!--   Memory manager     -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
 
         <!--Bucket-->
         <dependency>
@@ -103,7 +114,7 @@
             <version>7.6.0</version>
         </dependency>
 
-        <!--Caffeine Cache for RateLimit-->
+        <!--Caffeine Cache-->
         <!--thư viện hỗ trợ lưu trữ bộ nhớ đệm (in-memory cache) hiệu năng rất cao dành cho Java-->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>

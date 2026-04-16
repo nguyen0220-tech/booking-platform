@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.helper;
+package com.catholic.ac.kr.booking_platform.mapper;
 
 import com.catholic.ac.kr.booking_platform.dto.RoleForBatchDTO;
 import com.catholic.ac.kr.booking_platform.dto.UserInfoDetailsDTO;

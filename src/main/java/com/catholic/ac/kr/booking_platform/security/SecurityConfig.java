@@ -3,6 +3,7 @@ package com.catholic.ac.kr.booking_platform.security;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.repository.UserRepository;
 import com.catholic.ac.kr.booking_platform.security.userdetails.UserDetailsImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,15 +26,21 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
 @EnableWebSecurity
 public class SecurityConfig {
     private final UserRepository userRepository;
+    private final String REACT_PORT;
 
-    public SecurityConfig(UserRepository userRepository) {
+    public SecurityConfig(UserRepository userRepository, @Value("${react.port}") String REACT_PORT) {
         this.userRepository = userRepository;
+        this.REACT_PORT = REACT_PORT;
     }
 
     @Bean
@@ -75,7 +82,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextRepository repo) {
-        http.csrf(csrf -> csrf
+        http
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of(REACT_PORT));
+                    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
+                .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // save token vào Cookie để Frontend đọc được
                         .ignoringRequestMatchers("/auth/**", "/graphql", "/graphiql/**")
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
@@ -92,7 +108,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) //기존 form 로그인 사용하지 않음
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/health").permitAll()
+                                .requestMatchers("/health/**", "/actuator/**").permitAll()
                                 .requestMatchers(
                                         "/ws/**",
                                         "/auth/**",

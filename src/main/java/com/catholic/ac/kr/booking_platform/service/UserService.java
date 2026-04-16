@@ -12,6 +12,8 @@ import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.projection.UserProjection;
 import com.catholic.ac.kr.booking_platform.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Cacheable(value = "userPage", key = "{#page, #size}")
     public ListResponse<UserDTO> getUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
@@ -42,11 +45,13 @@ public class UserService {
                 new PageInfo(page, size, userProjections.hasNext()));
     }
 
+    @Cacheable(value = "userInfos", key = "#ids")
     public List<User> getAllByIds(List<Long> ids) {
         return userRepository.findAllById(ids);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = "userInfos", allEntries = true)
     public ApiResponse<String> blockUser(Long currentUserId, Long userId, AdminActive active) {
         if (currentUserId.equals(userId)) {
             throw new BadRequestException("You cannot active yourself.");

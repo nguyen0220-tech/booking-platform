@@ -1,7 +1,6 @@
 package com.catholic.ac.kr.booking_platform.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,11 +9,14 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Table(name = "users",
+@Table(
+        name = "users",
         indexes = @Index(columnList = "fullName, email"),
-        uniqueConstraints = @UniqueConstraint(
-                columnNames = {"email", "phone"}, name = "uni_email_phone"
-        )
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uni_username", columnNames = {"username"}),
+                @UniqueConstraint(name = "uni_email", columnNames = {"email"}),
+                @UniqueConstraint(name = "uni_phone", columnNames = {"phone"})
+        }
 )
 @Entity
 @AllArgsConstructor
@@ -35,7 +37,6 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-    @Email(message = "올바른 이메일을 입력하세요!")
     @Column(nullable = false)
     private String email;
 
@@ -64,6 +65,7 @@ public class User {
     @PrePersist
     protected void create() {
         createdAt = LocalDateTime.now();
+        avatarUrl = null;
     }
 
 }

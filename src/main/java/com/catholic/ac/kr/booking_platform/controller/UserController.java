@@ -23,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     @PutMapping("block")
-    public ApiResponse<String> blockUser(
+    public ApiResponse<String> actUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long userId,
             @RequestParam AdminActive active) {

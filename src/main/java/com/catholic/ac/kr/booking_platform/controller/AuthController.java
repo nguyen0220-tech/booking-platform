@@ -1,9 +1,10 @@
 package com.catholic.ac.kr.booking_platform.controller;
 
 import com.catholic.ac.kr.booking_platform.dto.LoginRequest;
+import com.catholic.ac.kr.booking_platform.dto.RegistryRequest;
 import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.dto.response.LoginResponse;
-import com.catholic.ac.kr.booking_platform.service.AuthService;
+import com.catholic.ac.kr.booking_platform.service.auth.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -18,6 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+
+    @PostMapping("registry")
+    public ApiResponse<String> registry(@RequestBody @Valid RegistryRequest request) {
+        return authService.registry(request);
+    }
 
     @PostMapping("login")
     public ApiResponse<LoginResponse> login(

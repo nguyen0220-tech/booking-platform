@@ -1,6 +1,7 @@
 package com.catholic.ac.kr.booking_platform.exception;
 
 import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -140,6 +141,25 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception);
+    }
+
+    //DB Constraint
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrity(DataIntegrityViolationException e, WebRequest request) {
+        String message = "데이터 제약 조건 오류";
+        String detail = e.getMostSpecificCause().getMessage();
+
+        if (detail.contains("uni_username")) message = "사용중인 아이디입니다.";
+        else if (detail.contains("uni_email")) message = "사용중인 이메일입니다.";
+        else if (detail.contains("uni_phone")) message = "사용중인 휴대폰입니다.";
+
+        ApiResponse<Void> exception = ApiResponse.exception(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                message,
+                request.getDescription(false).replace("uri=", "")
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception);
     }
 
     // General

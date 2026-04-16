@@ -4,7 +4,7 @@ import com.catholic.ac.kr.booking_platform.dto.RoleForBatchDTO;
 import com.catholic.ac.kr.booking_platform.dto.UserDTO;
 import com.catholic.ac.kr.booking_platform.dto.UserInfoDetailsDTO;
 import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
-import com.catholic.ac.kr.booking_platform.helper.ConverterForBatchMapping;
+import com.catholic.ac.kr.booking_platform.mapper.ConverterForBatchMapping;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.service.RoleService;
 import com.catholic.ac.kr.booking_platform.service.UserService;
