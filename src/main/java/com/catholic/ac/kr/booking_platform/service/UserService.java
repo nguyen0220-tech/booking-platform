@@ -5,6 +5,8 @@ import com.catholic.ac.kr.booking_platform.dto.UserDTO;
 import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.enumdef.AdminActive;
+import com.catholic.ac.kr.booking_platform.enumdef.FilterUser;
+import com.catholic.ac.kr.booking_platform.enumdef.SearchType;
 import com.catholic.ac.kr.booking_platform.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.mapper.UserMapper;
@@ -48,6 +50,36 @@ public class UserService {
     @Cacheable(value = "userInfos", key = "#ids")
     public List<User> getAllByIds(List<Long> ids) {
         return userRepository.findAllById(ids);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserDTO getUserWithType(SearchType type, String keyword) {
+        UserProjection projection = null;
+        switch (type) {
+            case USERNAME -> projection = userRepository.findUserByUsername(keyword)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+            case EMAIL -> projection = userRepository.findUserByEmail(keyword)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        }
+
+        return UserMapper.userDTO(projection);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public ListResponse<UserDTO> filterUser(int page, int size, FilterUser filter, boolean is) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<UserProjection> userProjections = null;
+        switch (filter) {
+            case ENABLED -> userProjections = userRepository.filterUserEnabled(pageable, is);
+            case BLOCKED -> userProjections = userRepository.filterUserBlocked(pageable, is);
+        }
+
+        Page<UserDTO> userDTOS = userProjections.map(UserMapper::userDTO);
+
+        List<UserDTO> rs = userDTOS.getContent();
+
+        return new ListResponse<>(rs, new PageInfo(page, size, userProjections.hasNext()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

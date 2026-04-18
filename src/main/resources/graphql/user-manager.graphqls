@@ -1,6 +1,9 @@
 type Query{
     users(page:Int!, size:Int):ListUser
+    user(searchType:SearchType!, keyword:String!):User
+    usersFilter(page:Int!, size:Int!, filter:FilterUser!, is:Boolean!):ListUser
 }
+
 
 type ListUser{
     data:[User]

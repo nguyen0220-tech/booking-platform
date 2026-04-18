@@ -1,0 +1,9 @@
+enum SearchType {
+    USERNAME,
+    EMAIL
+}
+
+enum FilterUser{
+    ENABLED,
+    BLOCKED
+}

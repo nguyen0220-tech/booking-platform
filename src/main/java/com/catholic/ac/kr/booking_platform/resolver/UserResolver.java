@@ -4,6 +4,8 @@ import com.catholic.ac.kr.booking_platform.dto.RoleForBatchDTO;
 import com.catholic.ac.kr.booking_platform.dto.UserDTO;
 import com.catholic.ac.kr.booking_platform.dto.UserInfoDetailsDTO;
 import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
+import com.catholic.ac.kr.booking_platform.enumdef.FilterUser;
+import com.catholic.ac.kr.booking_platform.enumdef.SearchType;
 import com.catholic.ac.kr.booking_platform.mapper.ConverterForBatchMapping;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.service.RoleService;
@@ -32,6 +34,23 @@ public class UserResolver {
             @Argument int size) {
 
         return userService.getUsers(page, size);
+    }
+
+    @QueryMapping
+    public UserDTO user(
+            @Argument SearchType searchType,
+            @Argument String keyword) {
+        return userService.getUserWithType(searchType, keyword);
+    }
+
+    @QueryMapping
+    public ListResponse<UserDTO> usersFilter(
+            @Argument int page,
+            @Argument int size,
+            @Argument FilterUser filter,
+            @Argument boolean is
+    ) {
+        return userService.filterUser(page, size, filter, is);
     }
 
     @BatchMapping(typeName = "User", field = "infoDetails")

@@ -11,7 +11,10 @@ import java.util.Set;
 
 @Table(
         name = "users",
-        indexes = @Index(columnList = "fullName, email"),
+        indexes = {
+                @Index(columnList = "email"),
+                @Index(columnList = "username")
+        },
         uniqueConstraints = {
                 @UniqueConstraint(name = "uni_username", columnNames = {"username"}),
                 @UniqueConstraint(name = "uni_email", columnNames = {"email"}),

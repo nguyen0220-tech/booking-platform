@@ -11,6 +11,6 @@ public class SignupSuccessListener {
 
     @EventListener
     public void handleSignupSuccess(RegistrySuccessEvent event) {
-        log.info("{} 이/가 정상적으로 가입하였다. Email: {} - Number phone: {}", event.getUsername(), event.getEmail(), event.getPhone());
+        log.info("{}이(가) 정상적으로 가입하였다. Email: {} - Number phone: {}", event.getUsername(), event.getEmail(), event.getPhone());
     }
 }

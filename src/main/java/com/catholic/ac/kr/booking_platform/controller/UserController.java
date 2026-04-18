@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @PutMapping("block")
+    @PutMapping("act")
     public ApiResponse<String> actUser(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam Long userId,
