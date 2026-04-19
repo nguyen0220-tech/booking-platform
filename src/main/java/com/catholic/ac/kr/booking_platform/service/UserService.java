@@ -56,11 +56,14 @@ public class UserService {
     public UserDTO getUserWithType(SearchType type, String keyword) {
         UserProjection projection = null;
         switch (type) {
-            case USERNAME -> projection = userRepository.findUserByUsername(keyword)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            case USERNAME -> projection = userRepository.findUserByUsername(keyword);
 
             case EMAIL -> projection = userRepository.findUserByEmail(keyword)
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                    .orElse(null);
+        }
+
+        if (projection == null) {
+            return null;
         }
 
         return UserMapper.userDTO(projection);

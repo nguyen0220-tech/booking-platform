@@ -106,7 +106,6 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-
         <!--Bucket-->
         <dependency>
             <groupId>com.github.vladimir-bukhtoyarov</groupId>
@@ -119,6 +118,20 @@
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
+        </dependency>
+
+        <!-- cloudinary -->
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>1.39.0</version>
+        </dependency>
+
+        <!--resend -->
+        <dependency>
+            <groupId>com.resend</groupId>
+            <artifactId>resend-java</artifactId>
+            <version>3.1.0</version>
         </dependency>
     </dependencies>
 

@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT u.id AS id
             FROM User u WHERE u.username = :username
             """)
-    Optional<UserProjection> findUserByUsername(@Param("username") String username);
+    UserProjection findUserByUsername(@Param("username") String username);
 
     @Query("""
             SELECT u.id AS id

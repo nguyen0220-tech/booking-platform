@@ -23,7 +23,8 @@ public class CacheConfig {
         List<CaffeineCache> caches = Arrays.asList(
                 buildCaffeineCache("userPage",1,100),
                 buildCaffeineCache("userInfos", 10,500),
-                buildCaffeineCache("userRoles", 10,500)
+                buildCaffeineCache("userRoles", 10,500),
+                buildCaffeineCache("profile", 5,100)
         );
 
         cacheManager.setCaches(caches);

@@ -11,4 +11,5 @@ public class RegistrySuccessEvent {
     private String username;
     private String email;
     private String phone;
+    private String tokenVerify;
 }

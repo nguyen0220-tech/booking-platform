@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("auth")
@@ -25,6 +22,11 @@ public class AuthController {
         return authService.registry(request);
     }
 
+    @PostMapping("verify")
+    public ApiResponse<String> verifyNewUser(@RequestParam String token){
+        return authService.verifyNewUser(token);
+    }
+
     @PostMapping("login")
     public ApiResponse<LoginResponse> login(
             @RequestBody @Valid LoginRequest request,
@@ -32,5 +34,10 @@ public class AuthController {
             HttpServletResponse httpResponse) {
 
         return authService.login(request, httpRequest, httpResponse);
+    }
+
+    @DeleteMapping("logout")
+    public ApiResponse<Void> logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        return authService.logout(httpRequest, httpResponse);
     }
 }
