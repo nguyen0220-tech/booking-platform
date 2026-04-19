@@ -58,8 +58,6 @@ backend
  └── ws                # WebSocket config
 
 frontend
- ├── static            # HTML, CSS, Vanilla JS
- │   └── icon          # Favicon & static icons
  └── graphql           # GraphQL queries & mutations
 
 ```
