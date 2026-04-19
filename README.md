@@ -39,25 +39,25 @@ Client → API Gateway → Service Layer → Database
 ## 🧩 Project Structure
 ```
 backend
+ ├── components        # Logging, Rate limit,...
  ├── config            # Application configuration
  ├── controller        # REST Controller
- ├── entity            # JPA entities
+ ├── model             # JPA entities
  ├── dto               # Data Transfer Objects
- ├── exception         # @RestControllerAdvice
- ├── log               # activity app logging
- ├── interceptor       # Rate limiting, request interception
+ ├── exception         # ControllerAdviestControllerAdvic
+ ├── event             # Event data classes for publishing
+ ├── listener          # Spring event handlers
+ ├── helper            # Custom utility classes
  ├── mapper            # Mapping entity <-> DTO
  ├── projection        # GraphQL dto projection
  ├── repository        # Spring Data JPA
  ├── resolver          # Queries, Mutation, @SchemaMapping / @BatchMapping
- │   └── batchloader 
  ├── service           # Business logic
  │   └── auth          # signup, login, refresh token
- ├── security          # JWT / OAuth2
- ├── status            # Enum definitions
+ ├── security          # Config session / OAuth2
+ ├── enumdef           # Enum definitions
  └── ws                # WebSocket config
 
 frontend
  └── graphql           # GraphQL queries & mutations
-
 ```
