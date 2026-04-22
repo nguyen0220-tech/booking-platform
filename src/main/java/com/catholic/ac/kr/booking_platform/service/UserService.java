@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.service;
 
-import com.catholic.ac.kr.booking_platform.dto.PageInfo;
+import com.catholic.ac.kr.booking_platform.dto.response.PageInfo;
 import com.catholic.ac.kr.booking_platform.dto.UserDTO;
 import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
@@ -58,8 +58,7 @@ public class UserService {
         switch (type) {
             case USERNAME -> projection = userRepository.findUserByUsername(keyword);
 
-            case EMAIL -> projection = userRepository.findUserByEmail(keyword)
-                    .orElse(null);
+            case EMAIL -> projection = userRepository.findUserByEmail(keyword);
         }
 
         if (projection == null) {

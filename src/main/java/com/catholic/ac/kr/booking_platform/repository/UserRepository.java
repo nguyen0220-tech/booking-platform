@@ -29,7 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             SELECT u.id AS id
             FROM User u WHERE u.email = :email
             """)
-    Optional<UserProjection> findUserByEmail(@Param("email") String email);
+    UserProjection findUserByEmail(@Param("email") String email);
 
     @Query("""
             SELECT u.id AS id
@@ -44,4 +44,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<UserProjection> filterUserBlocked(Pageable pageable, @Param("is") boolean is);
 
     Optional<User> findByUsername(String username);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByPhone(String phone);
 }

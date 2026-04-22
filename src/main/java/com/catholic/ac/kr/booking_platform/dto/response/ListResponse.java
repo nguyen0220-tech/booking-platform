@@ -3,7 +3,6 @@ package com.catholic.ac.kr.booking_platform.dto.response;
     GraphQL Query
   */
 
-import com.catholic.ac.kr.booking_platform.dto.PageInfo;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -27,4 +27,30 @@ public class HelperUtils {
 
         return rs.toString();
     }
+
+    public static String normalizeEmail(String email) {
+        return email.trim().toLowerCase();
+    }
+
+    public static boolean isInvalidEmail(String email) {
+        String normalizedEmail = normalizeEmail(email);
+        return !normalizedEmail.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    }
+
+    public static String normalizeUsername(String username) {
+        return username.trim();
+    }
+
+    public static String normalizePhone(String phone) {
+        return phone.replaceAll("\\s+", "");
+    }
+
+    public static boolean isInvalidPhone(String phone) {
+        String normalizedPhone = normalizePhone(phone);
+        return !normalizedPhone.matches("^\\d{9,11}$");
+    }
+
+    public static String normalizePassword(String password) {
+        return password.trim();
+    }
 }

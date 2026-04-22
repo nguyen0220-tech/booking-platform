@@ -94,11 +94,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ApiResponse<Void>> handBadCredentialsException(WebRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handBadCredentialsException(BadCredentialsException ex, WebRequest request) {
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.UNAUTHORIZED.value(),
                 HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                "로그인 정보가 일치하지 않습니다.",
+                "인증 실패: " + ex.getMessage(),
                 request.getDescription(false).replace("uri=", "")
         );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception);
@@ -136,7 +136,7 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.UNAUTHORIZED.value(),
                 HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                "Auth error: " + e.getMessage(),
+                "인증 오류: " + e.getMessage(),
                 request.getDescription(false).replace("uri=", "")
         );
 
@@ -162,6 +162,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception);
     }
 
+    // 409
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAlreadyExistsException(AlreadyExistsException e, WebRequest request) {
+        ApiResponse<Void> exception = ApiResponse.exception(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONTENT_TOO_LARGE.getReasonPhrase(),
+                "중복된 데어터: " + e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception);
+    }
+
     // General
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handlerGeneralException(Exception e, WebRequest request) {
@@ -169,7 +182,7 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                "General error: " + e.getMessage(),
+                "시스템 오류: " + e.getMessage(),
                 request.getDescription(false).replace("uri=", "")
         );
 

@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.dto;
+package com.catholic.ac.kr.booking_platform.dto.request;
 
 import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
 import jakarta.validation.constraints.*;

@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.dto;
+package com.catholic.ac.kr.booking_platform.dto.response;
 
 
 import lombok.AllArgsConstructor;

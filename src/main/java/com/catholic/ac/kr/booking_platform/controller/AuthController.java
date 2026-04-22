@@ -1,7 +1,8 @@
 package com.catholic.ac.kr.booking_platform.controller;
 
-import com.catholic.ac.kr.booking_platform.dto.LoginRequest;
-import com.catholic.ac.kr.booking_platform.dto.RegistryRequest;
+import com.catholic.ac.kr.booking_platform.dto.request.CheckInfoRequest;
+import com.catholic.ac.kr.booking_platform.dto.request.LoginRequest;
+import com.catholic.ac.kr.booking_platform.dto.request.RegistryRequest;
 import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.dto.response.LoginResponse;
 import com.catholic.ac.kr.booking_platform.service.auth.AuthService;
@@ -39,5 +40,10 @@ public class AuthController {
     @DeleteMapping("logout")
     public ApiResponse<Void> logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         return authService.logout(httpRequest, httpResponse);
+    }
+
+    @PostMapping("confirm")
+    public ApiResponse<String> checkExistInfo(@RequestBody CheckInfoRequest request) {
+        return authService.checkExistInfo(request);
     }
 }

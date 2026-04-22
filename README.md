@@ -44,7 +44,7 @@ backend
  ├── controller        # REST Controller
  ├── model             # JPA entities
  ├── dto               # Data Transfer Objects
- ├── exception         # ControllerAdviestControllerAdvic
+ ├── exception         # ControllerAdviest
  ├── event             # Event data classes for publishing
  ├── listener          # Spring event handlers
  ├── helper            # Custom utility classes

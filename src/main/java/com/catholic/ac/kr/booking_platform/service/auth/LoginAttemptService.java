@@ -12,7 +12,7 @@ public class LoginAttemptService {
     private final int MAX_ATTEMPT = 5;
 
     private final Cache<String, Integer> attemptCache = Caffeine.newBuilder()
-            .expireAfterWrite(1, TimeUnit.MINUTES)
+            .expireAfterWrite(10, TimeUnit.MINUTES)
             .build();
 
     public void loginFailed(String key) {
