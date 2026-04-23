@@ -14,13 +14,14 @@ import com.catholic.ac.kr.booking_platform.helper.HelperUtils;
 import com.catholic.ac.kr.booking_platform.mapper.UserMapper;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.repository.UserRepository;
-import com.catholic.ac.kr.booking_platform.service.auth.UpdateProfileCacheService;
+import com.catholic.ac.kr.booking_platform.cache.UpdateProfileCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,7 +116,7 @@ public class ProfileService {
     @CacheEvict(value = "profile", allEntries = true)
     public ApiResponse<String> updateProfile(Long userId, UpdateProfileRequest request) {
         if (updateProfileCacheService.isBlocked(userId)) {
-            throw new IllegalArgumentException("비밀번호를 5번 이상 입력 잘못했습니다. 잠시 후 시도하세요.");
+            throw new LockedException("비밀번호를 5번 이상 입력 잘못했습니다. 잠시 후 시도하세요.");
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));

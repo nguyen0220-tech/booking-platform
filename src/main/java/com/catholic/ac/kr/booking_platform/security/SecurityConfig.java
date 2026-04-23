@@ -2,6 +2,7 @@ package com.catholic.ac.kr.booking_platform.security;
 
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.repository.UserRepository;
+import com.catholic.ac.kr.booking_platform.security.custom.CustomAuthenticationEntryPoint;
 import com.catholic.ac.kr.booking_platform.security.userdetails.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -37,10 +38,12 @@ import java.util.List;
 public class SecurityConfig {
     private final UserRepository userRepository;
     private final String REACT_PORT;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-    public SecurityConfig(UserRepository userRepository, @Value("${react.port}") String REACT_PORT) {
+    public SecurityConfig(UserRepository userRepository, @Value("${react.port}") String REACT_PORT, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
         this.userRepository = userRepository;
         this.REACT_PORT = REACT_PORT;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean
@@ -100,6 +103,7 @@ public class SecurityConfig {
                     s.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
                     s.maximumSessions(1);
                 })
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .securityContext(context -> {
                     context.securityContextRepository(repo);
                     context.requireExplicitSave(true);

@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.service.auth;
+package com.catholic.ac.kr.booking_platform.cache;
 
 import com.catholic.ac.kr.booking_platform.dto.PendingEmailUpdate;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -24,6 +24,7 @@ public class UpdateProfileCacheService {
 
     private final Cache<Long, Integer> lockInputPassword = Caffeine.newBuilder()
             .expireAfterWrite(30, TimeUnit.MINUTES)
+            .maximumSize(1000)
             .build();
 
     public boolean existEmailCache(Long userId) {
@@ -50,10 +51,20 @@ public class UpdateProfileCacheService {
         lockCache.put(userId, token);
     }
 
+    /*
+    Sử dụng asMap().compute để đảm bảo thread-safe
+
+    Vấn đề: Đây gọi là lỗi Race Condition. Giả sử có 2 request (Luồng A và Luồng B) cùng gửi đến một lúc:
+    A lấy được counter = 0.
+    B cũng lấy được counter = 0 (vì A chưa kịp lưu giá trị mới).
+    A tăng lên 1 và put(userId, 1).
+    B cũng tăng lên 1 và put(userId, 1).
+    Kết quả: User nhập sai 2 lần nhưng hệ thống chỉ đếm là 1.
+     */
     public void verifyPasswordFail(Long userId) {
-        int counter = Objects.requireNonNull(lockInputPassword.get(userId, k->0));
-        counter++;
-        lockInputPassword.put(userId, counter);
+        lockInputPassword.asMap().compute(
+                userId,
+                (key, count) -> (count == null) ? 1 : count + 1);
     }
 
     public boolean isBlocked(Long userId) {

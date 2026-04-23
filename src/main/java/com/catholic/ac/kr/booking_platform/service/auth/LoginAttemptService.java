@@ -15,14 +15,19 @@ public class LoginAttemptService {
             .build();
 
     public void loginFailed(String key) {
+        /*.
         int attempts = Objects.requireNonNull(attemptCache.get(key, k -> 0));
-
         attempts++;
         attemptCache.put(key, attempts);
+
+         */
+        attemptCache.asMap().compute(
+                key,
+                (username, count) -> (count == null ? 1 : count + 1));
     }
 
     public boolean isBlocked(String key) {
-        int MAX_ATTEMPT = 5;
+        final int MAX_ATTEMPT = 5;
         return Objects.requireNonNull(attemptCache.get(key, k -> 0)) >= MAX_ATTEMPT;
     }
 
