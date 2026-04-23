@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class LoginAttemptService {
-    private final int MAX_ATTEMPT = 5;
 
     private final Cache<String, Integer> attemptCache = Caffeine.newBuilder()
             .expireAfterWrite(10, TimeUnit.MINUTES)
@@ -23,6 +22,7 @@ public class LoginAttemptService {
     }
 
     public boolean isBlocked(String key) {
+        int MAX_ATTEMPT = 5;
         return Objects.requireNonNull(attemptCache.get(key, k -> 0)) >= MAX_ATTEMPT;
     }
 

@@ -25,12 +25,12 @@ public class ProfileController {
     @PutMapping
     public ApiResponse<String> updateProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody UpdateProfileRequest request){
-        return profileService.updateProfile(userDetails.getId(),request);
+            @RequestBody UpdateProfileRequest request) {
+        return profileService.updateProfile(userDetails.getId(), request);
     }
 
     @PostMapping("verify")
-    public ApiResponse<String> verifyUpdateEmail(@RequestParam String token){
+    public ApiResponse<String> verifyUpdateEmail(@RequestParam String token) {
         return profileService.verifyUpdateEmailByToken(token);
     }
 

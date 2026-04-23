@@ -112,19 +112,30 @@ public class ProfileService {
         }
     }
      */
+    @CacheEvict(value = "profile", allEntries = true)
     public ApiResponse<String> updateProfile(Long userId, UpdateProfileRequest request) {
+        if (updateProfileCacheService.isBlocked(userId)) {
+            throw new IllegalArgumentException("비밀번호를 5번 이상 입력 잘못했습니다. 잠시 후 시도하세요.");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(request.getConfirmPassword(), user.getPassword())) {
+            updateProfileCacheService.verifyPasswordFail(userId);
             throw new BadCredentialsException("비밀번호가 틀렸습니다");
         }
 
+        updateProfileCacheService.verifyPasswordPassed(userId);
         return handlerMap.getOrDefault(request.getType(), this::unsupported).apply(user, request.getNewInfo());
     }
 
     private ApiResponse<String> updateFullName(User user, String newName) {
-        user.setFullName(newName);
+        String norNewName = HelperUtils.normalizeUsername(newName);
+
+        if (user.getFullName().equals(norNewName)) {
+            throw new BadRequestException("현재 본 계정 이릅이니다.");
+        }
+        user.setFullName(norNewName);
         userRepository.save(user);
         return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                 "정보 변경이 되었습니다.");
@@ -195,6 +206,7 @@ public class ProfileService {
     }
 
     @Transactional
+    @CacheEvict(value = "profile", allEntries = true)
     public ApiResponse<String> verifyUpdateEmailByToken(String token) {
         PendingEmailUpdate pendingEmailUpdate = updateProfileCacheService.getPendingEmailCache(token);
         if (pendingEmailUpdate == null) {
