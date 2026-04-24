@@ -9,7 +9,7 @@ import com.catholic.ac.kr.booking_platform.enumdef.SearchType;
 import com.catholic.ac.kr.booking_platform.mapper.ConverterForBatchMapping;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.service.RoleService;
-import com.catholic.ac.kr.booking_platform.service.UserService;
+import com.catholic.ac.kr.booking_platform.service.UserManageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
-public class UserResolver {
-    private final UserService userService;
+public class UserManageResolver {
+    private final UserManageService userManageService;
     private final RoleService roleService;
 
     @QueryMapping
@@ -33,14 +33,14 @@ public class UserResolver {
             @Argument int page,
             @Argument int size) {
 
-        return userService.getUsers(page, size);
+        return userManageService.getUsers(page, size);
     }
 
     @QueryMapping
     public UserDTO user(
             @Argument SearchType searchType,
             @Argument String keyword) {
-        return userService.getUserWithType(searchType, keyword);
+        return userManageService.getUserWithType(searchType, keyword);
     }
 
     @QueryMapping
@@ -50,14 +50,14 @@ public class UserResolver {
             @Argument FilterUser filter,
             @Argument boolean is
     ) {
-        return userService.filterUser(page, size, filter, is);
+        return userManageService.filterUser(page, size, filter, is);
     }
 
     @BatchMapping(typeName = "User", field = "infoDetails")
     public Map<UserDTO, UserInfoDetailsDTO> infoDetails(List<UserDTO> users) {
         List<Long> userIds = getUserIds(users);
 
-        List<User> userList = userService.getAllByIds(userIds);
+        List<User> userList = userManageService.getAllByIds(userIds);
 
         Map<Long, UserInfoDetailsDTO> map = userList.stream()
                 .collect(Collectors.toMap(

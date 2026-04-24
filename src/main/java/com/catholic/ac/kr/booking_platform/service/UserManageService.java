@@ -28,7 +28,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserManageService {
     private final UserRepository userRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
