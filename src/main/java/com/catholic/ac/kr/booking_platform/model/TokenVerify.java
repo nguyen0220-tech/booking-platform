@@ -1,5 +1,6 @@
 package com.catholic.ac.kr.booking_platform.model;
 
+import com.catholic.ac.kr.booking_platform.enumdef.TokenType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,11 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uni_userId_type", columnNames = {"user_id","type"})
+        }
+)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,20 +29,18 @@ public class TokenVerify {
     @Column(nullable = false)
     private String token;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TokenType type;
 
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
     @Column(nullable = false)
     private LocalDateTime created;
-
-    @PrePersist
-    protected void create() {
-        created = LocalDateTime.now();
-        expiryDate = LocalDateTime.now().plusDays(1);
-    }
 }

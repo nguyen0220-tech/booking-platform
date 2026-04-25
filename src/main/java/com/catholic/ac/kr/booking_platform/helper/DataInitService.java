@@ -1,4 +1,4 @@
-//package com.catholic.ac.kr.booking_platform.service;
+//package com.catholic.ac.kr.booking_platform.helper;
 //
 //import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
 //import com.catholic.ac.kr.booking_platform.model.Role;
@@ -69,7 +69,7 @@
 //                    return roleRepository.save(role);
 //                });
 //
-//        for (int i = 0; i < 50; i++) {
+//        for (int i = 0; i < 10; i++) {
 //            User user = createBaseUser(Set.of(userRole), i);
 //
 //            user.setUsername("user_" + i);

@@ -15,6 +15,7 @@ public class ConverterForBatchMapping {
         userInfoDetailsDTO.setAvatarUrl(user.getAvatarUrl());
         userInfoDetailsDTO.setEnabled(user.isEnabled());
         userInfoDetailsDTO.setBlocked(user.isBlocked());
+        userInfoDetailsDTO.setDeleted(user.isDeleted());
         userInfoDetailsDTO.setCreatedAt(user.getCreatedAt());
 
         return userInfoDetailsDTO;

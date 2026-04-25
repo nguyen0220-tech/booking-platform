@@ -19,7 +19,11 @@ public class RegistryRequest {
     private String fullName;
 
     @NotBlank
-    @Email(message = "정확한 이메일을 입력하세요")
+    @Email(message = "이메일 형식이 올바르지 않습니다")
+    @Pattern(
+            regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "이메일 형식이 올바르지 않습니다"
+    )
     private String email;
 
     @Pattern(regexp = "^[0-9]{9,11}$", message = "휴대폰 번호는 9~11 숫자 입력하세요")

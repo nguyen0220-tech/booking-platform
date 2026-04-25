@@ -1,10 +1,14 @@
 package com.catholic.ac.kr.booking_platform.service;
 
+import com.catholic.ac.kr.booking_platform.enumdef.TokenType;
+import com.catholic.ac.kr.booking_platform.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.model.TokenVerify;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.repository.TokenVerifyRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -15,16 +19,32 @@ public class TokenVerifyService {
         this.tokenVerifyRepository = tokenVerifyRepository;
     }
 
-    public String createToken(User user) {
-        TokenVerify tokenVerify = new TokenVerify();
+    public String createToken(User user, TokenType type) {
+        Optional<TokenVerify> existingToken = tokenVerifyRepository.findByUserAndType(user, type);
 
-        String token = UUID.randomUUID().toString();
+        TokenVerify tokenVerify;
+        if (existingToken.isPresent()) {
+            tokenVerify = existingToken.get();
+            if (tokenVerify.getCreated().isAfter(LocalDateTime.now().minusMinutes(1))) {
+                throw new BadRequestException("1분 후에 시도해주세요.");
 
-        tokenVerify.setToken(token);
-        tokenVerify.setUser(user);
+            }
+            tokenVerify.setToken(UUID.randomUUID().toString());
+            tokenVerify.setCreated(LocalDateTime.now());
+            tokenVerify.setExpiryDate(LocalDateTime.now().plusMinutes(1));
+        } else {
+            String token = UUID.randomUUID().toString();
+            tokenVerify = new TokenVerify();
+            tokenVerify.setUser(user);
+            tokenVerify.setType(type);
+            tokenVerify.setToken(token);
+            tokenVerify.setCreated(LocalDateTime.now());
+            tokenVerify.setExpiryDate(LocalDateTime.now().plusMinutes(1));
+            tokenVerify.setType(type);
+        }
 
         tokenVerifyRepository.save(tokenVerify);
 
-        return token;
+        return tokenVerify.getToken();
     }
 }

@@ -24,5 +24,6 @@ type InfoDetails{
     avatarUrl:String
     enabled:Boolean!
     blocked:Boolean!
+    deleted:Boolean!
     createdAt:String!
 }

@@ -1,5 +1,6 @@
 package com.catholic.ac.kr.booking_platform.components;
 
+import com.catholic.ac.kr.booking_platform.exception.TooManyRequestsException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.bucket4j.Bandwidth;
@@ -9,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -63,10 +63,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         if (bucket != null && bucket.tryConsume(1)) {
             return true;
         } else {
-            response.setContentType("text/plain; charset=UTF-8"); //한국어 타입
-            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-            response.getWriter().write("과도한 요청입니다.잠시 후 다시 시도하세요");
-            return false;
+            throw new TooManyRequestsException("과도한 요청입니다.잠시 후 다시 시도하세요");
         }
     }
 
