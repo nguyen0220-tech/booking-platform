@@ -7,3 +7,9 @@ enum FilterUser{
     ENABLED,
     BLOCKED
 }
+
+enum RoleName{
+    USER,
+    PROVIDER,
+    ADMIN
+}

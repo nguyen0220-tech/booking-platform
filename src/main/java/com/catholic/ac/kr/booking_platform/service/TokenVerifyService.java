@@ -31,7 +31,7 @@ public class TokenVerifyService {
             }
             tokenVerify.setToken(UUID.randomUUID().toString());
             tokenVerify.setCreated(LocalDateTime.now());
-            tokenVerify.setExpiryDate(LocalDateTime.now().plusMinutes(1));
+            tokenVerify.setExpiryDate(LocalDateTime.now().plusMinutes(15));
         } else {
             String token = UUID.randomUUID().toString();
             tokenVerify = new TokenVerify();
@@ -39,7 +39,7 @@ public class TokenVerifyService {
             tokenVerify.setType(type);
             tokenVerify.setToken(token);
             tokenVerify.setCreated(LocalDateTime.now());
-            tokenVerify.setExpiryDate(LocalDateTime.now().plusMinutes(1));
+            tokenVerify.setExpiryDate(LocalDateTime.now().plusMinutes(15));
             tokenVerify.setType(type);
         }
 

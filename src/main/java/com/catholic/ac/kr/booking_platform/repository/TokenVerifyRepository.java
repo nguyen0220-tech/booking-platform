@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface TokenVerifyRepository extends JpaRepository<TokenVerify, Long> {
-    TokenVerify findByToken(String token);
+    TokenVerify findByTokenAndType(String token, TokenType type);
 
     @Modifying
     @Query("""

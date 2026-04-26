@@ -63,14 +63,10 @@ public class User {
     private boolean blocked;
 
     @Column(nullable = false)
-    private boolean deleted;
-
-    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void create() {
-        createdAt = LocalDateTime.now();
         avatarUrl = null;
     }
 

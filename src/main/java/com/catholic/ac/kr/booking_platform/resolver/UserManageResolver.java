@@ -5,6 +5,7 @@ import com.catholic.ac.kr.booking_platform.dto.UserDTO;
 import com.catholic.ac.kr.booking_platform.dto.UserInfoDetailsDTO;
 import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.enumdef.FilterUser;
+import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
 import com.catholic.ac.kr.booking_platform.enumdef.SearchType;
 import com.catholic.ac.kr.booking_platform.mapper.ConverterForBatchMapping;
 import com.catholic.ac.kr.booking_platform.model.User;
@@ -51,6 +52,14 @@ public class UserManageResolver {
             @Argument boolean is
     ) {
         return userManageService.filterUser(page, size, filter, is);
+    }
+    @QueryMapping
+    public ListResponse<UserDTO> usersFilterByRole(
+            @Argument int page,
+            @Argument int size,
+            @Argument RoleName name
+            ) {
+        return userManageService.filterUserByRole(page, size,name);
     }
 
     @BatchMapping(typeName = "User", field = "infoDetails")

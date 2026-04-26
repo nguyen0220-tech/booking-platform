@@ -12,6 +12,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
 
 @Table(
+        indexes = {
+                @Index(columnList = "token,type"),
+        },
         uniqueConstraints = {
                 @UniqueConstraint(name = "uni_userId_type", columnNames = {"user_id","type"})
         }

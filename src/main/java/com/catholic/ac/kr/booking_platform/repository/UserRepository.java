@@ -1,5 +1,6 @@
 package com.catholic.ac.kr.booking_platform.repository;
 
+import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.projection.UserProjection;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
             FROM User u WHERE u.blocked = :is
             """)
     Page<UserProjection> filterUserBlocked(Pageable pageable, @Param("is") boolean is);
+
+    @Query("""
+            SELECT u.id AS id
+            FROM User u
+            JOIN u.roles r
+            WHERE r.name = :name
+            """)
+    Page<UserProjection> findByRoleName(@Param("name") RoleName name, Pageable pageable);
 
     Optional<User> findByUsername(String username);
 

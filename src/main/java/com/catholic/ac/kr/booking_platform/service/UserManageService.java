@@ -6,6 +6,7 @@ import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.enumdef.AdminActive;
 import com.catholic.ac.kr.booking_platform.enumdef.FilterUser;
+import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
 import com.catholic.ac.kr.booking_platform.enumdef.SearchType;
 import com.catholic.ac.kr.booking_platform.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.exception.ResourceNotFoundException;
@@ -76,6 +77,19 @@ public class UserManageService {
             case ENABLED -> userProjections = userRepository.filterUserEnabled(pageable, is);
             case BLOCKED -> userProjections = userRepository.filterUserBlocked(pageable, is);
         }
+
+        Page<UserDTO> userDTOS = userProjections.map(UserMapper::userDTO);
+
+        List<UserDTO> rs = userDTOS.getContent();
+
+        return new ListResponse<>(rs, new PageInfo(page, size, userProjections.hasNext()));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public ListResponse<UserDTO> filterUserByRole(int page, int size, RoleName name){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+
+        Page<UserProjection> userProjections = userRepository.findByRoleName(name, pageable);
 
         Page<UserDTO> userDTOS = userProjections.map(UserMapper::userDTO);
 

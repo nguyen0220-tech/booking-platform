@@ -2,6 +2,7 @@ type Query{
     users(page:Int!, size:Int):ListUser
     user(searchType:SearchType!, keyword:String!):User
     usersFilter(page:Int!, size:Int!, filter:FilterUser!, is:Boolean!):ListUser
+    usersFilterByRole(page:Int!,size:Int!, name:RoleName):ListUser
 }
 
 
@@ -24,6 +25,5 @@ type InfoDetails{
     avatarUrl:String
     enabled:Boolean!
     blocked:Boolean!
-    deleted:Boolean!
     createdAt:String!
 }

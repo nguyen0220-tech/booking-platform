@@ -152,6 +152,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception);
     }
 
+    // 409
+    @ExceptionHandler(UserAlreadyExistsButNotEnabledException.class)
+    public ResponseEntity<ApiResponse<Void>>UserAlreadyExistsButNotEnabledException(UserAlreadyExistsButNotEnabledException e, WebRequest request) {
+        ApiResponse<Void> exception = ApiResponse.exception(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception);
+    }
+
     // format JSON error,not body...
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadable(HttpMessageNotReadableException e, WebRequest request) {
