@@ -9,6 +9,7 @@
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.stereotype.Component;
 //
+//import java.time.LocalDateTime;
 //import java.util.Set;
 //
 //@Component
@@ -26,39 +27,39 @@
 //        this.roleRepository = roleRepository;
 //        this.passwordEncoder = passwordEncoder;
 //    }
-//
-//    @PostConstruct
-//    public void initAdmin() {
-//        Role userRole = roleRepository.findByName(RoleName.USER)
-//                .orElseGet(() -> {
-//                    Role role = new Role();
-//                    role.setName(RoleName.USER);
-//                    return roleRepository.save(role);
-//                });
-//
-//        Role providerRole = roleRepository.findByName(RoleName.PROVIDER)
-//                .orElseGet(() -> {
-//                    Role role = new Role();
-//                    role.setName(RoleName.PROVIDER);
-//                    return roleRepository.save(role);
-//                });
-//
-//        Role adminRole = roleRepository.findByName(RoleName.ADMIN)
-//                .orElseGet(() -> {
-//                    Role role = new Role();
-//                    role.setName(RoleName.ADMIN);
-//                    return roleRepository.save(role);
-//                });
-//
-//
-//        User admin = createBaseUser(Set.of(adminRole, userRole, providerRole), 1);
-//        admin.setUsername("admin");
-//        admin.setEmail("test@gmail.com");
-//        admin.setPhone("123456789");
-//        admin.setFullName("관리자");
-//
-//        userRepository.save(admin);
-//    }
+////
+////    @PostConstruct
+////    public void initAdmin() {
+////        Role userRole = roleRepository.findByName(RoleName.USER)
+////                .orElseGet(() -> {
+////                    Role role = new Role();
+////                    role.setName(RoleName.USER);
+////                    return roleRepository.save(role);
+////                });
+////
+////        Role providerRole = roleRepository.findByName(RoleName.PROVIDER)
+////                .orElseGet(() -> {
+////                    Role role = new Role();
+////                    role.setName(RoleName.PROVIDER);
+////                    return roleRepository.save(role);
+////                });
+////
+////        Role adminRole = roleRepository.findByName(RoleName.ADMIN)
+////                .orElseGet(() -> {
+////                    Role role = new Role();
+////                    role.setName(RoleName.ADMIN);
+////                    return roleRepository.save(role);
+////                });
+////
+////
+////        User admin = createBaseUser(Set.of(adminRole, userRole, providerRole), 1);
+////        admin.setUsername("admin");
+////        admin.setEmail("test@gmail.com");
+////        admin.setPhone("123456789");
+////        admin.setFullName("관리자");
+////
+////        userRepository.save(admin);
+////    }
 //
 //    @PostConstruct
 //    public void initUserTest() {
@@ -72,10 +73,10 @@
 //        for (int i = 0; i < 10; i++) {
 //            User user = createBaseUser(Set.of(userRole), i);
 //
-//            user.setUsername("user_" + i);
-//            user.setEmail("test_" + i + "@gmail.com");
-//            user.setPhone("10000000" + i);
-//            user.setFullName("user test " + i);
+//            user.setUsername("user__" + i);
+//            user.setEmail("test__" + i + "@gmail.com");
+//            user.setPhone("100000001" + i);
+//            user.setFullName("user test_ " + i);
 //            userRepository.save(user);
 //
 //        }
@@ -85,9 +86,10 @@
 //        User user = new User();
 //
 //        user.setPassword(passwordEncoder.encode("123456"));
-//        user.setEnabled(true);
+//        user.setEnabled(false);
 //        user.setAvatarUrl(null);
 //        user.setRoles(roles);
+//        user.setCreatedAt(LocalDateTime.now());
 //
 //        user.setBlocked(num % 2 == 0);
 //

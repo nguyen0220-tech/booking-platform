@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -23,4 +24,9 @@ public interface TokenVerifyRepository extends JpaRepository<TokenVerify, Long> 
     void deleteByIdCustom(@Param("id") Long id);
 
     Optional<TokenVerify> findByUserAndType(User user, TokenType type);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM TokenVerify t WHERE t.expiryDate < :now")
+    void deleteExpiredTokens(@Param("now") LocalDateTime now);
 }

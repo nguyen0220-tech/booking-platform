@@ -22,6 +22,7 @@ import com.catholic.ac.kr.booking_platform.security.userdetails.UserDetailsImpl;
 import com.catholic.ac.kr.booking_platform.service.TokenVerifyService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -56,6 +58,7 @@ public class AuthService {
             CheckType.USERNAME, this::checkUserName,
             CheckType.EMAIL, this::checkEmail,
             CheckType.PHONE, this::checkPhone);
+    private final SessionRegistry sessionRegistry;
 
 
     public AuthService(
@@ -63,7 +66,7 @@ public class AuthService {
             SecurityContextRepository securityContextRepository,
             LoginAttemptService loginAttemptService, ApplicationEventPublisher eventPublisher,
             PasswordEncoder passwordEncoder, RoleRepository roleRepository, UserRepository userRepository,
-            TokenVerifyService tokenVerifyService, TokenVerifyRepository tokenVerifyRepository) {
+            TokenVerifyService tokenVerifyService, TokenVerifyRepository tokenVerifyRepository, SessionRegistry sessionRegistry) {
 
         this.authenticationManager = authenticationManager;
         this.securityContextRepository = securityContextRepository;
@@ -74,6 +77,7 @@ public class AuthService {
         this.userRepository = userRepository;
         this.tokenVerifyService = tokenVerifyService;
         this.tokenVerifyRepository = tokenVerifyRepository;
+        this.sessionRegistry = sessionRegistry;
     }
 
     public ApiResponse<String> registry(RegistryRequest request) {
@@ -116,7 +120,7 @@ public class AuthService {
     }
 
     private void setBaseInfoUser(User user, String username, String password,
-                                 String fullName, String email, String phone,Role role) {
+                                 String fullName, String email, String phone, Role role) {
 
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
@@ -194,16 +198,10 @@ public class AuthService {
         SecurityContextHolder.setContext(context);
         securityContextRepository.saveContext(context, httpRequest, httpResponse);
 
-            /*.
-            HttpSession session = httpRequest.getSession(true);
-
-            session.setAttribute(
-                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                    SecurityContextHolder.getContext()
-            );
-             */
-
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+
+        HttpSession session = httpRequest.getSession(true);
+        sessionRegistry.registerNewSession(session.getId(), Objects.requireNonNull(userDetails));
 
         LoginResponse response = ResponserMapper.toLoginResponse(userDetails);
 

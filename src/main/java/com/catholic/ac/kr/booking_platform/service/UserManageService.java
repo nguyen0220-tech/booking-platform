@@ -8,6 +8,7 @@ import com.catholic.ac.kr.booking_platform.enumdef.AdminActive;
 import com.catholic.ac.kr.booking_platform.enumdef.FilterUser;
 import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
 import com.catholic.ac.kr.booking_platform.enumdef.SearchType;
+import com.catholic.ac.kr.booking_platform.event.UserBlockedEvent;
 import com.catholic.ac.kr.booking_platform.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.mapper.UserMapper;
@@ -17,6 +18,7 @@ import com.catholic.ac.kr.booking_platform.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserManageService {
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @PreAuthorize("hasRole('ADMIN')")
     @Cacheable(value = "userPage", key = "{#page, #size}")
@@ -114,7 +117,7 @@ public class UserManageService {
                     return ApiResponse.success(HttpStatus.OK.value(), "ALREADY_BLOCKED", "User is already blocked");
                 }
                 user.setBlocked(true);
-
+                eventPublisher.publishEvent(new UserBlockedEvent(userId));
             }
 
             case UNBLOCK -> {
@@ -132,5 +135,9 @@ public class UserManageService {
                 HttpStatus.OK.value(),
                 HttpStatus.OK.getReasonPhrase(),
                 active + " 성공");
+    }
+
+    public void deleteUserUnenabled(){
+
     }
 }
