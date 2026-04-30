@@ -19,7 +19,6 @@ import com.catholic.ac.kr.booking_platform.repository.RoleRepository;
 import com.catholic.ac.kr.booking_platform.repository.TokenVerifyRepository;
 import com.catholic.ac.kr.booking_platform.repository.UserRepository;
 import com.catholic.ac.kr.booking_platform.security.userdetails.UserDetailsImpl;
-import com.catholic.ac.kr.booking_platform.service.TokenVerifyService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

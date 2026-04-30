@@ -27,39 +27,39 @@
 //        this.roleRepository = roleRepository;
 //        this.passwordEncoder = passwordEncoder;
 //    }
-////
-////    @PostConstruct
-////    public void initAdmin() {
-////        Role userRole = roleRepository.findByName(RoleName.USER)
-////                .orElseGet(() -> {
-////                    Role role = new Role();
-////                    role.setName(RoleName.USER);
-////                    return roleRepository.save(role);
-////                });
-////
-////        Role providerRole = roleRepository.findByName(RoleName.PROVIDER)
-////                .orElseGet(() -> {
-////                    Role role = new Role();
-////                    role.setName(RoleName.PROVIDER);
-////                    return roleRepository.save(role);
-////                });
-////
-////        Role adminRole = roleRepository.findByName(RoleName.ADMIN)
-////                .orElseGet(() -> {
-////                    Role role = new Role();
-////                    role.setName(RoleName.ADMIN);
-////                    return roleRepository.save(role);
-////                });
-////
-////
-////        User admin = createBaseUser(Set.of(adminRole, userRole, providerRole), 1);
-////        admin.setUsername("admin");
-////        admin.setEmail("test@gmail.com");
-////        admin.setPhone("123456789");
-////        admin.setFullName("관리자");
-////
-////        userRepository.save(admin);
-////    }
+//
+//    @PostConstruct
+//    public void initAdmin() {
+//        Role userRole = roleRepository.findByName(RoleName.USER)
+//                .orElseGet(() -> {
+//                    Role role = new Role();
+//                    role.setName(RoleName.USER);
+//                    return roleRepository.save(role);
+//                });
+//
+//        Role providerRole = roleRepository.findByName(RoleName.PROVIDER)
+//                .orElseGet(() -> {
+//                    Role role = new Role();
+//                    role.setName(RoleName.PROVIDER);
+//                    return roleRepository.save(role);
+//                });
+//
+//        Role adminRole = roleRepository.findByName(RoleName.ADMIN)
+//                .orElseGet(() -> {
+//                    Role role = new Role();
+//                    role.setName(RoleName.ADMIN);
+//                    return roleRepository.save(role);
+//                });
+//
+//
+//        User admin = createBaseUser(Set.of(adminRole, userRole, providerRole), 1);
+//        admin.setUsername("admin");
+//        admin.setEmail("test@gmail.com");
+//        admin.setPhone("123456789");
+//        admin.setFullName("관리자");
+//
+//        userRepository.save(admin);
+//    }
 //
 //    @PostConstruct
 //    public void initUserTest() {
@@ -86,7 +86,7 @@
 //        User user = new User();
 //
 //        user.setPassword(passwordEncoder.encode("123456"));
-//        user.setEnabled(false);
+//        user.setEnabled(true);
 //        user.setAvatarUrl(null);
 //        user.setRoles(roles);
 //        user.setCreatedAt(LocalDateTime.now());

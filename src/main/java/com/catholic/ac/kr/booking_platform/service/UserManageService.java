@@ -136,8 +136,4 @@ public class UserManageService {
                 HttpStatus.OK.getReasonPhrase(),
                 active + " 성공");
     }
-
-    public void deleteUserUnenabled(){
-
-    }
 }

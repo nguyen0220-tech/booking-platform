@@ -1,0 +1,23 @@
+extend type Query{
+    sportEquipments(ownerId: ID!, page:Int!, size:Int!):ListSportEquipment
+}
+
+type ListSportEquipment{
+    data:[SportEquipment]
+    pageInfo:PageInfo
+}
+
+type SportEquipment{
+    id:ID!
+    sportEquipmentInfo:SportEquipmentInfo!
+    imageUrls:[String]
+}
+
+type SportEquipmentInfo{
+    sport:String!
+    name:String!
+    description:String!
+    active:Boolean!
+    createdAt:String!
+    updatedAt:String!
+}

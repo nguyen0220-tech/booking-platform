@@ -12,6 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
 
 @Table(
+        name = "token_verify",
         indexes = {
                 @Index(columnList = "token,type"),
         },
@@ -33,7 +34,7 @@ public class TokenVerify {
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 

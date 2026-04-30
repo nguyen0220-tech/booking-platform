@@ -1,0 +1,68 @@
+package com.catholic.ac.kr.booking_platform.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.LocalDateTime;
+
+@Table(
+        name = "facility",
+        indexes = {
+                @Index(columnList = "owner_id"),
+                @Index(columnList = "active")
+        }
+)
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "facility_type")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public abstract class Facility {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User owner;
+
+    @Column(nullable = false)
+    private String address;
+
+    private String instruction;
+
+    @Column(nullable = false)
+    private boolean active;
+
+    @Column(nullable = false)
+    private boolean carPark;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void create() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void update() {
+        updatedAt = LocalDateTime.now();
+    }
+
+}

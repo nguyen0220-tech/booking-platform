@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.service;
+package com.catholic.ac.kr.booking_platform.service.auth;
 
 import com.catholic.ac.kr.booking_platform.enumdef.TokenType;
 import com.catholic.ac.kr.booking_platform.exception.BadRequestException;
