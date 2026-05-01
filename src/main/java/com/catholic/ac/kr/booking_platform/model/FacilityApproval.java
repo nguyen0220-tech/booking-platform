@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.model;
 
-import com.catholic.ac.kr.booking_platform.enumdef.EquipmentStatus;
+import com.catholic.ac.kr.booking_platform.enumdef.FacilityStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,11 @@ import java.time.LocalDateTime;
 
 //admin 관리
 @Entity
+@Table(
+        name = "facility_approval",
+        indexes = {@Index(columnList = "facility_id")}
+
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -30,7 +35,7 @@ public class FacilityApproval {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EquipmentStatus status;
+    private FacilityStatus status;
 
     private String note; //거절된경우 사유
 

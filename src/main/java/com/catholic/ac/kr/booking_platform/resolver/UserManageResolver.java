@@ -7,7 +7,7 @@ import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.enumdef.FilterUser;
 import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
 import com.catholic.ac.kr.booking_platform.enumdef.SearchType;
-import com.catholic.ac.kr.booking_platform.mapper.ConverterForBatchMapping;
+import com.catholic.ac.kr.booking_platform.mapper.UserMapper;
 import com.catholic.ac.kr.booking_platform.model.User;
 import com.catholic.ac.kr.booking_platform.service.RoleService;
 import com.catholic.ac.kr.booking_platform.service.UserManageService;
@@ -71,7 +71,7 @@ public class UserManageResolver {
         Map<Long, UserInfoDetailsDTO> map = userList.stream()
                 .collect(Collectors.toMap(
                         User::getId,
-                        ConverterForBatchMapping::convertToUserInFfo
+                        UserMapper::convertToUserInFfo
                 ));
 
         return users.stream()
@@ -90,7 +90,7 @@ public class UserManageResolver {
         Map<Long, Set<String>> map = roles.stream()
                 .collect(Collectors.groupingBy(
                         RoleForBatchDTO::getUserId,
-                        Collectors.mapping(ConverterForBatchMapping::convertToRoleName, Collectors.toSet())
+                        Collectors.mapping(UserMapper::convertToRoleName, Collectors.toSet())
                 ));
 
         return users.stream()

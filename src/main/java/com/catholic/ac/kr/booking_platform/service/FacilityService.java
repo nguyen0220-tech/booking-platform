@@ -1,21 +1,28 @@
 package com.catholic.ac.kr.booking_platform.service;
 
 import com.catholic.ac.kr.booking_platform.components.UploadHandler;
+import com.catholic.ac.kr.booking_platform.dto.*;
 import com.catholic.ac.kr.booking_platform.dto.request.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.dto.request.MotelRequest;
 import com.catholic.ac.kr.booking_platform.dto.request.RestaurantRequest;
 import com.catholic.ac.kr.booking_platform.dto.request.SportRequest;
 import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
+import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
+import com.catholic.ac.kr.booking_platform.dto.response.PageInfo;
 import com.catholic.ac.kr.booking_platform.enumdef.FacilityType;
 import com.catholic.ac.kr.booking_platform.event.NewFacilityEvent;
 import com.catholic.ac.kr.booking_platform.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.exception.ResourceNotFoundException;
+import com.catholic.ac.kr.booking_platform.mapper.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.model.*;
-import com.catholic.ac.kr.booking_platform.repository.FacilityImageRepository;
-import com.catholic.ac.kr.booking_platform.repository.FacilityRepository;
-import com.catholic.ac.kr.booking_platform.repository.UserRepository;
+import com.catholic.ac.kr.booking_platform.projection.FacilityProjection;
+import com.catholic.ac.kr.booking_platform.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -39,6 +46,47 @@ public class FacilityService {
             FacilityType.MOTEL, this::createMotelFacility,
             FacilityType.RESTAURANT, this::createRestaurantFacility
     );
+    private final FacilitySportRepository facilitySportRepository;
+    private final FacilityMotelRepository facilityMotelRepository;
+    private final FacilityRestaurantRepository facilityRestaurantRepository;
+    private final FacilityApprovalRepository facilityApprovalRepository;
+
+    @PreAuthorize("hasRole('PROVIDER')")
+    public ListResponse<FacilityDTO> getFacilitiesByOwnerId(Long ownerId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<FacilityProjection> facilityProjections = facilityRepository.findByOwnerId(ownerId, pageable);
+
+        Page<FacilityDTO> facilityDTOS = facilityProjections.map(FacilityMapper::toFacilityDTO);
+
+        List<FacilityDTO> rs = facilityDTOS.getContent();
+
+        return new ListResponse<>(rs, new PageInfo(page, size, facilityProjections.hasNext()));
+    }
+
+    public List<Facility> getFacilityByIds(List<Long> facilityIds) {
+        return facilityRepository.findAllById(facilityIds);
+    }
+
+    public List<FacilityImageDTO> getFacilityImageByEntityIds(List<Long> entityIds) {
+        return facilityImageRepository.findAllByEntityIdIdIn(entityIds);
+    }
+
+    public List<SportDTO> getFacilitySportByIds(List<Long> ids) {
+        return ids != null ? facilitySportRepository.findSportDTOsByIds(ids) : List.of();
+    }
+
+    public List<MotelDTO> getFacilityMotelByIds(List<Long> ids) {
+        return ids != null ? facilityMotelRepository.findMotelDTOsByIds(ids) : List.of();
+    }
+
+    public List<RestaurantDTO> getFacilityRestaurantByIds(List<Long> ids) {
+        return ids != null ? facilityRestaurantRepository.findRestaurantDTOsByIds(ids) : List.of();
+    }
+
+    public List<FacilityApproval> getFacilityApprovalByIds(List<Long> ids) {
+        return facilityApprovalRepository.findAllById(ids);
+    }
 
     @PreAuthorize("hasRole('PROVIDER')")
     public ApiResponse<String> createFacility(Long ownerId, FacilityRequest request) {
@@ -120,9 +168,11 @@ public class FacilityService {
         List<FacilityImage> list = new ArrayList<>();
         for (String image : images) {
             FacilityImage facilityImage = new FacilityImage();
-            facilityImage.setId(entityId);
+            facilityImage.setEntityId(entityId);
             facilityImage.setType(type);
             facilityImage.setImageUrl(image);
+
+            list.add(facilityImage);
         }
         facilityImageRepository.saveAll(list);
     }

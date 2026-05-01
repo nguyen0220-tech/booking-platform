@@ -59,6 +59,14 @@
 //        admin.setFullName("관리자");
 //
 //        userRepository.save(admin);
+//
+//        User provider = createBaseUser(Set.of(providerRole), 1);
+//        provider.setUsername("provider");
+//        provider.setEmail("test111@gmail.com");
+//        provider.setPhone("1234567890");
+//        provider.setFullName("제공자");
+//
+//        userRepository.save(provider);
 //    }
 //
 //    @PostConstruct

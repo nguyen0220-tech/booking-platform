@@ -7,4 +7,6 @@ import lombok.Setter;
 @Setter
 public class FacilityDTO {
     private Long id;
+    private String facilityType;
+    private Long ownerId;
 }

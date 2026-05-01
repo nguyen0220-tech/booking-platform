@@ -4,6 +4,7 @@ import com.catholic.ac.kr.booking_platform.dto.request.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.dto.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.security.userdetails.UserDetailsImpl;
 import com.catholic.ac.kr.booking_platform.service.FacilityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class FacilityController {
     @PostMapping
     public ApiResponse<String> createFacility(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody FacilityRequest request
+            @Valid @RequestBody FacilityRequest request
     ) {
         return facilityService.createFacility(userDetails.getId(), request);
     }

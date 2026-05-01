@@ -1,5 +1,6 @@
 package com.catholic.ac.kr.booking_platform.model;
 
+import com.catholic.ac.kr.booking_platform.enumdef.FacilityType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -31,6 +32,10 @@ public abstract class Facility {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
+
+     @Enumerated(EnumType.STRING)
+     @Column(name = "facility_type", insertable = false, updatable = false)
+     private FacilityType facilityType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")

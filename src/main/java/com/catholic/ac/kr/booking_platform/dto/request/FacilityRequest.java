@@ -4,10 +4,9 @@ import com.catholic.ac.kr.booking_platform.enumdef.FacilityType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +22,13 @@ import java.util.List;
         @JsonSubTypes.Type(value = MotelRequest.class, name = "MOTEL"),
         @JsonSubTypes.Type(value = RestaurantRequest.class, name = "RESTAURANT")
 })
-@Getter @Setter
+@Getter
+@Setter
 public abstract class FacilityRequest {
     @NotBlank(message = "입력 필수 항목입니다")
     private String name;
 
-    @NotEmpty(message = "입력 필수 항목입니다")
+    @NotNull(message = "입력 필수 항목입니다")
     private FacilityType type;
 
     @NotBlank(message = "입력 필수 항목입니다")

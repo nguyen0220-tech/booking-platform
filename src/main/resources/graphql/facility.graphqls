@@ -1,0 +1,52 @@
+scalar BigDecimal
+
+extend type Query{
+    facilities(page:Int!, size:Int!):ListFacility
+}
+
+type ListFacility{
+    data:[Facility]
+    pageInfo:PageInfo
+}
+
+type Facility{
+    id:ID!
+    facilityType:String!
+    ownerId:ID!
+    facilityInfo:FacilityInfo!
+    imageUrls:[String]
+    facilityTarget:FacilityTarget
+    owner:User!
+    approvalStatus:FacilityApproval
+}
+
+type FacilityInfo{
+    name:String!
+    description:String!
+    address:String!
+    instruction:String
+    active:Boolean!
+    carPark:Boolean!
+    createdAt:String!
+    updatedAt:String!
+}
+
+union FacilityTarget = Sport | Motel | Restaurant
+
+type Sport{
+    hourPrice:BigDecimal!
+}
+
+type Motel{
+    nightPrice:BigDecimal!
+    hourPrice:BigDecimal!
+}
+
+type Restaurant{
+    foodType:String!
+}
+
+type FacilityApproval{
+    status:String!
+    note:String
+}

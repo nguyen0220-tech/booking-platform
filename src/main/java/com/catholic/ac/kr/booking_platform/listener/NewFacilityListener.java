@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.listener;
 
-import com.catholic.ac.kr.booking_platform.enumdef.EquipmentStatus;
+import com.catholic.ac.kr.booking_platform.enumdef.FacilityStatus;
 import com.catholic.ac.kr.booking_platform.event.NewFacilityEvent;
 import com.catholic.ac.kr.booking_platform.model.FacilityApproval;
 import com.catholic.ac.kr.booking_platform.repository.FacilityApprovalRepository;
@@ -20,7 +20,7 @@ public class NewFacilityListener {
     public void newEquipmentHandle(NewFacilityEvent event) {
         FacilityApproval newFac = new FacilityApproval();
 
-        newFac.setStatus(EquipmentStatus.PENDING);
+        newFac.setStatus(FacilityStatus.PENDING);
         newFac.setFacility(event.facility());
 
         facilityApprovalRepository.save(newFac);
