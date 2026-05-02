@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,6 +51,16 @@ public class FacilityService {
     private final FacilityMotelRepository facilityMotelRepository;
     private final FacilityRestaurantRepository facilityRestaurantRepository;
     private final FacilityApprovalRepository facilityApprovalRepository;
+
+    public FacilityDTO getFacilityById(Long ownerId,Long id) {
+        FacilityProjection projection = facilityRepository.findFacilityById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Facility not found"));
+
+        if (!ownerId.equals(projection.getOwnerId())) {
+            throw new AccessDeniedException("access denied");
+        }
+        return FacilityMapper.toFacilityDTO(projection);
+    }
 
     @PreAuthorize("hasRole('PROVIDER')")
     public ListResponse<FacilityDTO> getFacilitiesByOwnerId(Long ownerId, int page, int size) {
@@ -86,6 +97,19 @@ public class FacilityService {
 
     public List<FacilityApproval> getFacilityApprovalByIds(List<Long> ids) {
         return facilityApprovalRepository.findAllById(ids);
+    }
+
+    @PreAuthorize("hasRole('PROVIDER')")
+    public ListResponse<FacilityDTO> searchFacilityByKeyword(Long ownerId, String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<FacilityProjection> projection = facilityRepository.findByOwnerIdAndKeyword(ownerId, keyword, pageable);
+
+        List<FacilityDTO> rs = projection.stream()
+                .map(FacilityMapper::toFacilityDTO)
+                .toList();
+
+        return new ListResponse<>(rs, new PageInfo(page, size, projection.hasNext()));
     }
 
     @PreAuthorize("hasRole('PROVIDER')")
@@ -154,6 +178,7 @@ public class FacilityService {
         facility.setInstruction(request.getInstruction());
         facility.setActive(request.isActive());
         facility.setCarPark(request.isCarPark());
+        facility.setHasWifi(request.isHasWifi());
     }
 
     private ApiResponse<String> unsupported(User owner, FacilityRequest request) {

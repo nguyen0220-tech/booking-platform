@@ -1,0 +1,3 @@
+extend type Query {
+    facilityApprovalList(status:FacilityStatus!, page:Int!, size:Int!):ListFacility
+}

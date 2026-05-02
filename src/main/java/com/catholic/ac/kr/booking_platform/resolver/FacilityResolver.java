@@ -30,11 +30,28 @@ public class FacilityResolver {
     private final UserManageService userManageService;
 
     @QueryMapping
+    public FacilityDTO facility(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Argument Long id){
+        return facilityService.getFacilityById(userDetails.getId(),id);
+    }
+
+    @QueryMapping
     public ListResponse<FacilityDTO> facilities(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Argument int page,
             @Argument int size) {
         return facilityService.getFacilitiesByOwnerId(userDetails.getId(), page, size);
+    }
+
+    @QueryMapping
+    public ListResponse<FacilityDTO> facilitiesByKeyword(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Argument String keyword,
+            @Argument int page,
+            @Argument int size
+    ){
+        return facilityService.searchFacilityByKeyword(userDetails.getId(), keyword, page, size);
     }
 
     @BatchMapping(typeName = "Facility", field = "facilityInfo")

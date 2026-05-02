@@ -1,7 +1,9 @@
 scalar BigDecimal
 
 extend type Query{
+    facility(id:ID!):Facility
     facilities(page:Int!, size:Int!):ListFacility
+    facilitiesByKeyword(keyword:String!, page:Int!, size:Int!):ListFacility
 }
 
 type ListFacility{
@@ -27,6 +29,7 @@ type FacilityInfo{
     instruction:String
     active:Boolean!
     carPark:Boolean!
+    hasWifi:Boolean!
     createdAt:String!
     updatedAt:String!
 }

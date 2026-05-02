@@ -52,7 +52,7 @@
 //                });
 //
 //
-//        User admin = createBaseUser(Set.of(adminRole, userRole, providerRole), 1);
+//        User admin = createBaseUser(Set.of(adminRole, userRole), 1);
 //        admin.setUsername("admin");
 //        admin.setEmail("test@gmail.com");
 //        admin.setPhone("123456789");

@@ -38,6 +38,8 @@ public abstract class FacilityRequest {
 
     private boolean carPark;
 
+    private boolean hasWifi;
+
     @NotBlank(message = "입력 필수 항목입니다")
     private String address;
 

@@ -1,0 +1,38 @@
+package com.catholic.ac.kr.booking_platform.service;
+
+import com.catholic.ac.kr.booking_platform.dto.FacilityDTO;
+import com.catholic.ac.kr.booking_platform.dto.response.ListResponse;
+import com.catholic.ac.kr.booking_platform.dto.response.PageInfo;
+import com.catholic.ac.kr.booking_platform.enumdef.FacilityStatus;
+import com.catholic.ac.kr.booking_platform.mapper.FacilityMapper;
+import com.catholic.ac.kr.booking_platform.projection.FacilityProjection;
+import com.catholic.ac.kr.booking_platform.repository.FacilityApprovalRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class FacilityApprovalService {
+
+    private final FacilityApprovalRepository facilityApprovalRepository;
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public ListResponse<FacilityDTO> getFacilityRegistrations(FacilityStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<FacilityProjection> projections = facilityApprovalRepository.findFacilityApprovalByStatus(status, pageable);
+
+        Page<FacilityDTO> facilityDTOS = projections.map(FacilityMapper::toFacilityDTO);
+
+        List<FacilityDTO> rs = facilityDTOS.getContent();
+
+        return new ListResponse<>(rs, new PageInfo(page, size, projections.hasNext()));
+    }
+}

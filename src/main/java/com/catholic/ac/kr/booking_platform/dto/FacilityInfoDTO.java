@@ -14,6 +14,7 @@ public class FacilityInfoDTO {
     private String address;
     private boolean active;
     private boolean carPark;
+    private boolean hasWifi;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

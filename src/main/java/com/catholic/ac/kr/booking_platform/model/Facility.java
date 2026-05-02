@@ -2,7 +2,10 @@ package com.catholic.ac.kr.booking_platform.model;
 
 import com.catholic.ac.kr.booking_platform.enumdef.FacilityType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -12,7 +15,7 @@ import java.time.LocalDateTime;
         name = "facility",
         indexes = {
                 @Index(columnList = "owner_id"),
-                @Index(columnList = "active")
+                @Index(columnList = "name, active")
         }
 )
 @Entity
@@ -33,9 +36,9 @@ public abstract class Facility {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-     @Enumerated(EnumType.STRING)
-     @Column(name = "facility_type", insertable = false, updatable = false)
-     private FacilityType facilityType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "facility_type", insertable = false, updatable = false)
+    private FacilityType facilityType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
@@ -52,6 +55,9 @@ public abstract class Facility {
 
     @Column(nullable = false)
     private boolean carPark;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean hasWifi;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

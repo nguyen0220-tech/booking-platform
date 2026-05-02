@@ -13,3 +13,9 @@ enum RoleName{
     PROVIDER,
     ADMIN
 }
+
+enum FacilityStatus{
+    PENDING,
+    APPROVED,
+    REJECTED
+}
