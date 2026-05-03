@@ -1,7 +1,7 @@
 package com.catholic.ac.kr.booking_platform.user.data;
 
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
-import com.catholic.ac.kr.booking_platform.user.api.UserProjection;
+import com.catholic.ac.kr.booking_platform.user.projection.UserProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,5 +1,8 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
+import com.catholic.ac.kr.booking_platform.facility.core.FacilityApprovalService;
+import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
+import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
 import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
@@ -8,7 +11,6 @@ import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityApproval;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
-import com.catholic.ac.kr.booking_platform.facility.core.FacilityService;
 import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +28,16 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 public class FacilityResolver {
-    private final FacilityService facilityService;
     private final UserManageService userManageService;
+    private final FacilityImageService facilityImageService;
+    private final FacilityQueryService facilityQueryService;
+    private final FacilityApprovalService facilityApprovalService;
 
     @QueryMapping
     public FacilityDTO facility(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Argument Long id){
-        return facilityService.getFacilityById(userDetails.getId(),id);
+        return facilityQueryService.getFacilityById(userDetails.getId(),id);
     }
 
     @QueryMapping
@@ -41,7 +45,7 @@ public class FacilityResolver {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Argument int page,
             @Argument int size) {
-        return facilityService.getFacilitiesByOwnerId(userDetails.getId(), page, size);
+        return facilityQueryService.getFacilitiesByOwnerId(userDetails.getId(), page, size);
     }
 
     @QueryMapping
@@ -51,7 +55,7 @@ public class FacilityResolver {
             @Argument int page,
             @Argument int size
     ){
-        return facilityService.searchFacilityByKeyword(userDetails.getId(), keyword, page, size);
+        return facilityQueryService.searchFacilityByKeyword(userDetails.getId(), keyword, page, size);
     }
 
     @BatchMapping(typeName = "Facility", field = "facilityInfo")
@@ -60,7 +64,7 @@ public class FacilityResolver {
                 .map(FacilityDTO::getId)
                 .toList();
 
-        List<Facility> facilityList = facilityService.getFacilityByIds(facilityIds);
+        List<Facility> facilityList = facilityQueryService.getFacilityByIds(facilityIds);
 
         Map<Long, FacilityInfoDTO> map = facilityList.stream()
                 .collect(Collectors.toMap(
@@ -81,7 +85,7 @@ public class FacilityResolver {
                 .map(FacilityDTO::getId)
                 .toList();
 
-        List<FacilityImageDTO> facilityList = facilityService.getFacilityImageByEntityIds(facilityIds);
+        List<FacilityImageDTO> facilityList = facilityImageService.getFacilityImageByEntityIds(facilityIds);
 
         Map<Long, List<String>> map = facilityList.stream()
                 .collect(Collectors.groupingBy(
@@ -108,9 +112,9 @@ public class FacilityResolver {
         List<Long> motelFacilityIds = idsGroupByType.getOrDefault("MOTEL", List.of());
         List<Long> restaurantFacilityIds = idsGroupByType.getOrDefault("RESTAURANT", List.of());
 
-        List<SportDTO> sports = facilityService.getFacilitySportByIds(sportFacilityIds);
-        List<MotelDTO> motels = facilityService.getFacilityMotelByIds(motelFacilityIds);
-        List<RestaurantDTO> restaurants = facilityService.getFacilityRestaurantByIds(restaurantFacilityIds);
+        List<SportDTO> sports = facilityQueryService.getFacilitySportByIds(sportFacilityIds);
+        List<MotelDTO> motels = facilityQueryService.getFacilityMotelByIds(motelFacilityIds);
+        List<RestaurantDTO> restaurants = facilityQueryService.getFacilityRestaurantByIds(restaurantFacilityIds);
 
         Map<Long, SportDTO> sportMap = sports.stream()
                 .collect(Collectors.toMap(
@@ -175,8 +179,7 @@ public class FacilityResolver {
                 .map(FacilityDTO::getId)
                 .toList();
 
-        List<FacilityApproval> facilityApprovalList = facilityService.getFacilityApprovalByIds(facilityIds) != null ?
-                facilityService.getFacilityApprovalByIds(facilityIds) : List.of();
+        List<FacilityApproval> facilityApprovalList = facilityApprovalService.getFacilityApprovalByIds(facilityIds);
 
         Map<Long,FacilityApprovalDTO> map = facilityApprovalList.stream()
                 .collect(Collectors.toMap(

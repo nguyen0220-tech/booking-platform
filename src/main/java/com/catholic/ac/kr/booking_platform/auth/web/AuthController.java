@@ -1,9 +1,10 @@
 package com.catholic.ac.kr.booking_platform.auth.web;
 
+import com.catholic.ac.kr.booking_platform.auth.core.AccountRecoveryService;
+import com.catholic.ac.kr.booking_platform.auth.core.AuthService;
+import com.catholic.ac.kr.booking_platform.auth.core.UserCheckInfoService;
 import com.catholic.ac.kr.booking_platform.auth.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
-import com.catholic.ac.kr.booking_platform.auth.dto.LoginResponse;
-import com.catholic.ac.kr.booking_platform.auth.core.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final AccountRecoveryService accountRecoveryService;
+    private final UserCheckInfoService userCheckInfoService;
 
     @PostMapping("registry")
     public ApiResponse<String> registry(@RequestBody @Valid RegistryRequest request) {
@@ -22,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("verify")
-    public ApiResponse<String> verifyNewUser(@RequestParam String token){
+    public ApiResponse<String> verifyNewUser(@RequestParam String token) {
         return authService.verifyNewUser(token);
     }
 
@@ -42,21 +45,21 @@ public class AuthController {
 
     @PostMapping("confirm")
     public ApiResponse<String> checkExistInfo(@RequestBody CheckInfoRequest request) {
-        return authService.checkExistInfo(request);
+        return userCheckInfoService.checkExistInfo(request);
     }
 
     @PostMapping("find-username")
     public ApiResponse<String> forgotUsername(@RequestBody @Valid ForgotUsernameRequest request) {
-        return authService.forgotUsername(request);
+        return accountRecoveryService.forgotUsername(request);
     }
 
     @PostMapping("find-password")
     public ApiResponse<String> forgotPassword(@RequestBody @Valid ForgotPasswordRequest username) {
-        return authService.forgotPassword(username);
+        return accountRecoveryService.forgotPassword(username);
     }
 
     @PostMapping("reset-password")
     public ApiResponse<String> resetPassword(@RequestBody @Valid NewPasswordRequest request) {
-        return authService.resetPassword(request);
+        return accountRecoveryService.resetPassword(request);
     }
 }

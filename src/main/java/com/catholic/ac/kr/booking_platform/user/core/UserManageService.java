@@ -13,7 +13,7 @@ import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestEx
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.user.UserMapper;
 import com.catholic.ac.kr.booking_platform.user.data.User;
-import com.catholic.ac.kr.booking_platform.user.api.UserProjection;
+import com.catholic.ac.kr.booking_platform.user.projection.UserProjection;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;

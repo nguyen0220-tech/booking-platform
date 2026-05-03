@@ -1,12 +1,13 @@
 package com.catholic.ac.kr.booking_platform.facility.core;
 
+import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
+import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityApproval;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityApprovalRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
+import com.catholic.ac.kr.booking_platform.facility.projection.FacilityProjection;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
-import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
-import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
-import com.catholic.ac.kr.booking_platform.facility.api.FacilityProjection;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityApprovalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,4 +36,9 @@ public class FacilityApprovalService {
 
         return new ListResponse<>(rs, new PageInfo(page, size, projections.hasNext()));
     }
+
+    public List<FacilityApproval> getFacilityApprovalByIds(List<Long> ids) {
+        return ids != null ? facilityApprovalRepository.findAllById(ids) : List.of();
+    }
+
 }

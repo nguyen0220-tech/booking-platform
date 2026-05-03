@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.facility.api;
+package com.catholic.ac.kr.booking_platform.facility.projection;
 
 public interface FacilityProjection {
     Long getId();

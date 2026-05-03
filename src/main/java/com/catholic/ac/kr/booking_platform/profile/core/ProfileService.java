@@ -70,47 +70,6 @@ public class ProfileService {
                 "Get profile successfully", profile);
     }
 
-    /* .
-    public ApiResponse<String> updateProfile(Long userId, UpdateProfileRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        if (!passwordEncoder.matches(request.getConfirmPassword(), user.getPassword())) {
-            throw new AuthenticationException("Password does not match") {
-            };
-        }
-
-        switch (request.getType()) {
-            case FULL_NAME -> {
-                user.setFullName(request.getNewInfo());
-                userRepository.save(user);
-                return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
-                        "정보 변경이 되었습니다.");
-            }
-
-            case EMAIL -> {
-                if (HelperUtils.isInvalidEmail(request.getNewInfo())) {
-                    throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다");
-                }
-                String newEmail = HelperUtils.normalizeEmail(request.getNewInfo());
-
-                if (user.getEmail().equals(newEmail)) {
-                    throw new BadRequestException("입력한 이메일 주소는 본 계정의 이메일입니다");
-                }
-                if (userRepository.existsByEmail(newEmail)) {
-                    throw new AlreadyExistsException("이미 등록된 이메일입니다.");
-                }
-                return cacheEmail(userId, newEmail, user.getFullName());
-            }
-            case PHONE -> {
-                user.setPhone(request.getNewInfo());
-                return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
-                        "phone 변경이 되었습니다.");
-            }
-            default -> throw new IllegalArgumentException("Unsupported update type");
-        }
-    }
-     */
     @CacheEvict(value = "profile", allEntries = true)
     public ApiResponse<String> updateProfile(Long userId, UpdateProfileRequest request) {
         if (updateProfileCacheService.isBlocked(userId)) {

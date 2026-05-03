@@ -1,9 +1,10 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
+import com.catholic.ac.kr.booking_platform.facility.core.FacilityCommandService;
+import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
-import com.catholic.ac.kr.booking_platform.facility.core.FacilityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,14 +17,15 @@ import java.util.List;
 @RequestMapping("facility")
 @RequiredArgsConstructor
 public class FacilityController {
-    private final FacilityService facilityService;
+    private final FacilityCommandService facilityCommandService;
+    private final FacilityImageService facilityImageService;
 
     @PostMapping
     public ApiResponse<String> createFacility(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody FacilityRequest request
     ) {
-        return facilityService.createFacility(userDetails.getId(), request);
+        return facilityCommandService.createFacility(userDetails.getId(), request);
     }
 
     @PostMapping("upload-images")
@@ -31,6 +33,6 @@ public class FacilityController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @ModelAttribute List<MultipartFile> images){
 
-        return facilityService.uploadFacilityImage(userDetails.getId(), images);
+        return facilityImageService.uploadFacilityImage(userDetails.getId(), images);
     }
 }

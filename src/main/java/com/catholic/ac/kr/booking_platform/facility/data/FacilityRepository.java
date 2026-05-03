@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.data;
 
-import com.catholic.ac.kr.booking_platform.facility.api.FacilityProjection;
+import com.catholic.ac.kr.booking_platform.facility.projection.FacilityProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

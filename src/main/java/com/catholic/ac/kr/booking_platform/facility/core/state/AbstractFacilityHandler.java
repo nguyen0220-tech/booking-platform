@@ -1,19 +1,19 @@
 package com.catholic.ac.kr.booking_platform.facility.core.state;
 
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityImage;
-import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityImageRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
+import com.catholic.ac.kr.booking_platform.user.data.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-public abstract class AbstractFacilityHandler implements FacilityHandler {
+public abstract class AbstractFacilityHandler<T> implements FacilityHandler<T> {
     protected final FacilityRepository facilityRepository;
     protected final FacilityImageRepository facilityImageRepository;
     protected final ApplicationEventPublisher eventPublisher;

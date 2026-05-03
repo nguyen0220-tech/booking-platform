@@ -6,7 +6,7 @@ import com.catholic.ac.kr.booking_platform.facility.dto.FacilityImageDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoDTO;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityApproval;
-import com.catholic.ac.kr.booking_platform.facility.api.FacilityProjection;
+import com.catholic.ac.kr.booking_platform.facility.projection.FacilityProjection;
 
 public class FacilityMapper {
     public static FacilityDTO toFacilityDTO(FacilityProjection facilityProjection) {
