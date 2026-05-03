@@ -1,6 +1,5 @@
-package com.catholic.ac.kr.booking_platform.auth.data;
+package com.catholic.ac.kr.booking_platform.user.data;
 
-import com.catholic.ac.kr.booking_platform.user.data.Role;
 import com.catholic.ac.kr.booking_platform.user.dto.RoleForBatchDTO;
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
 import org.springframework.data.jpa.repository.JpaRepository;

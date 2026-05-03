@@ -1,7 +1,7 @@
 package com.catholic.ac.kr.booking_platform.user.core;
 
 import com.catholic.ac.kr.booking_platform.user.dto.RoleForBatchDTO;
-import com.catholic.ac.kr.booking_platform.auth.data.RoleRepository;
+import com.catholic.ac.kr.booking_platform.user.data.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

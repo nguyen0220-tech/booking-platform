@@ -22,7 +22,6 @@ public class FacilityImageService {
         return facilityImageRepository.findAllByEntityIdIdIn(entityIds);
     }
 
-
     public ApiResponse<List<String>> uploadFacilityImage(Long ownerId, List<MultipartFile> images) {
         List<String> rs = new ArrayList<>();
 

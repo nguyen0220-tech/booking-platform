@@ -1,42 +1,29 @@
 package com.catholic.ac.kr.booking_platform.facility.core;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
-import com.catholic.ac.kr.booking_platform.facility.core.state.FacilityHandler;
-import com.catholic.ac.kr.booking_platform.facility.core.state.MotelFacilityHandler;
-import com.catholic.ac.kr.booking_platform.facility.core.state.RestaurantFacilityHandler;
-import com.catholic.ac.kr.booking_platform.facility.core.state.SportFacilityHandler;
-import com.catholic.ac.kr.booking_platform.facility.data.*;
-import com.catholic.ac.kr.booking_platform.facility.dto.*;
+import com.catholic.ac.kr.booking_platform.facility.core.strategy.FacilityHandler;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class FacilityCommandService {
-    public final FacilityRepository facilityRepository;
     private final UserRepository userRepository;
 
-    private final SportFacilityHandler sportFacilityHandler;
-    private final MotelFacilityHandler motelFacilityHandler;
-    private final RestaurantFacilityHandler restaurantFacilityHandler;
+    private final Map<FacilityType, FacilityHandler<?>> facilityHandlers;
 
-    private Map<FacilityType, FacilityHandler<?>> facilityHandlers;
-
-    @PostConstruct
-    private void init() {
-        facilityHandlers = Map.of(
-                FacilityType.SPORT, sportFacilityHandler,
-                FacilityType.MOTEL, motelFacilityHandler,
-                FacilityType.RESTAURANT, restaurantFacilityHandler
-        );
+    public FacilityCommandService(UserRepository userRepository, List<FacilityHandler<?>> handlers) {
+        this.userRepository = userRepository;
+        this.facilityHandlers = handlers.stream()
+                .collect(Collectors.toMap(FacilityHandler::getType, f -> f));
     }
 
     @PreAuthorize("hasRole('PROVIDER')")

@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.facility.core.state;
+package com.catholic.ac.kr.booking_platform.facility.core.strategy;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.core.event.NewFacilityEvent;

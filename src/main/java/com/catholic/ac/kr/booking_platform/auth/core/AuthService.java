@@ -12,7 +12,7 @@ import com.catholic.ac.kr.booking_platform.auth.ResponserMapper;
 import com.catholic.ac.kr.booking_platform.user.data.Role;
 import com.catholic.ac.kr.booking_platform.auth.data.TokenVerify;
 import com.catholic.ac.kr.booking_platform.user.data.User;
-import com.catholic.ac.kr.booking_platform.auth.data.RoleRepository;
+import com.catholic.ac.kr.booking_platform.user.data.RoleRepository;
 import com.catholic.ac.kr.booking_platform.auth.data.TokenVerifyRepository;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 
 @Service
 public class AuthService {

@@ -2,9 +2,9 @@ package com.catholic.ac.kr.booking_platform.facility.core;
 
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilityProjection;
-import com.catholic.ac.kr.booking_platform.facility.core.state.MotelFacilityHandler;
-import com.catholic.ac.kr.booking_platform.facility.core.state.RestaurantFacilityHandler;
-import com.catholic.ac.kr.booking_platform.facility.core.state.SportFacilityHandler;
+import com.catholic.ac.kr.booking_platform.facility.core.strategy.MotelFacilityHandler;
+import com.catholic.ac.kr.booking_platform.facility.core.strategy.RestaurantFacilityHandler;
+import com.catholic.ac.kr.booking_platform.facility.core.strategy.SportFacilityHandler;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;

@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.facility.core.state;
+package com.catholic.ac.kr.booking_platform.facility.core.strategy;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.core.event.NewFacilityEvent;
@@ -12,6 +12,7 @@ import com.catholic.ac.kr.booking_platform.facility.dto.SportRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class SportFacilityHandler extends AbstractFacilityHandler<SportDTO> {
         saveFacilityImages(newSport.getId(), getType(), request.getImages());
         eventPublisher.publishEvent(new NewFacilityEvent(newSport));
 
-        return ApiResponse.success(200, "OK", request.getName() + " 등록 접수가 되었습니다");
+        return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
+                request.getName() + " 등록 접수가 되었습니다");
     }
 }

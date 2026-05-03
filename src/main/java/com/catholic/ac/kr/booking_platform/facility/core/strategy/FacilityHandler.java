@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.facility.core.state;
+package com.catholic.ac.kr.booking_platform.facility.core.strategy;
 
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
