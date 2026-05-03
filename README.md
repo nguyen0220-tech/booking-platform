@@ -36,38 +36,34 @@ REST API 및 GraphQL을 동시에 활용하는 구조를 학습하기 위해 개
 
 - User
 - Service
+- Facility
 - Booking
 - Review
 - Notification
 
 ## ➣ Architecture
 
-Client → API Gateway → Service Layer → Database
+Client → Reverse Proxy (Nginx) → Monolith Application → DB
 
 ## 🧩 Project Structure
 
 ```
 backend
- ├── cache             # Local cache (Caffeine) 
- ├── components        # Logging, Rate limit,...
- ├── config            # Application configuration
- ├── controller        # REST Controller
- ├── dto               # Data Transfer Objects
- ├── enumdef           # enum define
- ├── event             # Event data classes for publishing
- ├── exception         # ControllerAdviest
- ├── helper            # Custom utility classes
- ├── listener          # Spring event handlers
- ├── mapper            # Mapping entity <-> DTO
- ├── model             # JPA entities
- ├── projection        # GraphQL dto projection
- ├── repository        # Spring Data JPA
- ├── resolver          # Queries, Mutation, @SchemaMapping / @BatchMapping
- ├── schedule          # Clear system (token expired, user unenabled...)
- ├── security          # Config session / OAuth2
- ├── service           # Business logic
- │   └── auth          # signup, registry,... 
- └── ws                # WebSocket config
+ ├── auth            # login/registration flows
+ ├── facility        # Management of system-wide facilities and infrastructure assets.
+ ├── helper          # Cross-cutting utilities (Date, String, and Validation helpers).
+ ├── infrastructure  # Global configurations: Persistence, Security, Exception, and API Documentation.
+ ├── notification    # Dispatching system messages via Email, Push
+ ├── profile         # User-specific settings, account recovery, and personal data management
+ └── user            # Account management, role-based access control (RBAC), and user identity
+ 
+feature-name/
+├── web/            # Presentation Layer
+├── core/           # Business Logic Layer
+├── data/           # Persistence Layer
+├── api/            # Contract Layer
+├── dto/            # Data Transfer Layer
+└── constant/       # Definitions
 
 frontend
  └── graphql           # GraphQL queries & mutations
