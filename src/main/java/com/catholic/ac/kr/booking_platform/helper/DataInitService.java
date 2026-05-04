@@ -1,11 +1,12 @@
 //package com.catholic.ac.kr.booking_platform.helper;
 //
-//import com.catholic.ac.kr.booking_platform.enumdef.RoleName;
-//import com.catholic.ac.kr.booking_platform.model.Role;
-//import com.catholic.ac.kr.booking_platform.model.User;
-//import com.catholic.ac.kr.booking_platform.repository.RoleRepository;
-//import com.catholic.ac.kr.booking_platform.repository.UserRepository;
+//import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
+//import com.catholic.ac.kr.booking_platform.user.data.Role;
+//import com.catholic.ac.kr.booking_platform.user.data.RoleRepository;
+//import com.catholic.ac.kr.booking_platform.user.data.User;
+//import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
 //import jakarta.annotation.PostConstruct;
+//import lombok.RequiredArgsConstructor;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.stereotype.Component;
 //
@@ -13,20 +14,11 @@
 //import java.util.Set;
 //
 //@Component
+//@RequiredArgsConstructor
 //public class DataInitService {
 //    private final UserRepository userRepository;
 //    private final RoleRepository roleRepository;
 //    private final PasswordEncoder passwordEncoder;
-//
-//    public DataInitService(
-//            UserRepository userRepository,
-//            RoleRepository roleRepository,
-//            PasswordEncoder passwordEncoder) {
-//
-//        this.userRepository = userRepository;
-//        this.roleRepository = roleRepository;
-//        this.passwordEncoder = passwordEncoder;
-//    }
 //
 //    @PostConstruct
 //    public void initAdmin() {

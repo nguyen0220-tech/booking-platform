@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
-import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityApprovalCommandService;
+import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityRegistrationCommandService;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
 import com.catholic.ac.kr.booking_platform.facility.dto.*;
@@ -31,7 +31,7 @@ public class FacilityResolver {
     private final UserManageService userManageService;
     private final FacilityImageService facilityImageService;
     private final FacilityQueryService facilityQueryService;
-    private final FacilityApprovalCommandService facilityApprovalCommandService;
+    private final FacilityRegistrationCommandService facilityRegistrationCommandService;
 
     @QueryMapping
     public FacilityDTO facility(
@@ -179,7 +179,7 @@ public class FacilityResolver {
                 .map(FacilityDTO::getId)
                 .toList();
 
-        List<FacilityRegistration> facilityRegistrationList = facilityApprovalCommandService.getFacilityApprovalByIds(facilityIds);
+        List<FacilityRegistration> facilityRegistrationList = facilityRegistrationCommandService.getFacilityApprovalByIds(facilityIds);
 
         Map<Long, FacilityRegistrationDTO> map = facilityRegistrationList.stream()
                 .collect(Collectors.toMap(

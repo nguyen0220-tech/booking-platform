@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
-import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityApprovalCommandService;
+import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityRegistrationCommandService;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FacilityRegistrationController {
 
-    private final FacilityApprovalCommandService facilityApprovalCommandService;
+    private final FacilityRegistrationCommandService facilityRegistrationCommandService;
 
     @PostMapping
     public ApiResponse<String> facilityRegistrationHandler(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody FacilityRegistrationRequest request) {
-        return facilityApprovalCommandService.handleFacilityRegistration(userDetails.getId(), request);
+        return facilityRegistrationCommandService.handleFacilityRegistration(userDetails.getId(), request);
     }
 }
