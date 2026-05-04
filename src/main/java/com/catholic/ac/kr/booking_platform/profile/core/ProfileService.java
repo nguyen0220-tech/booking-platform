@@ -1,22 +1,19 @@
 package com.catholic.ac.kr.booking_platform.profile.core;
 
+import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.components.UploadHandler;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
+import com.catholic.ac.kr.booking_platform.profile.core.strategy.ProfileStrategy;
 import com.catholic.ac.kr.booking_platform.profile.data.PendingEmailUpdate;
 import com.catholic.ac.kr.booking_platform.profile.data.ProfileDTO;
 import com.catholic.ac.kr.booking_platform.profile.data.UpdateProfileRequest;
-import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
-import com.catholic.ac.kr.booking_platform.profile.core.event.UpdateProfileEvent;
-import com.catholic.ac.kr.booking_platform.infrastructure.exception.AlreadyExistsException;
-import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
-import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
-import com.catholic.ac.kr.booking_platform.helper.HelperUtils;
 import com.catholic.ac.kr.booking_platform.user.UserMapper;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -25,38 +22,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class ProfileService {
     private final UserRepository userRepository;
     private final UploadHandler uploadHandler;
-    private final ApplicationEventPublisher eventPublisher;
     private final PasswordEncoder passwordEncoder;
     private final UpdateProfileCacheService updateProfileCacheService;
-
-    private final Map<UpdateProfileType, BiFunction<User, String, ApiResponse<String>>> handlerMap = Map.of(
-            UpdateProfileType.FULL_NAME, this::updateFullName,
-            UpdateProfileType.EMAIL, this::updateEmail,
-            UpdateProfileType.PHONE, this::updatePhone
-    );
+    private final Map<UpdateProfileType, ProfileStrategy> profileStrategyMap;
 
 
     public ProfileService(
             UserRepository userRepository,
             UploadHandler uploadHandler,
-            ApplicationEventPublisher eventPublisher,
             PasswordEncoder passwordEncoder,
-            UpdateProfileCacheService updateProfileCacheService) {
+            UpdateProfileCacheService updateProfileCacheService,
+            List<ProfileStrategy> profileStrategyList) {
 
         this.userRepository = userRepository;
         this.uploadHandler = uploadHandler;
-        this.eventPublisher = eventPublisher;
         this.passwordEncoder = passwordEncoder;
         this.updateProfileCacheService = updateProfileCacheService;
+        this.profileStrategyMap = profileStrategyList.stream()
+                .collect(Collectors.toMap(ProfileStrategy::getUpdateProfileType, p -> p));
     }
 
     @Cacheable(value = "profile", key = "{#userId}")
@@ -84,83 +76,10 @@ public class ProfileService {
         }
 
         updateProfileCacheService.verifyPasswordPassed(userId);
-        return handlerMap.getOrDefault(request.getType(), this::unsupported).apply(user, request.getNewInfo());
-    }
 
-    private ApiResponse<String> updateFullName(User user, String newName) {
-        String norNewName = HelperUtils.normalizeUsername(newName);
+        ProfileStrategy strategy = profileStrategyMap.get(request.getType());
 
-        if (user.getFullName().equals(norNewName)) {
-            throw new BadRequestException("현재 본 계정 이릅이니다.");
-        }
-        user.setFullName(norNewName);
-        userRepository.save(user);
-        return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
-                "정보 변경이 되었습니다.");
-    }
-
-    private ApiResponse<String> updateEmail(User user, String newEmail) {
-        if (HelperUtils.isInvalidEmail(newEmail)) {
-            throw new BadRequestException("이메일 형식이 올바르지 않습니다");
-        }
-        String normalizeEmail = HelperUtils.normalizeEmail(newEmail);
-
-        if (user.getEmail().equals(normalizeEmail)) {
-            throw new BadRequestException("입력한 이메일 주소는 본 계정의 이메일입니다");
-        }
-        if (userRepository.existsByEmail(normalizeEmail)) {
-            throw new AlreadyExistsException("이미 등록된 이메일입니다.");
-        }
-        return cacheEmail(user.getId(), newEmail, user.getFullName());
-    }
-
-    private ApiResponse<String> cacheEmail(Long userId, String newEmail, String currentFullName) {
-        if (updateProfileCacheService.existEmailCache(userId)) {
-            String token = updateProfileCacheService.getTokenCache(userId);
-            PendingEmailUpdate pendingEmailCache = updateProfileCacheService.getPendingEmailCache(token);
-
-            log.info("Cache Pending Email: {}", pendingEmailCache);
-
-            return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
-                    "이메일 변경 요청하셨습니다! 이메일 다시 확인하세요");
-        }
-        String token = UUID.randomUUID().toString();
-        PendingEmailUpdate pendingEmail = new PendingEmailUpdate(userId, newEmail);
-        updateProfileCacheService.saveEmailCache(
-                token,
-                pendingEmail);
-
-        updateProfileCacheService.saveCacheLock(userId, token);
-
-        log.info("New Pending Email: {}", pendingEmail);
-
-        eventPublisher.publishEvent(new UpdateProfileEvent(currentFullName, newEmail, token)); //send email
-        return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
-                "이메일 주소 변경을 인증하기 위한 이메일을 보냈습니다. 이메일을 확인하세요");
-    }
-
-    //개인 프로젝트이기 때문에 휴대폰 변경이 간단하게 구현함. 실제는 이메일처럼 구현.
-    private ApiResponse<String> updatePhone(User user, String newPhone) {
-        if (HelperUtils.isInvalidPhone(newPhone)) {
-            throw new BadRequestException("휴대폰 형식이 올바르지 않습니다");
-        }
-
-        if (user.getPhone().equals(newPhone)) {
-            throw new BadRequestException("입력한 휴대폰는 본 계정의 휴대폰입니다");
-        }
-
-        if (userRepository.existsByPhone(newPhone)) {
-            throw new AlreadyExistsException("이미 등록된 휴대톤입니다.");
-        }
-
-        user.setPhone(newPhone);
-        userRepository.save(user);
-        return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
-                "휴대폰 변경이 되었습니다.");
-    }
-
-    private ApiResponse<String> unsupported(User user, String keyword) {
-        throw new BadRequestException("지원하지 않는 타입입니다");
+        return strategy.updateProfile(user, request);
     }
 
     @Transactional

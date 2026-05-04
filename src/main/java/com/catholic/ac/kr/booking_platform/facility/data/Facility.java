@@ -60,6 +60,9 @@ public abstract class Facility {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean hasWifi;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean isSuspended;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -70,6 +73,7 @@ public abstract class Facility {
     protected void create() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        isSuspended = false;
     }
 
     @PreUpdate

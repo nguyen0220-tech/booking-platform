@@ -28,6 +28,7 @@ public class FacilityMapper {
         facilityInfoDTO.setActive(facility.isActive());
         facilityInfoDTO.setCarPark(facility.isCarPark());
         facilityInfoDTO.setHasWifi(facility.isHasWifi());
+        facilityInfoDTO.setSuspended(facility.isSuspended());
         facilityInfoDTO.setCreatedAt(facility.getCreatedAt());
         facilityInfoDTO.setUpdatedAt(facility.getUpdatedAt());
 

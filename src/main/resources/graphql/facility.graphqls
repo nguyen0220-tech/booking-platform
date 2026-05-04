@@ -30,6 +30,7 @@ type FacilityInfo{
     active:Boolean!
     carPark:Boolean!
     hasWifi:Boolean!
+    isSuspended:Boolean!
     createdAt:String!
     updatedAt:String!
 }

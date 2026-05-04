@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
-import com.catholic.ac.kr.booking_platform.facility.core.FacilityCommandService;
+import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityCommandService;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
