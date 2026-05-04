@@ -1,9 +1,9 @@
 package com.catholic.ac.kr.booking_platform.facility.core.admin.strategy;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityApproval;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityApprovalRepository;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityApprovalRequest;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistrationRepository;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ApprovalFacilityHandler extends AbstractFacilityApprovalHandler {
-    private final FacilityApprovalRepository facilityApprovalRepository;
+public class ApprovalFacilityHandler extends AbstractFacilityRegistrationHandler {
+    private final FacilityRegistrationRepository facilityRegistrationRepository;
 
     @Override
     public FacilityStatus getFacilityStatus() {
@@ -21,11 +21,11 @@ public class ApprovalFacilityHandler extends AbstractFacilityApprovalHandler {
     }
 
     @Override
-    public ApiResponse<String> handleFacilityApproval(User admin,FacilityApproval approval, FacilityApprovalRequest request) {
+    public ApiResponse<String> handleFacilityRegistration(User admin, FacilityRegistration registration, FacilityRegistrationRequest request) {
 
-        setHandleRegistration(admin, approval, request);
+        setHandleRegistration(admin, registration, request);
 
-        facilityApprovalRepository.save(approval);
+        facilityRegistrationRepository.save(registration);
 
         return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                 "정상적으로 승인 처리되었습니다");

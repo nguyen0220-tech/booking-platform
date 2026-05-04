@@ -8,7 +8,7 @@ import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.user.UserMapper;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityApproval;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
@@ -174,16 +174,16 @@ public class FacilityResolver {
     }
 
     @BatchMapping(typeName = "Facility", field = "approvalStatus")
-    public Map<FacilityDTO, FacilityApprovalDTO> approvalStatus(List<FacilityDTO> facilities) {
+    public Map<FacilityDTO, FacilityRegistrationDTO> approvalStatus(List<FacilityDTO> facilities) {
         List<Long> facilityIds = facilities.stream()
                 .map(FacilityDTO::getId)
                 .toList();
 
-        List<FacilityApproval> facilityApprovalList = facilityApprovalCommandService.getFacilityApprovalByIds(facilityIds);
+        List<FacilityRegistration> facilityRegistrationList = facilityApprovalCommandService.getFacilityApprovalByIds(facilityIds);
 
-        Map<Long,FacilityApprovalDTO> map = facilityApprovalList.stream()
+        Map<Long, FacilityRegistrationDTO> map = facilityRegistrationList.stream()
                 .collect(Collectors.toMap(
-                        FacilityApproval::getId,
+                        FacilityRegistration::getId,
                         FacilityMapper::convertToFacilityApprovalDTO
                 ));
 

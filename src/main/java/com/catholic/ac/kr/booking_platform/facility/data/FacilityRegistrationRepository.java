@@ -10,12 +10,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FacilityApprovalRepository extends JpaRepository<FacilityApproval, Long> {
+public interface FacilityRegistrationRepository extends JpaRepository<FacilityRegistration, Long> {
     @Query("""
             SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
-            FROM FacilityApproval fa
-            JOIN Facility f ON fa.facility = f
-            WHERE fa.status = :status
+            FROM FacilityRegistration fg
+            JOIN Facility f ON fg.facility = f
+            WHERE fg.status = :status
             """)
     Page<FacilityProjection> findFacilityApprovalByStatus(@Param("status") FacilityStatus status, Pageable pageable);
 }

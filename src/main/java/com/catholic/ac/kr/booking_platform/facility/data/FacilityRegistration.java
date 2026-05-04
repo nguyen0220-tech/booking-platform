@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 //admin 관리
 @Entity
 @Table(
-        name = "facility_approval",
+        name = "facility_registration",
         indexes = {@Index(columnList = "facility_id, status")}
 
 )
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class FacilityApproval {
+public class FacilityRegistration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

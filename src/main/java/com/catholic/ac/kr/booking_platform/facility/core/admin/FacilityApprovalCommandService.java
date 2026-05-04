@@ -2,10 +2,10 @@ package com.catholic.ac.kr.booking_platform.facility.core.admin;
 
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
-import com.catholic.ac.kr.booking_platform.facility.core.admin.strategy.FacilityApprovalHandle;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityApproval;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityApprovalRepository;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityApprovalRequest;
+import com.catholic.ac.kr.booking_platform.facility.core.admin.strategy.FacilityRegistrationHandle;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistrationRepository;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilityProjection;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -30,23 +30,23 @@ import java.util.stream.Collectors;
 @Service
 public class FacilityApprovalCommandService {
 
-    private final FacilityApprovalRepository facilityApprovalRepository;
+    private final FacilityRegistrationRepository facilityRegistrationRepository;
     private final UserRepository userRepository;
-    private final Map<FacilityStatus, FacilityApprovalHandle> facilityApprovalHandles;
+    private final Map<FacilityStatus, FacilityRegistrationHandle> facilityApprovalHandles;
 
-    public FacilityApprovalCommandService(FacilityApprovalRepository facilityApprovalRepository, UserRepository userRepository,
-                                          List<FacilityApprovalHandle> handles) {
-        this.facilityApprovalRepository = facilityApprovalRepository;
+    public FacilityApprovalCommandService(FacilityRegistrationRepository facilityRegistrationRepository, UserRepository userRepository,
+                                          List<FacilityRegistrationHandle> handles) {
+        this.facilityRegistrationRepository = facilityRegistrationRepository;
         this.userRepository = userRepository;
         this.facilityApprovalHandles = handles.stream()
-                .collect(Collectors.toMap(FacilityApprovalHandle::getFacilityStatus, h -> h));
+                .collect(Collectors.toMap(FacilityRegistrationHandle::getFacilityStatus, h -> h));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public ListResponse<FacilityDTO> getFacilityRegistrations(FacilityStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        Page<FacilityProjection> projections = facilityApprovalRepository.findFacilityApprovalByStatus(status, pageable);
+        Page<FacilityProjection> projections = facilityRegistrationRepository.findFacilityApprovalByStatus(status, pageable);
 
         Page<FacilityDTO> facilityDTOS = projections.map(FacilityMapper::toFacilityDTO);
 
@@ -55,27 +55,27 @@ public class FacilityApprovalCommandService {
         return new ListResponse<>(rs, new PageInfo(page, size, projections.hasNext()));
     }
 
-    public List<FacilityApproval> getFacilityApprovalByIds(List<Long> ids) {
-        return ids != null ? facilityApprovalRepository.findAllById(ids) : List.of();
+    public List<FacilityRegistration> getFacilityApprovalByIds(List<Long> ids) {
+        return ids != null ? facilityRegistrationRepository.findAllById(ids) : List.of();
     }
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<String> handleFacilityRegistration(Long adminId, FacilityApprovalRequest request) {
+    public ApiResponse<String> handleFacilityRegistration(Long adminId, FacilityRegistrationRequest request) {
         User admin = userRepository.findById(adminId)
                 .orElseThrow(() -> new ResourceNotFoundException("admin not found"));
 
-        FacilityApproval approval = facilityApprovalRepository.findById(request.getId())
+        FacilityRegistration registration = facilityRegistrationRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Facility Approval Not Found"));
 
-        String exMessage = "이미 " + approval.getStatus().getDisplayStatus();
-        if (approval.getStatus().equals(FacilityStatus.APPROVED) ||
-                approval.getStatus().equals(FacilityStatus.REJECTED)) {
+        String exMessage = "이미 " + registration.getStatus().getDisplayStatus();
+        if (registration.getStatus().equals(FacilityStatus.APPROVED) ||
+                registration.getStatus().equals(FacilityStatus.REJECTED)) {
             throw new BadRequestException(exMessage);
         }
 
-        FacilityApprovalHandle handle = facilityApprovalHandles.get(request.getStatus());
+        FacilityRegistrationHandle handle = facilityApprovalHandles.get(request.getStatus());
 
-        return handle.handleFacilityApproval(admin, approval, request);
+        return handle.handleFacilityRegistration(admin, registration, request);
     }
 }

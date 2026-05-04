@@ -1,11 +1,11 @@
 package com.catholic.ac.kr.booking_platform.facility;
 
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityApprovalDTO;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityImageDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoDTO;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityApproval;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilityProjection;
 
 public class FacilityMapper {
@@ -39,12 +39,12 @@ public class FacilityMapper {
         return facilityImage.getImageUrl();
     }
 
-    public static FacilityApprovalDTO convertToFacilityApprovalDTO(FacilityApproval facilityApproval) {
-        FacilityApprovalDTO facilityApprovalDTO = new FacilityApprovalDTO();
+    public static FacilityRegistrationDTO convertToFacilityApprovalDTO(FacilityRegistration facilityRegistration) {
+        FacilityRegistrationDTO facilityRegistrationDTO = new FacilityRegistrationDTO();
 
-        facilityApprovalDTO.setStatus(facilityApproval.getStatus().getDisplayStatus());
-        facilityApprovalDTO.setNote(facilityApproval.getNote());
+        facilityRegistrationDTO.setStatus(facilityRegistration.getStatus().getDisplayStatus());
+        facilityRegistrationDTO.setNote(facilityRegistration.getNote());
 
-        return facilityApprovalDTO;
+        return facilityRegistrationDTO;
     }
 }

@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FacilityApprovalRequest {
+public class FacilityRegistrationRequest {
     private Long id;
     private FacilityStatus status;
     private String note;

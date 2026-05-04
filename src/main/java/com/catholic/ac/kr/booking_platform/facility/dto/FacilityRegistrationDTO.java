@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class FacilityApprovalDTO {
+public class FacilityRegistrationDTO {
     private String status;
     private String note;
 
