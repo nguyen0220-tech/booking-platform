@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.data;
 
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilityProjection;
+import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,19 +16,19 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
             SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
             FROM Facility f WHERE f.id = :id
             """)
-    Optional<FacilityProjection> findFacilityById(@Param("id") Long id);
+    Optional<FacilitySummaryProjection> findFacilityById(@Param("id") Long id);
 
     @Query("""
             SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
             FROM Facility f WHERE f.owner.id = :ownerId
             """)
-    Page<FacilityProjection> findByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable);
+    Page<FacilitySummaryProjection> findByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable);
 
     @Query("""
             SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
             FROM Facility f WHERE f.owner.id = :ownerId AND f.name LIKE CONCAT('%', :keyword, '%')
             """)
-    Page<FacilityProjection> findByOwnerIdAndKeyword(
+    Page<FacilitySummaryProjection> findByOwnerIdAndKeyword(
             @Param("ownerId") Long ownerId,
             @Param("keyword") String keyword,
             Pageable pageable);

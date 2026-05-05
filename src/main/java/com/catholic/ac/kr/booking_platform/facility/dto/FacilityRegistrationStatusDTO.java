@@ -5,15 +5,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-public class FacilityRegistrationDTO {
-    private Long id;
-    private Long facilityId;
-    private String facilityType;
+@Getter @Setter
+public class FacilityRegistrationStatusDTO {
     private String status;
     private String note;
-    private Long ownerId;
-    private Long reviewerId;
     private LocalDateTime lastUpdateAt;
 }

@@ -30,7 +30,7 @@ public class FacilityRegistration {
     @JoinColumn(name = "facility_id", nullable = false)
     private Facility facility;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn( name = "admin_id")
     private User reviewer; //접수한 관리자
 

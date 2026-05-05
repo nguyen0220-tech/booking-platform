@@ -1,7 +1,7 @@
 package com.catholic.ac.kr.booking_platform.facility.core;
 
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilityProjection;
+import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy.MotelFacilityHandler;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy.RestaurantFacilityHandler;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy.SportFacilityHandler;
@@ -34,7 +34,7 @@ public class FacilityQueryService {
     private final RestaurantFacilityHandler restaurantFacilityHandler;
 
     public FacilityDTO getFacilityById(Long ownerId, Long id) {
-        FacilityProjection projection = facilityRepository.findFacilityById(id)
+        FacilitySummaryProjection projection = facilityRepository.findFacilityById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Facility not found"));
 
         if (!ownerId.equals(projection.getOwnerId())) {
@@ -47,7 +47,7 @@ public class FacilityQueryService {
     public ListResponse<FacilityDTO> getFacilitiesByOwnerId(Long ownerId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        Page<FacilityProjection> facilityProjections = facilityRepository.findByOwnerId(ownerId, pageable);
+        Page<FacilitySummaryProjection> facilityProjections = facilityRepository.findByOwnerId(ownerId, pageable);
 
         Page<FacilityDTO> facilityDTOS = facilityProjections.map(FacilityMapper::toFacilityDTO);
 
@@ -78,7 +78,7 @@ public class FacilityQueryService {
     public ListResponse<FacilityDTO> searchFacilityByKeyword(Long ownerId, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        Page<FacilityProjection> projection = facilityRepository.findByOwnerIdAndKeyword(ownerId, keyword, pageable);
+        Page<FacilitySummaryProjection> projection = facilityRepository.findByOwnerIdAndKeyword(ownerId, keyword, pageable);
 
         List<FacilityDTO> rs = projection.stream()
                 .map(FacilityMapper::toFacilityDTO)

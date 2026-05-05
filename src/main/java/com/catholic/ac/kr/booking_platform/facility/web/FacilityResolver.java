@@ -20,6 +20,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,8 +37,8 @@ public class FacilityResolver {
     @QueryMapping
     public FacilityDTO facility(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Argument Long id){
-        return facilityQueryService.getFacilityById(userDetails.getId(),id);
+            @Argument Long id) {
+        return facilityQueryService.getFacilityById(userDetails.getId(), id);
     }
 
     @QueryMapping
@@ -54,7 +55,7 @@ public class FacilityResolver {
             @Argument String keyword,
             @Argument int page,
             @Argument int size
-    ){
+    ) {
         return facilityQueryService.searchFacilityByKeyword(userDetails.getId(), keyword, page, size);
     }
 
@@ -174,23 +175,27 @@ public class FacilityResolver {
     }
 
     @BatchMapping(typeName = "Facility", field = "approvalStatus")
-    public Map<FacilityDTO, FacilityRegistrationDTO> approvalStatus(List<FacilityDTO> facilities) {
+    public Map<FacilityDTO, FacilityRegistrationStatusDTO> approvalStatus(List<FacilityDTO> facilities) {
         List<Long> facilityIds = facilities.stream()
                 .map(FacilityDTO::getId)
                 .toList();
 
-        List<FacilityRegistration> facilityRegistrationList = facilityRegistrationCommandService.getFacilityApprovalByIds(facilityIds);
+        List<FacilityRegistration> facilityRegistrationList = facilityRegistrationCommandService
+                .getFacilityRegistrationByIds(facilityIds);
 
-        Map<Long, FacilityRegistrationDTO> map = facilityRegistrationList.stream()
+        // QUAN TRỌNG: Key của Map phải là Facility ID
+        Map<Long, FacilityRegistrationStatusDTO> map = facilityRegistrationList.stream()
                 .collect(Collectors.toMap(
-                        FacilityRegistration::getId,
-                        FacilityMapper::convertToFacilityApprovalDTO
+                        fr -> fr.getFacility().getId(), // Dùng ID của Facility làm KEY
+                        FacilityMapper::convertToFacilityRegistrationDTO,
+                        (existing, replacement) -> existing // đề phòng có 2 record trùng ID facility gây lỗi Duplicate Key
                 ));
 
-        return facilities.stream()
-                .collect(Collectors.toMap(
-                        f -> f,
-                        f -> map.get(f.getId())
-                ));
+
+        Map<FacilityDTO, FacilityRegistrationStatusDTO> result = new HashMap<>();
+        for (FacilityDTO facility : facilities) {
+            result.put(facility, map.get(facility.getId()));
+        }
+        return result;
     }
 }

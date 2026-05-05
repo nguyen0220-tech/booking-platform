@@ -1,3 +1,15 @@
 extend type Query {
+    facilityRegistration(id:ID!):FacilityRegistration
     facilityRegistrationList(status:FacilityStatus!, page:Int!, size:Int!):ListFacility
+}
+
+type FacilityRegistration{
+    id:ID!,
+    facilityId:ID!
+    reviewerId:ID
+    status:String!
+    note:String
+    lastUpdateAt:String!
+    facility:Facility
+    reviewer:User
 }

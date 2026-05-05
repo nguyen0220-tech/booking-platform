@@ -15,6 +15,7 @@ type Facility{
     id:ID!
     facilityType:String!
     ownerId:ID!
+    facilityRegistrationId:ID
     facilityInfo:FacilityInfo!
     imageUrls:[String]
     facilityTarget:FacilityTarget
@@ -53,4 +54,5 @@ type Restaurant{
 type FacilityApproval{
     status:String!
     note:String
+    lastUpdateAt:String!
 }
