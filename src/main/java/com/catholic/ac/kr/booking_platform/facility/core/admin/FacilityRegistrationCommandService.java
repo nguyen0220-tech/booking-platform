@@ -2,7 +2,7 @@ package com.catholic.ac.kr.booking_platform.facility.core.admin;
 
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
-import com.catholic.ac.kr.booking_platform.facility.core.admin.state.RegistrationStateProvider;
+import com.catholic.ac.kr.booking_platform.facility.core.admin.state.FacilityRegistrationState;
 import com.catholic.ac.kr.booking_platform.facility.core.admin.strategy.FacilityRegistrationHandle;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistrationRepository;
@@ -32,14 +32,19 @@ public class FacilityRegistrationCommandService {
 
     private final FacilityRegistrationRepository facilityRegistrationRepository;
     private final UserRepository userRepository;
-    private final Map<FacilityStatus, FacilityRegistrationHandle> facilityApprovalHandles;
+    private final Map<FacilityStatus, FacilityRegistrationHandle> registrationHandleMap;
+    private final Map<FacilityStatus, FacilityRegistrationState> registrationStateMap;
 
     public FacilityRegistrationCommandService(FacilityRegistrationRepository facilityRegistrationRepository, UserRepository userRepository,
-                                              List<FacilityRegistrationHandle> handles) {
+                                              List<FacilityRegistrationHandle> handles,
+                                              List<FacilityRegistrationState> states) {
         this.facilityRegistrationRepository = facilityRegistrationRepository;
         this.userRepository = userRepository;
-        this.facilityApprovalHandles = handles.stream()
+        this.registrationHandleMap = handles.stream()
                 .collect(Collectors.toMap(FacilityRegistrationHandle::getFacilityStatus, h -> h));
+        this.registrationStateMap = states.stream().collect(
+                Collectors.toMap(FacilityRegistrationState::getStatus, s -> s)
+        );
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -68,10 +73,10 @@ public class FacilityRegistrationCommandService {
         FacilityRegistration registration = facilityRegistrationRepository.findById(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Facility Approval Not Found"));
 
-        RegistrationStateProvider.get(registration.getStatus())
-                .validateTransition(request.getStatus());
+        FacilityRegistrationState state = registrationStateMap.get(registration.getStatus());
+        state.validateTransition(request.getStatus());
 
-        FacilityRegistrationHandle handle = facilityApprovalHandles.get(request.getStatus());
+        FacilityRegistrationHandle handle = registrationHandleMap.get(request.getStatus());
 
         return handle.handleFacilityRegistration(admin, registration, request);
     }
