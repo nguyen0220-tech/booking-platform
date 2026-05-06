@@ -15,6 +15,7 @@ import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.UnsupportedOptionException;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
 import org.springframework.data.domain.Page;
@@ -87,6 +88,9 @@ public class FacilityRegistrationCommandService {
         state.validateTransition(request.getStatus());
 
         FacilityRegistrationHandle handle = registrationHandleMap.get(request.getStatus());
+        if (handle == null) {
+            throw new UnsupportedOptionException(request.getStatus().name());
+        }
 
         return handle.handleFacilityRegistration(admin, registration, request);
     }

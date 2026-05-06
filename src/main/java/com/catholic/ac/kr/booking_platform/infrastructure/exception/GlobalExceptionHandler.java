@@ -154,7 +154,7 @@ public class GlobalExceptionHandler {
 
     // 409
     @ExceptionHandler(UserAlreadyExistsButNotEnabledException.class)
-    public ResponseEntity<ApiResponse<Void>>UserAlreadyExistsButNotEnabledException(UserAlreadyExistsButNotEnabledException e, WebRequest request) {
+    public ResponseEntity<ApiResponse<Void>> UserAlreadyExistsButNotEnabledException(UserAlreadyExistsButNotEnabledException e, WebRequest request) {
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.CONFLICT.value(),
                 HttpStatus.CONFLICT.getReasonPhrase(),
@@ -198,6 +198,17 @@ public class GlobalExceptionHandler {
                 request.getDescription(false).replace("uri=", "")
         );
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(exception);
+    }
+
+    @ExceptionHandler(UnsupportedOptionException.class)
+    public ResponseEntity<ApiResponse<Void>> nullPointerException(UnsupportedOptionException e, WebRequest request) {
+        ApiResponse<Void> exception = ApiResponse.exception(
+                HttpStatus.BAD_REQUEST.value(),
+                "UNSUPPORTED_OPTION",
+                "지원하지 않는 방식입니다." + e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception);
     }
 
     // General

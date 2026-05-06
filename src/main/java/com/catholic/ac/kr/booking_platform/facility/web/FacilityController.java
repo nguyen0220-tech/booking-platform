@@ -1,7 +1,8 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
-import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityCommandService;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
+import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityCommandService;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityOptionRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
@@ -31,8 +32,15 @@ public class FacilityController {
     @PostMapping("upload-images")
     public ApiResponse<List<String>> uploadImages(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @ModelAttribute List<MultipartFile> images){
+            @ModelAttribute List<MultipartFile> images) {
 
         return facilityImageService.uploadFacilityImage(userDetails.getId(), images);
+    }
+
+    @PutMapping
+    public ApiResponse<String> updateFacilityOption(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody FacilityOptionRequest request) {
+        return facilityCommandService.updateFacilityOption(userDetails.getId(), request);
     }
 }
