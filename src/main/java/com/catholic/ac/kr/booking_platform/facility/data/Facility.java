@@ -81,4 +81,11 @@ public abstract class Facility {
         updatedAt = LocalDateTime.now();
     }
 
+    public void updateInfo(String name, String description, String instruction, String address) {
+        if (name != null) this.name = name;
+        if (description != null) this.description = description;
+        if (instruction != null) this.instruction = instruction;
+        if (address != null) this.address = address;
+    }
+
 }

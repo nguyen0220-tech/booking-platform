@@ -200,8 +200,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(exception);
     }
 
-    @ExceptionHandler(UnsupportedOptionException.class)
-    public ResponseEntity<ApiResponse<Void>> nullPointerException(UnsupportedOptionException e, WebRequest request) {
+    @ExceptionHandler(UnsupportedStrategyException.class)
+    public ResponseEntity<ApiResponse<Void>> nullPointerException(UnsupportedStrategyException e, WebRequest request) {
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.BAD_REQUEST.value(),
                 "UNSUPPORTED_OPTION",

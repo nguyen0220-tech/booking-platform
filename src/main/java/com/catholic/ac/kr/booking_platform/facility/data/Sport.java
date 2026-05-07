@@ -19,4 +19,11 @@ import java.math.BigDecimal;
 public class Sport extends Facility {
     @Column(nullable = false)
     private BigDecimal hourPrice;
+
+
+    public void updatePrice(BigDecimal hourPrice) {
+        if (hourPrice != null) {
+            this.hourPrice = hourPrice;
+        }
+    }
 }

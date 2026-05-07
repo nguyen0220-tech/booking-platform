@@ -2,6 +2,8 @@ package com.catholic.ac.kr.booking_platform.facility.web;
 
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityCommandService;
+import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityUpdateService;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityOptionRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -20,6 +22,7 @@ import java.util.List;
 public class FacilityController {
     private final FacilityCommandService facilityCommandService;
     private final FacilityImageService facilityImageService;
+    private final FacilityUpdateService facilityUpdateService;
 
     @PostMapping
     public ApiResponse<String> createFacility(
@@ -37,10 +40,17 @@ public class FacilityController {
         return facilityImageService.uploadFacilityImage(userDetails.getId(), images);
     }
 
-    @PutMapping
+    @PutMapping("option")
     public ApiResponse<String> updateFacilityOption(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody FacilityOptionRequest request) {
-        return facilityCommandService.updateFacilityOption(userDetails.getId(), request);
+        return facilityUpdateService.updateFacilityOption(userDetails.getId(), request);
+    }
+
+    @PutMapping("info")
+    public ApiResponse<String> updateFacilityInfo(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody FacilityInfoRequest request) {
+        return facilityUpdateService.updateFacilityInfo(userDetails.getId(), request);
     }
 }

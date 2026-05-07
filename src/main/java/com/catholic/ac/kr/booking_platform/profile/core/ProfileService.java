@@ -4,7 +4,7 @@ import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.components.UploadHandler;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
-import com.catholic.ac.kr.booking_platform.infrastructure.exception.UnsupportedOptionException;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.UnsupportedStrategyException;
 import com.catholic.ac.kr.booking_platform.profile.core.strategy.ProfileStrategy;
 import com.catholic.ac.kr.booking_platform.profile.data.PendingEmailUpdate;
 import com.catholic.ac.kr.booking_platform.profile.data.ProfileDTO;
@@ -80,7 +80,7 @@ public class ProfileService {
 
         ProfileStrategy strategy = profileStrategyMap.get(request.getType());
         if (strategy == null) {
-            throw new UnsupportedOptionException(request.getType().name());
+            throw new UnsupportedStrategyException(request.getType().name());
         }
 
         return strategy.updateProfile(user, request);

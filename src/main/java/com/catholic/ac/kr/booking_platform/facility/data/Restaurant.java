@@ -12,4 +12,10 @@ public class Restaurant extends Facility{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FoodType foodType; //식당 종류: 한식, 일식, 중식...
+
+    public void updateFoodType(FoodType newFoodType){
+        if (newFoodType != null){
+            this.foodType = newFoodType;
+        }
+    }
 }
