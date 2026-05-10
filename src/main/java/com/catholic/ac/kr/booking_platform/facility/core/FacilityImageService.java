@@ -10,6 +10,7 @@ import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.components.UploadHandler;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +27,7 @@ public class FacilityImageService {
     private final FacilityImageRepository facilityImageRepository;
     private final FacilityRepository facilityRepository;
 
+    @Cacheable(value = "facilityImageUrls", key = "{#entityIds}")
     public List<FacilityImageDTO> getFacilityImageByEntityIds(List<Long> entityIds) {
         return facilityImageRepository.findAllByEntityIdIdIn(entityIds);
     }

@@ -9,14 +9,12 @@ import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
-import com.catholic.ac.kr.booking_platform.user.UserMapper;
-import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
-import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
@@ -32,7 +30,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 public class FacilityResolver {
-    private final UserManageService userManageService;
     private final FacilityImageService facilityImageService;
     private final FacilityQueryService facilityQueryService;
     private final FacilityRegistrationCommandService facilityRegistrationCommandService;
@@ -165,28 +162,11 @@ public class FacilityResolver {
         System.out.println(LocalTime.now() + " | [" + Thread.currentThread().getName() + "] | " + message);
     }
 
-    @BatchMapping(typeName = "Facility", field = "owner")
-    public Map<FacilityDTO, UserDTO> owner(List<FacilityDTO> facilities) {
-        List<Long> ownerIds = facilities.stream()
-                .map(FacilityDTO::getOwnerId)
-                .distinct()
-                .toList();
+    @SchemaMapping(typeName = "Facility", field = "owner")
+    public UserDTO owner(FacilityDTO facility) {
+        Long ownerId = facility.getOwnerId();
 
-        System.out.println("userId: " + ownerIds);
-
-        List<User> ownerList = userManageService.getAllByIds(ownerIds);
-
-        Map<Long, UserDTO> map = ownerList.stream()
-                .collect(Collectors.toMap(
-                        User::getId,
-                        UserMapper::convertToUserDTO
-                ));
-
-        return facilities.stream()
-                .collect(Collectors.toMap(
-                        f -> f,
-                        f -> map.get(f.getOwnerId())
-                ));
+        return new UserDTO(ownerId);
     }
 
     @BatchMapping(typeName = "Facility", field = "approvalStatus")

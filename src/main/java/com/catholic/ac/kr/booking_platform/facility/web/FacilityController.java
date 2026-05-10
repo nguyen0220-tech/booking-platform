@@ -41,7 +41,7 @@ public class FacilityController {
         return facilityImageService.uploadFacilityImage(userDetails.getId(), images);
     }
 
-    @PostMapping("add-image")
+    @PostMapping("add-images")
     public ApiResponse<String> addImagesForFacility(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody AddImagesForFacilityRequest request

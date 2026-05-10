@@ -24,7 +24,16 @@ public class CacheConfig {
                 buildCaffeineCache("userPage",1,100),
                 buildCaffeineCache("userInfos", 10,500),
                 buildCaffeineCache("userRoles", 10,500),
-                buildCaffeineCache("profile", 5,100)
+                buildCaffeineCache("profile", 5,100),
+                buildCaffeineCache("facilityPage", 15,100),
+                buildCaffeineCache("facility-details", 15,500),
+                buildCaffeineCache("facilityInfos", 15,500),
+                buildCaffeineCache("facilityImageUrls", 15,500),
+                buildCaffeineCache("facilitySport", 15,500),
+                buildCaffeineCache("facilityMotel", 15,500),
+                buildCaffeineCache("facilityRestaurant", 15,500),
+                buildCaffeineCache("registrationStatus", 15,500)
+
         );
 
         cacheManager.setCaches(caches);

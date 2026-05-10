@@ -18,6 +18,8 @@ import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotF
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.UnsupportedStrategyException;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -63,6 +65,7 @@ public class FacilityRegistrationCommandService {
         return new ListResponse<>(rs, new PageInfo(page, size, projections.hasNext()));
     }
 
+    @Cacheable(value = "registrationStatus", key = "{#ids}")
     public List<FacilityRegistration> getFacilityRegistrationByIds(List<Long> ids) {
         return ids != null ? facilityRegistrationRepository.findAllByFacilityIdIn(ids) : List.of();
     }
@@ -77,6 +80,7 @@ public class FacilityRegistrationCommandService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = "registrationStatus", allEntries = true)
     public ApiResponse<String> handleFacilityRegistration(Long adminId, FacilityRegistrationRequest request) {
         User admin = userRepository.findById(adminId)
                 .orElseThrow(() -> new ResourceNotFoundException("admin not found"));

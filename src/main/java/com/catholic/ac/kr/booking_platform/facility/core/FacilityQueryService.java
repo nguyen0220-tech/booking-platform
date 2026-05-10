@@ -15,6 +15,7 @@ import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,7 @@ public class FacilityQueryService {
     private final MotelFacilityHandler motelFacilityHandler;
     private final RestaurantFacilityHandler restaurantFacilityHandler;
 
+    @Cacheable(value = "facility-details", key = "{#id}")
     public FacilityDTO getFacilityById(Long ownerId, Long id) {
         FacilitySummaryProjection projection = facilityRepository.findFacilityById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Facility not found"));
@@ -44,6 +46,7 @@ public class FacilityQueryService {
     }
 
     @PreAuthorize("hasRole('PROVIDER')")
+    @Cacheable(value = "facilityPage", key = "{#page, #size}")
     public ListResponse<FacilityDTO> getFacilitiesByOwnerId(Long ownerId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
@@ -56,23 +59,25 @@ public class FacilityQueryService {
         return new ListResponse<>(rs, new PageInfo(page, size, facilityProjections.hasNext()));
     }
 
+    @Cacheable(value = "facilityInfos",key = "{#facilityIds}")
     public List<Facility> getFacilityByIds(List<Long> facilityIds) {
         return facilityRepository.findAllById(facilityIds);
     }
 
-
+    @Cacheable(value = "facilitySport", key = "{#ids}")
     public List<SportDTO> getFacilitySportByIds(List<Long> ids) {
         return ids != null ? sportFacilityHandler.getSpecificDTOs(ids) : List.of();
     }
 
+    @Cacheable(value = "facilityMotel", key = "{#ids}")
     public List<MotelDTO> getFacilityMotelByIds(List<Long> ids) {
         return ids != null ? motelFacilityHandler.getSpecificDTOs(ids) : List.of();
     }
 
+    @Cacheable(value = "facilityRestaurant", key = "{#ids}")
     public List<RestaurantDTO> getFacilityRestaurantByIds(List<Long> ids) {
         return ids != null ? restaurantFacilityHandler.getSpecificDTOs(ids) : List.of();
     }
-
 
     @PreAuthorize("hasRole('PROVIDER')")
     public ListResponse<FacilityDTO> searchFacilityByKeyword(Long ownerId, String keyword, int page, int size) {
