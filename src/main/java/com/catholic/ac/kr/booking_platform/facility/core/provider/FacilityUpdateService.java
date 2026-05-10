@@ -6,7 +6,7 @@ import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy_optio
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy_update.FacilityUpdateHandler;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoRequest;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoUpdateRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityOptionRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.OptionStateRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -25,12 +25,11 @@ import java.util.stream.Collectors;
 @Service
 public class FacilityUpdateService {
     private final Map<FacilityOption, FacilityOptionHandler> optionHandlers;
-    @SuppressWarnings("rawtypes")
-    private final Map<FacilityType, FacilityUpdateHandler> updateHandler;
+    private final Map<FacilityType, FacilityUpdateHandler<? extends Facility, ? extends FacilityInfoUpdateRequest>> updateHandler;
     private final FacilityRepository facilityRepository;
 
     public FacilityUpdateService(List<FacilityOptionHandler> optionHandlers,
-                                 @SuppressWarnings("rawtypes") List<FacilityUpdateHandler> updateHandlers,
+                                 List<FacilityUpdateHandler<? extends Facility, ? extends FacilityInfoUpdateRequest>> updateHandlers,
                                  FacilityRepository facilityRepository) {
 
         this.optionHandlers = optionHandlers.stream()
@@ -71,7 +70,7 @@ public class FacilityUpdateService {
     @PreAuthorize("hasRole('PROVIDER')")
     @Transactional
     @SuppressWarnings("unchecked")
-    public ApiResponse<String> updateFacilityInfo(Long ownerId, FacilityInfoRequest request) {
+    public ApiResponse<String> updateFacilityInfo(Long ownerId, FacilityInfoUpdateRequest request) {
         if (request == null) {
             return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                     "성공적으로 설정되었습니다");
@@ -82,8 +81,15 @@ public class FacilityUpdateService {
 
         validationAccess(ownerId, facility);
 
-        FacilityUpdateHandler<Facility, FacilityInfoRequest> handler =
-                (FacilityUpdateHandler<Facility, FacilityInfoRequest>) updateHandler.get(facility.getFacilityType());
+        if (facility.getFacilityType() != request.getType()) {
+            throw new IllegalArgumentException(
+                    String.format("이 시설은 %s 입니다. %s 아닙니다",
+                            facility.getFacilityType(), request.getType())
+            );
+        }
+
+        FacilityUpdateHandler<Facility, FacilityInfoUpdateRequest> handler =
+                (FacilityUpdateHandler<Facility, FacilityInfoUpdateRequest>) updateHandler.get(facility.getFacilityType());
         if (handler == null) {
             throw new UnsupportedStrategyException(facility.getFacilityType().name());
         }

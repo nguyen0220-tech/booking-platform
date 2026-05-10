@@ -98,9 +98,6 @@ public class AuthService {
 
         newUser.setEnabled(false);
         newUser.setBlocked(false);
-        newUser.setRoles(Set.of(roleRepository
-                .findByName(request.getRole())
-                .orElseThrow(() -> new ResourceNotFoundException("Role not found"))));
 
         userRepository.save(newUser);
         generateTokenAndSendEmail(newUser);

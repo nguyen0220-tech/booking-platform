@@ -6,6 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FacilityInfoRestaurantUpdateRequest extends FacilityInfoRequest{
+public class FacilityInfoRestaurantUpdateUpdateRequest extends FacilityInfoUpdateRequest {
     private FoodType foodType;
 }

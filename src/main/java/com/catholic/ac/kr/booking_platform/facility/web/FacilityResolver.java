@@ -1,17 +1,17 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
-import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityRegistrationCommandService;
+import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
-import com.catholic.ac.kr.booking_platform.facility.dto.*;
-import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
-import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
-import com.catholic.ac.kr.booking_platform.user.UserMapper;
+import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityRegistrationCommandService;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
-import com.catholic.ac.kr.booking_platform.user.data.User;
+import com.catholic.ac.kr.booking_platform.facility.dto.*;
+import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
+import com.catholic.ac.kr.booking_platform.user.UserMapper;
 import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
+import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -19,11 +19,14 @@ import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Mono;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Controller
@@ -102,7 +105,7 @@ public class FacilityResolver {
     }
 
     @BatchMapping(typeName = "Facility", field = "facilityTarget")
-    public Map<FacilityDTO, Object> facilityTarget(List<FacilityDTO> facilities) {
+    public Mono<Map<FacilityDTO, Object>> facilityTarget(List<FacilityDTO> facilities) {
         Map<String, List<Long>> idsGroupByType = facilities.stream()
                 .collect(Collectors.groupingBy(
                         FacilityDTO::getFacilityType,
@@ -113,41 +116,53 @@ public class FacilityResolver {
         List<Long> motelFacilityIds = idsGroupByType.getOrDefault("MOTEL", List.of());
         List<Long> restaurantFacilityIds = idsGroupByType.getOrDefault("RESTAURANT", List.of());
 
-        List<SportDTO> sports = facilityQueryService.getFacilitySportByIds(sportFacilityIds);
-        List<MotelDTO> motels = facilityQueryService.getFacilityMotelByIds(motelFacilityIds);
-        List<RestaurantDTO> restaurants = facilityQueryService.getFacilityRestaurantByIds(restaurantFacilityIds);
+        var executor = Executors.newVirtualThreadPerTaskExecutor();
 
-        Map<Long, SportDTO> sportMap = sports.stream()
-                .collect(Collectors.toMap(
-                        SportDTO::getId,
-                        s -> s
-                ));
+        CompletableFuture<Map<FacilityDTO, Object>> futureResult = CompletableFuture.supplyAsync(() -> {
 
-        Map<Long, MotelDTO> motelMap = motels.stream()
-                .collect(Collectors.toMap(
-                        MotelDTO::getId,
-                        m -> m
-                ));
+            // Kích hoạt 3 task chạy song song
+            CompletableFuture<List<SportDTO>> sportTask = CompletableFuture.supplyAsync(() -> {
+                log("sportTask");
+                return facilityQueryService.getFacilitySportByIds(sportFacilityIds);
+            }, executor);
 
-        Map<Long, RestaurantDTO> restaurantMap = restaurants.stream()
-                .collect(Collectors.toMap(
-                        RestaurantDTO::getId,
-                        r -> r
-                ));
+            CompletableFuture<List<MotelDTO>> motelTask = CompletableFuture.supplyAsync(() -> {
+                log("motelTask");
+                return facilityQueryService.getFacilityMotelByIds(motelFacilityIds);
+            }, executor);
 
-        Map<FacilityDTO, Object> result = new ConcurrentHashMap<>();
+            CompletableFuture<List<RestaurantDTO>> restaurantTask = CompletableFuture.supplyAsync(() -> {
+                log("restaurantTask");
+                return facilityQueryService.getFacilityRestaurantByIds(restaurantFacilityIds);
+            }, executor);
 
-        for (FacilityDTO facility : facilities) {
-            Object value = switch (facility.getFacilityType()) {
-                case "SPORT" -> sportMap.get(facility.getId());
-                case "MOTEL" -> motelMap.get(facility.getId());
-                case "RESTAURANT" -> restaurantMap.get(facility.getId());
-                default -> null;
-            };
-            result.put(facility, value);
-        }
+            // Đợi cả 3 xong (Vì đang ở trong Virtual Thread nên .join() thoải mái không sợ nghẽn)
+            Map<Long, SportDTO> sportMap = sportTask.join().stream()
+                    .collect(Collectors.toMap(SportDTO::getId, s -> s));
+            Map<Long, MotelDTO> motelMap = motelTask.join().stream()
+                    .collect(Collectors.toMap(MotelDTO::getId, m -> m));
+            Map<Long, RestaurantDTO> restaurantMap = restaurantTask.join().stream()
+                    .collect(Collectors.toMap(RestaurantDTO::getId, r -> r));
 
-        return result;
+            Map<FacilityDTO, Object> result = new HashMap<>();
+            for (FacilityDTO facility : facilities) {
+                Object value = switch (facility.getFacilityType()) {
+                    case "SPORT" -> sportMap.get(facility.getId());
+                    case "MOTEL" -> motelMap.get(facility.getId());
+                    case "RESTAURANT" -> restaurantMap.get(facility.getId());
+                    default -> null;
+                };
+                result.put(facility, value);
+            }
+
+            return result;
+        }, executor);
+
+        return Mono.fromFuture(futureResult);
+    }
+
+    public static void log(String message) {
+        System.out.println(LocalTime.now() + " | [" + Thread.currentThread().getName() + "] | " + message);
     }
 
     @BatchMapping(typeName = "Facility", field = "owner")

@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class FacilityInfoMotelUpdateRequest extends FacilityInfoRequest {
+public class FacilityInfoSportUpdateUpdateRequest extends FacilityInfoUpdateRequest {
     private BigDecimal hourPrice;
-    private BigDecimal nightPrice;
 }

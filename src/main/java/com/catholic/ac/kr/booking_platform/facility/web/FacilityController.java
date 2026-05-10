@@ -3,7 +3,8 @@ package com.catholic.ac.kr.booking_platform.facility.web;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityCommandService;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityUpdateService;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoRequest;
+import com.catholic.ac.kr.booking_platform.facility.dto.AddImagesForFacilityRequest;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoUpdateRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityOptionRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -40,6 +41,14 @@ public class FacilityController {
         return facilityImageService.uploadFacilityImage(userDetails.getId(), images);
     }
 
+    @PostMapping("add-image")
+    public ApiResponse<String> addImagesForFacility(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody AddImagesForFacilityRequest request
+            ){
+        return facilityImageService.addImagesForFacility(userDetails.getId(), request);
+    }
+
     @PutMapping("option")
     public ApiResponse<String> updateFacilityOption(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -50,7 +59,7 @@ public class FacilityController {
     @PutMapping("info")
     public ApiResponse<String> updateFacilityInfo(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody FacilityInfoRequest request) {
+            @RequestBody FacilityInfoUpdateRequest request) {
         return facilityUpdateService.updateFacilityInfo(userDetails.getId(), request);
     }
 }

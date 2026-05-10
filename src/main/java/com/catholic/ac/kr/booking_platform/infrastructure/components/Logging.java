@@ -10,22 +10,24 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class Logging {
-    @Around("execution(* com.catholic.ac.kr.booking_platform.notification.*.*(..))")
-    public Object logMethod(ProceedingJoinPoint joinPoint) throws Throwable {
+
+    @Around("""
+                execution(* com.catholic.ac.kr.booking_platform.notification..*(..)) ||
+                execution(* com.catholic.ac.kr.booking_platform..core..*(..))
+            """)
+    public Object logMethods(ProceedingJoinPoint joinPoint) throws Throwable {
         String className = joinPoint.getTarget().getClass().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
-        log.info("==> {}.{}() 호출",className,methodName);
 
+        log.info("==> {}.{}() 호출", className, methodName);
 
         long startTime = System.currentTimeMillis();
 
         Object result = joinPoint.proceed();
 
-        long endTime = System.currentTimeMillis();
+        long runtime = System.currentTimeMillis() - startTime;
 
-        long runtime = endTime - startTime;
-
-        log.info("<== {}.{}() 실행 끝 in {}ms",className,methodName,runtime);
+        log.info("<== {}.{}() 실행 끝 in {}ms", className, methodName, runtime);
 
         return result;
     }

@@ -1,10 +1,13 @@
 package com.catholic.ac.kr.booking_platform.facility.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
-public class FacilityInfoSportUpdateRequest extends FacilityInfoRequest {
+@Setter
+public class FacilityInfoMotelUpdateUpdateRequest extends FacilityInfoUpdateRequest {
     private BigDecimal hourPrice;
+    private BigDecimal nightPrice;
 }

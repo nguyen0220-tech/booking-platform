@@ -3,13 +3,13 @@ package com.catholic.ac.kr.booking_platform.facility.core.provider.strategy_upda
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilitySportRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.Sport;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoSportUpdateRequest;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoSportUpdateUpdateRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FacilitySportUpdate extends AbstractFacilityUpdateHandler<Sport, FacilityInfoSportUpdateRequest>{
+public class FacilitySportUpdate extends AbstractFacilityUpdateHandler<Sport, FacilityInfoSportUpdateUpdateRequest>{
     private final FacilitySportRepository facilitySportRepository;
 
     public FacilitySportUpdate(FacilitySportRepository facilitySportRepository) {
@@ -23,7 +23,15 @@ public class FacilitySportUpdate extends AbstractFacilityUpdateHandler<Sport, Fa
     }
 
     @Override
-    public ApiResponse<String> updateFacility(Sport sport, FacilityInfoSportUpdateRequest request) {
+    public ApiResponse<String> updateFacility(Sport sport, FacilityInfoSportUpdateUpdateRequest request) {
+         boolean isPriceNotUpdated = sport.getHourPrice() != null && request.getHourPrice() != null
+                && sport.getHourPrice().compareTo(request.getHourPrice()) == 0;
+
+        if (isPriceNotUpdated && isNotUpdated(sport, request)) {
+            System.out.println("Không có thay đổi, không query db SPORT");
+            return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
+                    "성공적으로 업데이트되었습니다");
+        }
         updateFacilityInfo(sport, request);
         sport.updatePrice(request.getHourPrice());
 

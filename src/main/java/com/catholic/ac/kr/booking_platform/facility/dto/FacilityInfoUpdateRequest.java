@@ -13,13 +13,13 @@ import lombok.Setter;
         visible = true
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = FacilityInfoSportUpdateRequest.class, name = "SPORT"),
-        @JsonSubTypes.Type(value = FacilityInfoMotelUpdateRequest.class, name = "MOTEL"),
-        @JsonSubTypes.Type(value = FacilityInfoRestaurantUpdateRequest.class, name = "RESTAURANT"),
+        @JsonSubTypes.Type(value = FacilityInfoSportUpdateUpdateRequest.class, name = "SPORT"),
+        @JsonSubTypes.Type(value = FacilityInfoMotelUpdateUpdateRequest.class, name = "MOTEL"),
+        @JsonSubTypes.Type(value = FacilityInfoRestaurantUpdateUpdateRequest.class, name = "RESTAURANT"),
 })
 @Getter
 @Setter
-public abstract class FacilityInfoRequest {
+public abstract class FacilityInfoUpdateRequest {
     private Long facilityId;
     private FacilityType type;
 
