@@ -27,7 +27,7 @@ public class FacilityImageService {
     private final FacilityImageRepository facilityImageRepository;
     private final FacilityRepository facilityRepository;
 
-    @Cacheable(value = "facilityImageUrls", key = "{#entityIds}")
+    @Cacheable(value = "facilityImageUrls", key = "#entityIds")
     public List<FacilityImageDTO> getFacilityImageByEntityIds(List<Long> entityIds) {
         return facilityImageRepository.findAllByEntityIdIdIn(entityIds);
     }

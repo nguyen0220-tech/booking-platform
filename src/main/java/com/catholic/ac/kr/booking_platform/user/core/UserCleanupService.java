@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.user.web;
+package com.catholic.ac.kr.booking_platform.user.core;
 
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
 import lombok.extern.slf4j.Slf4j;

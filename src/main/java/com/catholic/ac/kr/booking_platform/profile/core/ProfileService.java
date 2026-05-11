@@ -52,7 +52,7 @@ public class ProfileService {
                 .collect(Collectors.toMap(ProfileStrategy::getUpdateProfileType, p -> p));
     }
 
-    @Cacheable(value = "profile", key = "{#userId}")
+    @Cacheable(value = "profile", key = "#userId")
     public ApiResponse<ProfileDTO> getProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));

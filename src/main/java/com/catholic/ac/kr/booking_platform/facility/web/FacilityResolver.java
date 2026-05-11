@@ -8,6 +8,7 @@ import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
+import com.catholic.ac.kr.booking_platform.infrastructure.config.VirtualThreadExecutor;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 public class FacilityResolver {
+    private final VirtualThreadExecutor executor;
     private final FacilityImageService facilityImageService;
     private final FacilityQueryService facilityQueryService;
     private final FacilityRegistrationCommandService facilityRegistrationCommandService;
@@ -113,25 +114,23 @@ public class FacilityResolver {
         List<Long> motelFacilityIds = idsGroupByType.getOrDefault("MOTEL", List.of());
         List<Long> restaurantFacilityIds = idsGroupByType.getOrDefault("RESTAURANT", List.of());
 
-        var executor = Executors.newVirtualThreadPerTaskExecutor();
-
         CompletableFuture<Map<FacilityDTO, Object>> futureResult = CompletableFuture.supplyAsync(() -> {
 
             // Kích hoạt 3 task chạy song song
             CompletableFuture<List<SportDTO>> sportTask = CompletableFuture.supplyAsync(() -> {
                 log("sportTask");
                 return facilityQueryService.getFacilitySportByIds(sportFacilityIds);
-            }, executor);
+            }, executor.executorService());
 
             CompletableFuture<List<MotelDTO>> motelTask = CompletableFuture.supplyAsync(() -> {
                 log("motelTask");
                 return facilityQueryService.getFacilityMotelByIds(motelFacilityIds);
-            }, executor);
+            }, executor.executorService());
 
             CompletableFuture<List<RestaurantDTO>> restaurantTask = CompletableFuture.supplyAsync(() -> {
                 log("restaurantTask");
                 return facilityQueryService.getFacilityRestaurantByIds(restaurantFacilityIds);
-            }, executor);
+            }, executor.executorService());
 
             // Đợi cả 3 xong (Vì đang ở trong Virtual Thread nên .join() thoải mái không sợ nghẽn)
             Map<Long, SportDTO> sportMap = sportTask.join().stream()
@@ -153,7 +152,7 @@ public class FacilityResolver {
             }
 
             return result;
-        }, executor);
+        }, executor.executorService());
 
         return Mono.fromFuture(futureResult);
     }

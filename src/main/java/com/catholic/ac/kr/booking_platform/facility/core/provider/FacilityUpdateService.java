@@ -12,6 +12,7 @@ import com.catholic.ac.kr.booking_platform.facility.dto.OptionStateRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.UnsupportedStrategyException;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,6 +43,7 @@ public class FacilityUpdateService {
 
     @PreAuthorize("hasRole('PROVIDER')")
     @Transactional
+    @CacheEvict(value = "facilityInfos", allEntries = true)
     public ApiResponse<String> updateFacilityOption(Long ownerId, FacilityOptionRequest request) {
         if (request.getOptionStates().isEmpty()) {
             return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
@@ -70,6 +72,7 @@ public class FacilityUpdateService {
     @PreAuthorize("hasRole('PROVIDER')")
     @Transactional
     @SuppressWarnings("unchecked")
+    @CacheEvict(value = "facilityInfos", allEntries = true)
     public ApiResponse<String> updateFacilityInfo(Long ownerId, FacilityInfoUpdateRequest request) {
         if (request == null) {
             return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
