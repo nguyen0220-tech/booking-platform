@@ -33,6 +33,13 @@ public class FacilityController {
         return facilityCommandService.createFacility(userDetails.getId(), request);
     }
 
+    @PutMapping("cancel")
+    public ApiResponse<String> cancelFacility(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long facilityId) {
+        return facilityCommandService.cancelFacility(userDetails.getId(), facilityId);
+    }
+
     @PostMapping("upload-images")
     public ApiResponse<List<String>> uploadImages(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -45,7 +52,7 @@ public class FacilityController {
     public ApiResponse<String> addImagesForFacility(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody AddImagesForFacilityRequest request
-            ){
+    ) {
         return facilityImageService.addImagesForFacility(userDetails.getId(), request);
     }
 

@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum FacilityStatus {
     PENDING("접수중입니다"),
     APPROVED("승인되었습니다"),
-    REJECTED("거절되었습니다");
+    REJECTED("거절되었습니다"),
+    CANCELLED("취소했습니다");
 
     private final String displayStatus;
     FacilityStatus(String displayStatus) {

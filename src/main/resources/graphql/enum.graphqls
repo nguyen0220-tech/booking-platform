@@ -17,5 +17,6 @@ enum RoleName{
 enum FacilityStatus{
     PENDING,
     APPROVED,
-    REJECTED
+    REJECTED,
+    CANCELLED
 }
