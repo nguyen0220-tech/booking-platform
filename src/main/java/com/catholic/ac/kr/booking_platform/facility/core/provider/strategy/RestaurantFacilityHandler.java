@@ -43,6 +43,8 @@ public class RestaurantFacilityHandler extends AbstractFacilityHandler<Restauran
 
         setBasicFacility(owner, newRestaurant, request);
         newRestaurant.setFoodType(request.getFoodType());
+        newRestaurant.setOpenTime(request.getOpenTime());
+        newRestaurant.setCloseTime(request.getCloseTime());
 
         facilityRepository.save(newRestaurant);
         saveFacilityImages(newRestaurant.getId(), request.getType(), request.getImages());

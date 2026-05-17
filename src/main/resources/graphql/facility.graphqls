@@ -49,6 +49,8 @@ type Motel{
 
 type Restaurant{
     foodType:String!
+    openTime:String!
+    closeTime:String!
 }
 
 type FacilityApproval{

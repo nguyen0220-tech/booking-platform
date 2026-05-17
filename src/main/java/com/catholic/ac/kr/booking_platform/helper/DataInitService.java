@@ -44,9 +44,9 @@
 //                });
 //
 //
-//        User admin = createBaseUser(Set.of(adminRole, userRole), 1);
+//        User admin = createBaseUser(Set.of(adminRole), 1);
 //        admin.setUsername("admin");
-//        admin.setEmail("test@gmail.com");
+//        admin.setEmail("admin@gmail.com");
 //        admin.setPhone("123456789");
 //        admin.setFullName("관리자");
 //
@@ -54,7 +54,7 @@
 //
 //        User provider = createBaseUser(Set.of(providerRole), 1);
 //        provider.setUsername("provider");
-//        provider.setEmail("test111@gmail.com");
+//        provider.setEmail("provider@gmail.com");
 //        provider.setPhone("1234567890");
 //        provider.setFullName("제공자");
 //
@@ -74,7 +74,7 @@
 //            User user = createBaseUser(Set.of(userRole), i);
 //
 //            user.setUsername("user__" + i);
-//            user.setEmail("test__" + i + "@gmail.com");
+//            user.setEmail("test_" + i + "@gmail.com");
 //            user.setPhone("100000001" + i);
 //            user.setFullName("user test_ " + i);
 //            userRepository.save(user);

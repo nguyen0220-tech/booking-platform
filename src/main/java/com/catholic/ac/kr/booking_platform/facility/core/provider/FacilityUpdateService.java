@@ -86,8 +86,7 @@ public class FacilityUpdateService {
 
         if (facility.getFacilityType() != request.getType()) {
             throw new IllegalArgumentException(
-                    String.format("이 시설은 %s 입니다. %s 아닙니다",
-                            facility.getFacilityType(), request.getType())
+                    String.format("이 시설은 %s 입니다. %s 아닙니다", facility.getFacilityType(), request.getType())
             );
         }
 

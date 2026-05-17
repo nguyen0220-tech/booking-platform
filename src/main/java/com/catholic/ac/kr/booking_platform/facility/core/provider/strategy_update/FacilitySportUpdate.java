@@ -3,13 +3,14 @@ package com.catholic.ac.kr.booking_platform.facility.core.provider.strategy_upda
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilitySportRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.Sport;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoSportUpdateUpdateRequest;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoSportUpdateRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FacilitySportUpdate extends AbstractFacilityUpdateHandler<Sport, FacilityInfoSportUpdateUpdateRequest>{
+public class FacilitySportUpdate extends AbstractFacilityUpdateHandler<Sport, FacilityInfoSportUpdateRequest>{
     private final FacilitySportRepository facilitySportRepository;
 
     public FacilitySportUpdate(FacilitySportRepository facilitySportRepository) {
@@ -22,8 +23,9 @@ public class FacilitySportUpdate extends AbstractFacilityUpdateHandler<Sport, Fa
         return FacilityType.SPORT;
     }
 
+    @CacheEvict(value = "facilitySport", allEntries = true)
     @Override
-    public ApiResponse<String> updateFacility(Sport sport, FacilityInfoSportUpdateUpdateRequest request) {
+    public ApiResponse<String> updateFacility(Sport sport, FacilityInfoSportUpdateRequest request) {
          boolean isPriceNotUpdated = sport.getHourPrice() != null && request.getHourPrice() != null
                 && sport.getHourPrice().compareTo(request.getHourPrice()) == 0;
 

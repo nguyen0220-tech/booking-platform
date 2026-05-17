@@ -3,13 +3,14 @@ package com.catholic.ac.kr.booking_platform.facility.core.provider.strategy_upda
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityMotelRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.Motel;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoMotelUpdateUpdateRequest;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoMotelUpdateRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FacilityMotelUpdate extends AbstractFacilityUpdateHandler<Motel, FacilityInfoMotelUpdateUpdateRequest> {
+public class FacilityMotelUpdate extends AbstractFacilityUpdateHandler<Motel, FacilityInfoMotelUpdateRequest> {
     private final FacilityMotelRepository facilityMotelRepository;
 
     public FacilityMotelUpdate(FacilityMotelRepository facilityMotelRepository) {
@@ -22,8 +23,9 @@ public class FacilityMotelUpdate extends AbstractFacilityUpdateHandler<Motel, Fa
         return FacilityType.MOTEL;
     }
 
+    @CacheEvict(value = "facilityMotel", allEntries = true)
     @Override
-    public ApiResponse<String> updateFacility(Motel motel, FacilityInfoMotelUpdateUpdateRequest request) {
+    public ApiResponse<String> updateFacility(Motel motel, FacilityInfoMotelUpdateRequest request) {
         boolean isHourPriceNotUpdate = (motel.getHourPrice() != null && request.getHourPrice() != null
                 && motel.getHourPrice().compareTo(request.getHourPrice()) == 0);
 

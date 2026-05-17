@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface FacilityRestaurantRepository extends JpaRepository<Restaurant, Long> {
     @Query("""
-                SELECT new com.catholic.ac.kr.booking_platform.facility.dto.RestaurantDTO(r.id, r.foodType)
+                SELECT new com.catholic.ac.kr.booking_platform.facility.dto.RestaurantDTO(r.id, r.foodType, r.openTime, r.closeTime)
                 FROM Restaurant r
                 WHERE r.id IN :ids
             """)

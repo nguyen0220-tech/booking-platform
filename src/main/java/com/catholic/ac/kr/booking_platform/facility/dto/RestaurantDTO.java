@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -13,4 +15,6 @@ import lombok.Setter;
 public class RestaurantDTO {
     private Long id;
     private FoodType foodType;
+    private LocalTime openTime;
+    private LocalTime closeTime;
 }
