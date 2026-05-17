@@ -1,15 +1,18 @@
 package com.catholic.ac.kr.booking_platform.facility.core.provider;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityOption;
+import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy_option.FacilityOptionHandler;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy_update.FacilityUpdateHandler;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistrationRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoUpdateRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityOptionRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.OptionStateRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.UnsupportedStrategyException;
 import org.springframework.cache.annotation.CacheEvict;
@@ -27,19 +30,18 @@ import java.util.stream.Collectors;
 public class FacilityUpdateService {
     private final Map<FacilityOption, FacilityOptionHandler> optionHandlers;
     private final Map<FacilityType, FacilityUpdateHandler<? extends Facility, ? extends FacilityInfoUpdateRequest>> updateHandler;
-    private final FacilityRepository facilityRepository;
+    private final FacilityRegistrationRepository facilityRegistrationRepository;
 
     public FacilityUpdateService(List<FacilityOptionHandler> optionHandlers,
                                  List<FacilityUpdateHandler<? extends Facility, ? extends FacilityInfoUpdateRequest>> updateHandlers,
-                                 FacilityRepository facilityRepository) {
+                                 FacilityRegistrationRepository facilityRegistrationRepository) {
 
         this.optionHandlers = optionHandlers.stream()
                 .collect(Collectors.toMap(FacilityOptionHandler::getFacilityOption, o -> o));
         this.updateHandler = updateHandlers.stream()
                 .collect(Collectors.toMap(FacilityUpdateHandler::getFacilityType, u -> u));
-        this.facilityRepository = facilityRepository;
+        this.facilityRegistrationRepository = facilityRegistrationRepository;
     }
-
 
     @PreAuthorize("hasRole('PROVIDER')")
     @Transactional
@@ -49,8 +51,8 @@ public class FacilityUpdateService {
             return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                     "성공적으로 설정되었습니다");
         }
-        Facility facility = facilityRepository.findById(request.getFacilityId())
-                .orElseThrow(() -> new ResourceNotFoundException("facility not found"));
+
+        Facility facility = getFacility(request.getFacilityId());
 
         validationAccess(ownerId, facility);
 
@@ -63,7 +65,6 @@ public class FacilityUpdateService {
 
             optionHandler.setFacilityOption(facility, optionItem);
         }
-        facilityRepository.save(facility);
 
         return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                 "성공적으로 설정되었습니다");
@@ -79,8 +80,7 @@ public class FacilityUpdateService {
                     "성공적으로 설정되었습니다");
         }
 
-        Facility facility = facilityRepository.findById(request.getFacilityId())
-                .orElseThrow(() -> new ResourceNotFoundException("facility not found"));
+        Facility facility = getFacility(request.getFacilityId());
 
         validationAccess(ownerId, facility);
 
@@ -103,5 +103,19 @@ public class FacilityUpdateService {
         if (!ownerId.equals(facility.getOwner().getId())) {
             throw new AccessDeniedException("access denied");
         }
+    }
+
+    private Facility getFacility(Long facilityId) {
+
+        FacilityRegistration facilityRegistration = facilityRegistrationRepository
+                .findByFacilityIdWithFacility(facilityId)
+                .orElseThrow(() -> new ResourceNotFoundException("facility registration not found"));
+
+        FacilityStatus status = facilityRegistration.getStatus();
+        if (status == FacilityStatus.CANCELLED || status == FacilityStatus.REJECTED) {
+            throw new BadRequestException("취소되거나 거절된 시설은 정보 수정을 할 수 없습니다");
+        }
+
+        return facilityRegistration.getFacility();
     }
 }

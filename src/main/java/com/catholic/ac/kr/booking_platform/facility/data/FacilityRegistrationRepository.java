@@ -40,4 +40,5 @@ public interface FacilityRegistrationRepository extends JpaRepository<FacilityRe
     @Query("SELECT fr FROM FacilityRegistration fr " +
             "JOIN FETCH fr.facility f " +
             "WHERE fr.facility.id = :facilityId")
-    Optional<FacilityRegistration> findByFacilityIdWithFacility(@Param("facilityId") Long facilityId);}
+    Optional<FacilityRegistration> findByFacilityIdWithFacility(@Param("facilityId") Long facilityId);
+}
