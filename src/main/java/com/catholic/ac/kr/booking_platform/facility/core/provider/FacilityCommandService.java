@@ -3,6 +3,7 @@ package com.catholic.ac.kr.booking_platform.facility.core.provider;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy.FacilityHandler;
+import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistrationRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
@@ -66,10 +67,12 @@ public class FacilityCommandService {
             throw new BadRequestException("이미 " + registration.getStatus().getDisplayStatus());
         }
 
+        Facility facility = registration.getFacility();
+        facility.setSuspended(true);
+        facility.setActive(false);
+
         registration.setStatus(FacilityStatus.CANCELLED);
         registration.setNote("[소유자가 취소했습니다]");
-
-        facilityRegistrationRepository.save(registration);
 
         return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                 "등록를 취소하셨습니다");

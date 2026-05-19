@@ -40,6 +40,7 @@ union FacilityTarget = Sport | Motel | Restaurant
 
 type Sport{
     hourPrice:BigDecimal!
+    sportPackages(page:Int!, size:Int!):ListSportPackage
 }
 
 type Motel{
