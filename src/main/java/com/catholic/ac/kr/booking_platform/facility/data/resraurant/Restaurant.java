@@ -1,6 +1,7 @@
-package com.catholic.ac.kr.booking_platform.facility.data;
+package com.catholic.ac.kr.booking_platform.facility.data.resraurant;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FoodType;
+import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import java.time.LocalTime;
 @Entity
 @DiscriminatorValue("RESTAURANT")
 @Getter @Setter
-public class Restaurant extends Facility{
+public class Restaurant extends Facility {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FoodType foodType; //식당 종류: 한식, 일식, 중식...
@@ -21,7 +22,7 @@ public class Restaurant extends Facility{
     @Column(nullable = false)
     private LocalTime closeTime;
 
-    public void updateFoodType(FoodType newFoodType, LocalTime newOpenTime, LocalTime newCloseTime) {
+    public void updateRestaurant(FoodType newFoodType, LocalTime newOpenTime, LocalTime newCloseTime) {
         if (newFoodType != null){
             this.foodType = newFoodType;
         }

@@ -40,7 +40,6 @@ union FacilityTarget = Sport | Motel | Restaurant
 
 type Sport{
     hourPrice:BigDecimal!
-    sportPackages(page:Int!, size:Int!):ListSportPackage
 }
 
 type Motel{
@@ -52,6 +51,17 @@ type Restaurant{
     foodType:String!
     openTime:String!
     closeTime:String!
+    menus:[RestaurantMenu]
+}
+
+type RestaurantMenu{
+    id:ID!,
+    name:String!,
+    description:String,
+    price:BigDecimal!
+    imageUrl:String
+    deleted:Boolean!
+    soldOut:Boolean!
 }
 
 type FacilityApproval{

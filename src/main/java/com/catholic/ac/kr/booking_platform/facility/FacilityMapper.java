@@ -2,6 +2,7 @@ package com.catholic.ac.kr.booking_platform.facility;
 
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
+import com.catholic.ac.kr.booking_platform.facility.data.resraurant.RestaurantMenu;
 import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilityAdminProjection;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilityRegistrationProjection;
@@ -70,5 +71,19 @@ public class FacilityMapper {
         facilityRegistrationDTO.setLastUpdateAt(projection.getLastUpdateAt());
 
         return facilityRegistrationDTO;
+    }
+
+    public static RestaurantMenuDTO toRestaurantMenuDTO(RestaurantMenu facilityMenu) {
+        RestaurantMenuDTO menuDTO = new RestaurantMenuDTO();
+
+        menuDTO.setId(facilityMenu.getId());
+        menuDTO.setName(facilityMenu.getName());
+        menuDTO.setDescription(facilityMenu.getDescription());
+        menuDTO.setPrice(facilityMenu.getPrice());
+        menuDTO.setImageUrl(facilityMenu.getImageUrl());
+        menuDTO.setDeleted(facilityMenu.isDeleted());
+        menuDTO.setSoldOut(facilityMenu.isSoldOut());
+
+        return menuDTO;
     }
 }

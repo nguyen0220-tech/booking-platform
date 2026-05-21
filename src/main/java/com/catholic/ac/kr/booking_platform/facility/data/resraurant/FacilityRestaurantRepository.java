@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.facility.data;
+package com.catholic.ac.kr.booking_platform.facility.data.resraurant;
 
 import com.catholic.ac.kr.booking_platform.facility.dto.RestaurantDTO;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -19,7 +19,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @RestControllerAdvice
@@ -47,7 +46,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 
-    @ExceptionHandler({ResourceNotFoundException.class, NoSuchElementException.class})
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFoundException(ResourceNotFoundException e, WebRequest request) {
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.NOT_FOUND.value(),
@@ -75,6 +74,17 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.BAD_REQUEST.value(),
                 "INVALID_INPUT",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalState(IllegalStateException e, WebRequest request) {
+        ApiResponse<Void> exception = ApiResponse.exception(
+                HttpStatus.BAD_REQUEST.value(),
+                "INVALID_STATE",
                 e.getMessage(),
                 request.getDescription(false).replace("uri=", "")
         );

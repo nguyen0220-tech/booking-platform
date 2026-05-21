@@ -1,8 +1,8 @@
 package com.catholic.ac.kr.booking_platform.facility.core.provider.strategy_update;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityRestaurantRepository;
-import com.catholic.ac.kr.booking_platform.facility.data.Restaurant;
+import com.catholic.ac.kr.booking_platform.facility.data.resraurant.FacilityRestaurantRepository;
+import com.catholic.ac.kr.booking_platform.facility.data.resraurant.Restaurant;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoRestaurantUpdateRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import org.springframework.cache.annotation.CacheEvict;
@@ -38,7 +38,7 @@ public class FacilityRestaurantUpdate extends AbstractFacilityUpdateHandler<Rest
         }
 
         updateFacilityInfo(restaurant, request);
-        restaurant.updateFoodType(request.getFoodType(), request.getOpenTime(), request.getCloseTime());
+        restaurant.updateRestaurant(request.getFoodType(), request.getOpenTime(), request.getCloseTime());
 
         facilityRestaurantRepository.save(restaurant);
 

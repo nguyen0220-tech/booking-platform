@@ -4,8 +4,10 @@ import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
 import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityRegistrationCommandService;
+import com.catholic.ac.kr.booking_platform.facility.core.provider.RestaurantMenuCommandService;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
+import com.catholic.ac.kr.booking_platform.facility.data.resraurant.RestaurantMenu;
 import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.config.VirtualThreadExecutor;
@@ -34,6 +36,7 @@ public class FacilityResolver {
     private final FacilityImageService facilityImageService;
     private final FacilityQueryService facilityQueryService;
     private final FacilityRegistrationCommandService facilityRegistrationCommandService;
+    private final RestaurantMenuCommandService restaurantMenuCommandService;
 
     @QueryMapping
     public FacilityDTO facility(
@@ -159,6 +162,28 @@ public class FacilityResolver {
 
     public static void log(String message) {
         System.out.println(LocalTime.now() + " | [" + Thread.currentThread().getName() + "] | " + message);
+    }
+
+    @BatchMapping(typeName = "Restaurant", field = "menus")
+    public Map<RestaurantDTO, List<RestaurantMenuDTO>> menus(List<RestaurantDTO> restaurants) {
+        List<Long> restaurantIds = restaurants.stream()
+                .map(RestaurantDTO::getId)
+                .distinct()
+                .toList();
+
+        List<RestaurantMenu> allMenu = restaurantMenuCommandService.getAllByRestaurantIds(restaurantIds);
+
+        Map<Long, List<RestaurantMenuDTO>> map = allMenu.stream()
+                .collect(Collectors.groupingBy(
+                        m -> m.getRestaurant().getId(),
+                        Collectors.mapping(FacilityMapper::toRestaurantMenuDTO, Collectors.toList())
+                ));
+
+        return restaurants.stream()
+                .collect(Collectors.toMap(
+                        r -> r,
+                        m -> map.getOrDefault(m.getId(), List.of())
+                ));
     }
 
     @SchemaMapping(typeName = "Facility", field = "owner")

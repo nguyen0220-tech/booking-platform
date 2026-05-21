@@ -3,10 +3,8 @@ package com.catholic.ac.kr.booking_platform.facility.web;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityCommandService;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.FacilityUpdateService;
-import com.catholic.ac.kr.booking_platform.facility.dto.AddImagesForFacilityRequest;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityInfoUpdateRequest;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityOptionRequest;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
+import com.catholic.ac.kr.booking_platform.facility.core.provider.RestaurantMenuCommandService;
+import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -24,6 +22,7 @@ public class FacilityController {
     private final FacilityCommandService facilityCommandService;
     private final FacilityImageService facilityImageService;
     private final FacilityUpdateService facilityUpdateService;
+    private final RestaurantMenuCommandService restaurantMenuCommandService;
 
     @PostMapping
     public ApiResponse<String> createFacility(
@@ -54,6 +53,27 @@ public class FacilityController {
             @RequestBody AddImagesForFacilityRequest request
     ) {
         return facilityImageService.addImagesForFacility(userDetails.getId(), request);
+    }
+
+    @PostMapping("restaurant/add-menu")
+    public ApiResponse<String> addNewMenuForRestaurant(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @ModelAttribute @Valid RestaurantMenuRequest request) {
+        return restaurantMenuCommandService.addNewMenuForRestaurant(userDetails.getId(), request);
+    }
+
+    @PutMapping("restaurant/update-menu")
+    public ApiResponse<String> updateRestaurantMenu(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody @Valid RestaurantMenuUpdateRequest request) {
+        return restaurantMenuCommandService.updateMenuForRestaurant(userDetails.getId(), request);
+    }
+
+    @PutMapping("restaurant/handle-menu")
+    public ApiResponse<String> handleRestaurantMenu(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody RestaurantMenuCommandRequest request) {
+        return restaurantMenuCommandService.restaurantMenuCommand(userDetails.getId(), request);
     }
 
     @PutMapping("option")
