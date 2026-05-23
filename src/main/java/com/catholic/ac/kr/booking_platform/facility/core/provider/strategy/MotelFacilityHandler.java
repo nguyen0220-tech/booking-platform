@@ -6,7 +6,6 @@ import com.catholic.ac.kr.booking_platform.facility.data.FacilityImageRepository
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityMotelRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.Motel;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.MotelDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.MotelRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class MotelFacilityHandler extends AbstractFacilityHandler<MotelDTO> {
+public class MotelFacilityHandler extends AbstractFacilityHandler<MotelDTO, MotelRequest> {
     private final FacilityMotelRepository facilityMotelRepository;
 
     public MotelFacilityHandler(FacilityRepository f, FacilityImageRepository i, ApplicationEventPublisher e,
@@ -38,8 +37,7 @@ public class MotelFacilityHandler extends AbstractFacilityHandler<MotelDTO> {
     }
 
     @Override
-    public ApiResponse<String> create(User owner, FacilityRequest baseRequest) {
-        MotelRequest request = (MotelRequest) baseRequest;
+    public ApiResponse<String> processCreate(User owner, MotelRequest request) {
         Motel newMotel = new Motel();
 
         setBasicFacility(owner, newMotel, request);

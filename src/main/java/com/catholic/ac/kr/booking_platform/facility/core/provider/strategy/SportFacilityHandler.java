@@ -6,7 +6,6 @@ import com.catholic.ac.kr.booking_platform.facility.data.FacilityImageRepository
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilitySportRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.Sport;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.SportDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.SportRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -18,8 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-
-public class SportFacilityHandler extends AbstractFacilityHandler<SportDTO> {
+public class SportFacilityHandler extends AbstractFacilityHandler<SportDTO, SportRequest> {
 
     private final FacilitySportRepository facilitySportRepository;
 
@@ -39,11 +37,10 @@ public class SportFacilityHandler extends AbstractFacilityHandler<SportDTO> {
     }
 
     @Override
-    public ApiResponse<String> create(User owner, FacilityRequest baseRequest) {
-        SportRequest request = (SportRequest) baseRequest;
+    protected ApiResponse<String> processCreate(User owner, SportRequest request) {
         Sport newSport = new Sport();
         setBasicFacility(owner, newSport, request);
-        newSport.setHourPrice(request.getHourPrice());
+        newSport.setHourPrice(request.getHourPrice()); // Thoải mái dùng hàm của SportRequest
 
         facilityRepository.save(newSport);
         saveFacilityImages(newSport.getId(), getType(), request.getImages());

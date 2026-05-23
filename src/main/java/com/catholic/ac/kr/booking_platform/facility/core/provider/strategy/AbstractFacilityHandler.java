@@ -6,6 +6,7 @@ import com.catholic.ac.kr.booking_platform.facility.data.FacilityImage;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityImageRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
+import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,7 +14,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.List;
 
 @RequiredArgsConstructor
-public abstract class AbstractFacilityHandler<T> implements FacilityHandler<T> {
+public abstract class AbstractFacilityHandler<D, R extends FacilityRequest> implements FacilityHandler<D> {
     protected final FacilityRepository facilityRepository;
     protected final FacilityImageRepository facilityImageRepository;
     protected final ApplicationEventPublisher eventPublisher;
@@ -40,5 +41,13 @@ public abstract class AbstractFacilityHandler<T> implements FacilityHandler<T> {
         }).toList();
         facilityImageRepository.saveAll(list);
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ApiResponse<String> create(User owner, FacilityRequest request) {
+        return processCreate(owner, (R) request);
+    }
+
+    protected abstract ApiResponse<String> processCreate(User owner, R request);
 }
 

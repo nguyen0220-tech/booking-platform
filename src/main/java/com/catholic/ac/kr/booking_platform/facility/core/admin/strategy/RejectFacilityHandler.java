@@ -7,6 +7,7 @@ import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationRequ
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ public class RejectFacilityHandler extends AbstractFacilityRegistrationHandler {
 
     @Transactional
     @Override
+    @CacheEvict(value = "facilityInfos", allEntries = true)
     public ApiResponse<String> handleFacilityRegistration(User admin, FacilityRegistration registration, FacilityRegistrationRequest request) {
         Facility facility = registration.getFacility();
         facility.setSuspended(true);

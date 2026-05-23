@@ -6,7 +6,6 @@ import com.catholic.ac.kr.booking_platform.facility.data.FacilityImageRepository
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.resraurant.FacilityRestaurantRepository;
 import com.catholic.ac.kr.booking_platform.facility.data.resraurant.Restaurant;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRequest;
 import com.catholic.ac.kr.booking_platform.facility.dto.RestaurantDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.RestaurantRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class RestaurantFacilityHandler extends AbstractFacilityHandler<RestaurantDTO> {
+public class RestaurantFacilityHandler extends AbstractFacilityHandler<RestaurantDTO, RestaurantRequest> {
     private final FacilityRestaurantRepository facilityRestaurantRepository;
 
     public RestaurantFacilityHandler(FacilityRepository f, FacilityImageRepository i, ApplicationEventPublisher e, FacilityRestaurantRepository facilityRestaurantRepository) {
@@ -37,8 +36,7 @@ public class RestaurantFacilityHandler extends AbstractFacilityHandler<Restauran
     }
 
     @Override
-    public ApiResponse<String> create(User owner, FacilityRequest baseRequest) {
-        RestaurantRequest request = (RestaurantRequest) baseRequest;
+    public ApiResponse<String> processCreate(User owner, RestaurantRequest request) {
         Restaurant newRestaurant = new Restaurant();
 
         setBasicFacility(owner, newRestaurant, request);
@@ -49,7 +47,6 @@ public class RestaurantFacilityHandler extends AbstractFacilityHandler<Restauran
         facilityRepository.save(newRestaurant);
         saveFacilityImages(newRestaurant.getId(), request.getType(), request.getImages());
         eventPublisher.publishEvent(new NewFacilityEvent(newRestaurant));
-
 
         return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                 request.getName() + "등록 접수가 되었습니다");

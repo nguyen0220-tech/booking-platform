@@ -7,8 +7,8 @@ import com.catholic.ac.kr.booking_platform.user.data.User;
 
 import java.util.List;
 
-public interface FacilityHandler<T> {
+public interface FacilityHandler<D> {
     FacilityType getType();
-    List<T> getSpecificDTOs(List<Long> ids);
+    List<D> getSpecificDTOs(List<Long> ids);
     ApiResponse<String> create(User owner, FacilityRequest request);
 }
