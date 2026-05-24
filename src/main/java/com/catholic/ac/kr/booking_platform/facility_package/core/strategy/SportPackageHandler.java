@@ -7,10 +7,14 @@ import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage
 import com.catholic.ac.kr.booking_platform.facility_package.data.SportPackage;
 import com.catholic.ac.kr.booking_platform.facility_package.dto.SportPackageRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.LocalTime;
 
 @Component
 public class SportPackageHandler extends AbstractPackageHandler<SportPackageRequest> {
@@ -30,29 +34,38 @@ public class SportPackageHandler extends AbstractPackageHandler<SportPackageRequ
     }
 
     @Override
-    public ApiResponse<String> createPackage(Long ownerId, Long sportId, SportPackageRequest request) {
+    public ApiResponse<String> processCreate(Long ownerId, Long sportId, SportPackageRequest request) {
         Sport sport = facilitySportRepository.findById(sportId)
                 .orElseThrow(() -> new ResourceNotFoundException("sport not found"));
 
         validateFacility(ownerId, sport);
 
-        SportPackage newPackage = new SportPackage();
+        BigDecimal basicPrice = sportPriceCalculator(
+                sport.getHourPrice(), request.getStartTime(), request.getEndTime());
+        if (basicPrice.compareTo(request.getSalePrice()) < 0) {
+            throw new BadRequestException("할인 가겨이 원가격(" + basicPrice + ")보다 큽니다");
+        }
 
-        setBasicPackage(newPackage, request);
+        SportPackage sportPackage = new SportPackage();
 
-        newPackage.setFacility(sport);
-        newPackage.setStartTime(request.getStartTime());
-        newPackage.setEndTime(request.getEndTime());
-        setPackagePrice(newPackage, sport);
-        newPackage.setSalePrice(request.getSalePrice());
+        setBasicPackage(sportPackage, request);
 
-        packageRepository.save(newPackage);
+        sportPackage.setFacility(sport);
+        sportPackage.setStartTime(request.getStartTime());
+        sportPackage.setEndTime(request.getEndTime());
+        sportPackage.setPrice(basicPrice);
+        sportPackage.setSalePrice(request.getSalePrice());
+
+        packageRepository.save(sportPackage);
 
         return buildResponseSuccess(request.getPackageName());
     }
 
-    private void setPackagePrice(SportPackage sportPackage, Sport sport) {
-        BigDecimal price = sport.getHourPrice();
-        sportPackage.setSalePrice(price);
+    private BigDecimal sportPriceCalculator(BigDecimal hourPrice, LocalTime startTime, LocalTime endTime) {
+        Duration duration = Duration.between(startTime, endTime);
+
+        BigDecimal totalHours = BigDecimal.valueOf(duration.toMinutes())
+                .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
+        return hourPrice.multiply(totalHours);
     }
 }

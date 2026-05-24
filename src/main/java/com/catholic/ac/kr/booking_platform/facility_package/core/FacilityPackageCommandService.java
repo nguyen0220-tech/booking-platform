@@ -23,12 +23,13 @@ public class FacilityPackageCommandService {
                 ));
     }
 
-    public ApiResponse<String> createNewPackage(Long userId, Long facilityId, FacilityPackageRequest request){
+    public ApiResponse<String> createNewPackage(Long userId, FacilityPackageRequest request) {
         FacilityPackageHandler handler = facilityPackageHandlers.get(request.getFacilityType());
-        if(handler == null){
+        if (handler == null) {
             throw new UnsupportedStrategyException(request.getFacilityType().name());
         }
 
-        return handler.createPackage(userId, facilityId, request);
+
+        return handler.createPackage(userId, request);
     }
 }

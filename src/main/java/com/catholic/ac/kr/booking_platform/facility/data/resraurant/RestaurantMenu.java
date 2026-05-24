@@ -57,4 +57,23 @@ public class RestaurantMenu {
         if (description != null) this.description = description;
         if (price != null) this.price = price;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        // 1. Nếu cùng trỏ đến 1 ô nhớ -> Chắc chắn bằng nhau
+        if (this == o) return true;
+
+        // 2. Nếu object kia null hoặc không cùng class (hoặc proxy) -> Không bằng nhau
+        if (!(o instanceof RestaurantMenu that)) return false;
+
+        // Nếu id của cả 2 đều khác null thì so sánh id.
+        // Nếu 1 trong 2 id bằng null (object mới chưa lưu DB) -> luôn false (vì chưa thể xác định danh tính)
+        return id != null && id.equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        // Điều này đảm bảo hashCode không bị thay đổi trước và sau khi object được lưu vào DB (khi id chuyển từ null thành có giá trị).
+        return getClass().hashCode();
+    }
 }

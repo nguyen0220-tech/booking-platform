@@ -2,9 +2,11 @@ package com.catholic.ac.kr.booking_platform.facility.data.resraurant;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface RestaurantMenuRepository extends JpaRepository<RestaurantMenu, Long> {
@@ -13,4 +15,12 @@ public interface RestaurantMenuRepository extends JpaRepository<RestaurantMenu, 
             WHERE rm.restaurant.id IN :restaurantIds
             """)
     List<RestaurantMenu> findAllByRestaurantIds(List<Long> restaurantIds);
+
+    @Query("""
+            SELECT rm
+            FROM RestaurantMenu rm
+            WHERE rm.restaurant.id = :restaurantId AND rm.id IN :menuIds
+            """)
+    Set<RestaurantMenu> findAllByMenuIds(@Param("restaurantId") Long restaurantId,
+                                         @Param("menuIds") Set<Long> menuIds);
 }

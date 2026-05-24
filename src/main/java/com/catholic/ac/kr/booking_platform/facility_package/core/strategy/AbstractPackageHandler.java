@@ -10,14 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 
 @RequiredArgsConstructor
-public abstract class AbstractPackageHandler<T extends FacilityPackageRequest> implements FacilityPackageHandler<T> {
+public abstract class AbstractPackageHandler<R extends FacilityPackageRequest> implements FacilityPackageHandler {
     protected final FacilityPackageRepository packageRepository;
 
     protected void setBasicPackage(FacilityPackage newPackage, FacilityPackageRequest packageRequest) {
         newPackage.setPackageName(packageRequest.getPackageName());
         newPackage.setNote(packageRequest.getNote());
         newPackage.setFacilityType(packageRequest.getFacilityType());
-        newPackage.setSalePrice(packageRequest.getSalePrice());
     }
 
     protected void validateFacility(Long currentUserId, Facility facility) {
@@ -29,6 +28,15 @@ public abstract class AbstractPackageHandler<T extends FacilityPackageRequest> i
             throw new IllegalStateException("정지된 시설입니다");
         }
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ApiResponse<String> createPackage(Long ownerId, FacilityPackageRequest request) {
+        Long facilityId = request.getFacilityId();
+        return processCreate(ownerId, facilityId, (R) request);
+    }
+
+    protected abstract ApiResponse<String> processCreate(Long ownerId, Long facilityId, R request);
 
     protected ApiResponse<String> buildResponseSuccess(String name) {
         return ApiResponse.success(HttpStatus.CREATED.value(), HttpStatus.CREATED.getReasonPhrase(),

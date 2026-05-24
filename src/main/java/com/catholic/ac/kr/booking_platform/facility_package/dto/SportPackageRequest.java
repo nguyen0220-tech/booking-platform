@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility_package.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +11,9 @@ import java.time.LocalTime;
 @Setter
 @AllArgsConstructor
 public class SportPackageRequest extends FacilityPackageRequest {
-    @NotBlank(message = "입력 필수 항목입니다")
+    @NotNull(message = "입력 필수 항목입니다")
     private LocalTime startTime;
 
-    @NotBlank(message = "입력 필수 항목입니다")
+    @NotNull(message = "입력 필수 항목입니다")
     private LocalTime endTime;
 }

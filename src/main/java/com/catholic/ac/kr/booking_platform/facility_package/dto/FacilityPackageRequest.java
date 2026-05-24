@@ -3,8 +3,9 @@ package com.catholic.ac.kr.booking_platform.facility_package.dto;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        property = "facility_type",
+        property = "facilityType",
         visible = true
 )
 @JsonSubTypes({
@@ -24,14 +25,18 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public abstract class FacilityPackageRequest {
+    @NotNull(message = "입력 필수 항목입니다")
+    private Long facilityId;
+
     @NotBlank(message = "입력 필수 항목입니다")
     private String packageName;
 
     private String note;
 
-    @NotBlank(message = "입력 필수 항목입니다")
+    @NotNull(message = "입력 필수 항목입니다")
     private FacilityType facilityType;
 
-    @NotBlank(message = "입력 필수 항목입니다")
+    @DecimalMin(value = "0.0", inclusive = false, message = "0보다 커야 합니다")
+    @NotNull(message = "입력 필수 항목입니다")
     private BigDecimal salePrice;
 }
