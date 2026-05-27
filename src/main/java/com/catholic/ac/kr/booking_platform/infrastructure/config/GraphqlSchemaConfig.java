@@ -3,6 +3,9 @@ package com.catholic.ac.kr.booking_platform.infrastructure.config;
 import com.catholic.ac.kr.booking_platform.facility.dto.MotelDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.RestaurantDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.SportDTO;
+import com.catholic.ac.kr.booking_platform.facility_package.dto.MotelPackageDTO;
+import com.catholic.ac.kr.booking_platform.facility_package.dto.RestaurantPackageDTO;
+import com.catholic.ac.kr.booking_platform.facility_package.dto.SportPackageDTO;
 import graphql.scalars.ExtendedScalars;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +29,21 @@ public class GraphqlSchemaConfig {
                             }
                             if (src instanceof RestaurantDTO) {
                                 return env.getSchema().getObjectType("Restaurant");
+                            }
+                            return null;
+                        }))
+
+                .type("PackageTarget", typeWiring -> typeWiring
+                        .typeResolver(env -> {
+                            Object src = env.getObject();
+                            if (src instanceof SportPackageDTO) {
+                                return env.getSchema().getObjectType("SportPackage");
+                            }
+                            if (src instanceof MotelPackageDTO) {
+                                return env.getSchema().getObjectType("MotelPackage");
+                            }
+                            if (src instanceof RestaurantPackageDTO) {
+                                return env.getSchema().getObjectType("RestaurantPackage");
                             }
                             return null;
                         }));

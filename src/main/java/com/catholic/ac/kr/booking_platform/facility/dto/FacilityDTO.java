@@ -15,11 +15,6 @@ public class FacilityDTO {
     private Long ownerId;
     private Long facilityRegistrationId;
 
-    public FacilityDTO(Long id, Long ownerId){
-        this.id = id;
-        this.ownerId = ownerId;
-    }
-
     public FacilityDTO(Long id, String facilityType, Long ownerId) {
         this.id = id;
         this.facilityType = facilityType;

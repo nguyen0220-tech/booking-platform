@@ -105,6 +105,7 @@ public class FacilityResolver {
                 ));
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @BatchMapping(typeName = "Facility", field = "facilityTarget")
     public Mono<Map<FacilityDTO, Object>> facilityTarget(List<FacilityDTO> facilities) {
         Map<String, List<Long>> idsGroupByType = facilities.stream()
@@ -119,7 +120,6 @@ public class FacilityResolver {
 
         CompletableFuture<Map<FacilityDTO, Object>> futureResult = CompletableFuture.supplyAsync(() -> {
 
-            // Kích hoạt 3 task chạy song song
             CompletableFuture<List<SportDTO>> sportTask = CompletableFuture.supplyAsync(() -> {
                 log("sportTask");
                 return facilityQueryService.getFacilitySportByIds(sportFacilityIds);
@@ -135,7 +135,7 @@ public class FacilityResolver {
                 return facilityQueryService.getFacilityRestaurantByIds(restaurantFacilityIds);
             }, executor.executorService());
 
-            // Đợi cả 3 xong (Vì đang ở trong Virtual Thread nên .join() thoải mái không sợ nghẽn)
+            // Đợi cả 3 xong (Vì đang ở trong Virtual Thread nên .join() không sợ nghẽn)
             Map<Long, SportDTO> sportMap = sportTask.join().stream()
                     .collect(Collectors.toMap(SportDTO::getId, s -> s));
             Map<Long, MotelDTO> motelMap = motelTask.join().stream()
@@ -209,7 +209,6 @@ public class FacilityResolver {
                         FacilityMapper::convertToFacilityRegistrationDTO,
                         (existing, replacement) -> existing // đề phòng có 2 record trùng ID facility gây lỗi Duplicate Key
                 ));
-
 
         Map<FacilityDTO, FacilityRegistrationStatusDTO> result = new HashMap<>();
         for (FacilityDTO facility : facilities) {

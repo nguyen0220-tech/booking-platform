@@ -1,0 +1,49 @@
+extend type Query {
+    facilityPackages(facilityId:ID!, page:Int!, size:Int!):ListPackage
+}
+
+type ListPackage{
+    data:[FacilityPackage]
+    pageInfo:PageInfo
+}
+
+type FacilityPackage{
+    id:ID!
+    facilityType:String!
+    infoDetails:PackageInfoDetails
+    packageTarget:PackageTarget
+}
+
+type PackageInfoDetails{
+    packageName:String
+    note:String
+    totalCount:Int!
+    price:BigDecimal!
+    salePrice:BigDecimal!
+    active:Boolean!
+}
+
+union PackageTarget = SportPackage | MotelPackage | RestaurantPackage
+
+type SportPackage{
+    startTime:String!
+    endTime:String!
+}
+
+type MotelPackage{
+    pricingType:String!
+    checkIn:String!
+    checkOut:String!
+}
+
+type RestaurantPackage{
+    maxCapacity:Int!
+    menus:[PackageMenu]
+}
+
+type PackageMenu{
+    name:String!
+    description:String!
+    price:BigDecimal!
+    imageUrl:String
+}
