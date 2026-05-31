@@ -3,7 +3,6 @@ package com.catholic.ac.kr.booking_platform.facility_package.dto;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -36,7 +35,6 @@ public abstract class FacilityPackageRequest {
     @NotNull(message = "입력 필수 항목입니다")
     private FacilityType facilityType;
 
-    @DecimalMin(value = "0.0", inclusive = false, message = "0보다 커야 합니다")
     @NotNull(message = "입력 필수 항목입니다")
     private BigDecimal salePrice;
 }

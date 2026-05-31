@@ -16,7 +16,6 @@ public abstract class AbstractPackageHandler<R extends FacilityPackageRequest> i
     protected void setBasicPackage(FacilityPackage newPackage, FacilityPackageRequest packageRequest) {
         newPackage.setPackageName(packageRequest.getPackageName());
         newPackage.setNote(packageRequest.getNote());
-        newPackage.setFacilityType(packageRequest.getFacilityType());
     }
 
     protected void validateFacility(Long currentUserId, Facility facility) {
