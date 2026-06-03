@@ -89,7 +89,7 @@ public class UserManageService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ListResponse<UserDTO> filterUserByRole(int page, int size, RoleName name){
+    public ListResponse<UserDTO> filterUserByRole(int page, int size, RoleName name) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
         Page<UserProjection> userProjections = userRepository.findByRoleName(name, pageable);

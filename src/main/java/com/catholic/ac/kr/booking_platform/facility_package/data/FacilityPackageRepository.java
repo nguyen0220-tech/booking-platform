@@ -15,4 +15,11 @@ public interface FacilityPackageRepository extends JpaRepository<FacilityPackage
             WHERE fp.facility.id = :facilityId
             """)
     Page<FacilityPackage> findByFacilityId(@Param("facilityId") Long facilityId, Pageable pageable);
+
+    @Query("""
+            SELECT fp
+            FROM FacilityPackage fp
+            WHERE fp.facility.id = :facilityId AND fp.active = :active
+            """)
+    Page<FacilityPackage> findByFacilityIdAndActive(Long facilityId, boolean active, Pageable pageable);
 }

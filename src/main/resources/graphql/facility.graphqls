@@ -19,8 +19,9 @@ type Facility{
     facilityInfo:FacilityInfo!
     imageUrls:[String]
     facilityTarget:FacilityTarget
-    owner:User!
+    owner:User
     approvalStatus:FacilityApproval
+    packages(page:Int!, size:Int!):ListPackage
 }
 
 type FacilityInfo{

@@ -42,7 +42,7 @@
 //                    role.setName(RoleName.ADMIN);
 //                    return roleRepository.save(role);
 //                });
-//
+
 //
 //        User admin = createBaseUser(Set.of(adminRole), 1);
 //        admin.setUsername("admin");
@@ -59,6 +59,14 @@
 //        provider.setFullName("제공자");
 //
 //        userRepository.save(provider);
+
+//        User user = createBaseUser(Set.of(userRole), 1);
+//        user.setUsername("tamkem");
+//        user.setEmail("tamkem@gmail.com");
+//        user.setPhone("01012345679");
+//        user.setFullName("사용자");
+//
+//        userRepository.save(user);
 //    }
 //
 //    @PostConstruct
@@ -81,7 +89,7 @@
 //
 //        }
 //    }
-//
+
 //    private User createBaseUser(Set<Role> roles, int num) {
 //        User user = new User();
 //

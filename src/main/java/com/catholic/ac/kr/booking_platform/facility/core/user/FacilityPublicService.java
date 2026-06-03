@@ -1,0 +1,39 @@
+package com.catholic.ac.kr.booking_platform.facility.core.user;
+
+import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
+import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
+import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
+import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
+import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
+import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class FacilityPublicService {
+
+    private final FacilityRepository facilityRepository;
+
+    public ListResponse<FacilityDTO> searchFacilitiesByKeyword(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").descending());
+
+        Page<FacilitySummaryProjection> projections = facilityRepository
+                .findByKeyword(keyword, FacilityStatus.APPROVED, pageable);
+
+        Page<FacilityDTO> facilityDTOPage = projections.map(FacilityMapper::toFacilityDTO);
+
+        List<FacilityDTO> response = facilityDTOPage.getContent();
+
+        return new ListResponse<>(
+                response,
+                new PageInfo(page, size, projections.hasNext(), projections.getTotalElements(), projections.getTotalPages()));
+    }
+}

@@ -11,7 +11,10 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Table(name = "facility_package")
+@Table(
+        name = "facility_package",
+        indexes = {@Index(columnList = "facility_id, active")}
+)
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "facility_type")

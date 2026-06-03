@@ -35,13 +35,10 @@ public class FacilityQueryService {
     private final RestaurantFacilityHandler restaurantFacilityHandler;
 
     @Cacheable(value = "facility-details", key = "#id")
-    public FacilityDTO getFacilityById(Long ownerId, Long id) {
+    public FacilityDTO getFacilityById(Long id) {
         FacilitySummaryProjection projection = facilityRepository.findFacilityById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Facility not found"));
 
-        if (!ownerId.equals(projection.getOwnerId())) {
-            throw new AccessDeniedException("access denied");
-        }
         return FacilityMapper.toFacilityDTO(projection);
     }
 

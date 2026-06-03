@@ -3,14 +3,13 @@ package com.catholic.ac.kr.booking_platform.facility.web;
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
-import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityRegistrationCommandService;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.RestaurantMenuCommandService;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
-import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.data.resraurant.RestaurantMenu;
 import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.config.VirtualThreadExecutor;
+import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +34,11 @@ public class FacilityResolver {
     private final VirtualThreadExecutor executor;
     private final FacilityImageService facilityImageService;
     private final FacilityQueryService facilityQueryService;
-    private final FacilityRegistrationCommandService facilityRegistrationCommandService;
     private final RestaurantMenuCommandService restaurantMenuCommandService;
 
     @QueryMapping
-    public FacilityDTO facility(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Argument Long id) {
-        return facilityQueryService.getFacilityById(userDetails.getId(), id);
+    public FacilityDTO facility(@Argument Long id) {
+        return facilityQueryService.getFacilityById(id);
     }
 
     @QueryMapping
@@ -187,33 +183,23 @@ public class FacilityResolver {
     }
 
     @SchemaMapping(typeName = "Facility", field = "owner")
-    public UserDTO owner(FacilityDTO facility) {
+    public UserDTO owner(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            FacilityDTO facility) {
+
+        if (userDetails == null) {
+            return null;
+        }
+
+        boolean isAdmin = SecurityUtils.isAdmin(userDetails);
+        Long currentId = userDetails.getId();
         Long ownerId = facility.getOwnerId();
+
+        if (!isAdmin && !currentId.equals(ownerId)) {
+            return null;
+        }
 
         return new UserDTO(ownerId);
     }
 
-    @BatchMapping(typeName = "Facility", field = "approvalStatus")
-    public Map<FacilityDTO, FacilityRegistrationStatusDTO> approvalStatus(List<FacilityDTO> facilities) {
-        List<Long> facilityIds = facilities.stream()
-                .map(FacilityDTO::getId)
-                .toList();
-
-        List<FacilityRegistration> facilityRegistrationList = facilityRegistrationCommandService
-                .getFacilityRegistrationByIds(facilityIds);
-
-        // QUAN TRỌNG: Key của Map phải là Facility ID
-        Map<Long, FacilityRegistrationStatusDTO> map = facilityRegistrationList.stream()
-                .collect(Collectors.toMap(
-                        fr -> fr.getFacility().getId(), // Dùng ID của Facility làm KEY
-                        FacilityMapper::convertToFacilityRegistrationDTO,
-                        (existing, replacement) -> existing // đề phòng có 2 record trùng ID facility gây lỗi Duplicate Key
-                ));
-
-        Map<FacilityDTO, FacilityRegistrationStatusDTO> result = new HashMap<>();
-        for (FacilityDTO facility : facilities) {
-            result.put(facility, map.get(facility.getId()));
-        }
-        return result;
-    }
 }

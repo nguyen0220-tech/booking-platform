@@ -32,7 +32,7 @@ public interface FacilityRegistrationRepository extends JpaRepository<FacilityRe
                    fr.status AS status, fr.note AS note,
                    f.owner.id AS ownerId, fr.reviewer.id AS reviewerId, fr.lastUpdatedAt AS lastUpdateAt
             FROM FacilityRegistration fr
-            JOIN Facility f on fr.facility = f
+            JOIN Facility f ON fr.facility = f
             WHERE fr.id = :id
             """)
     Optional<FacilityRegistrationProjection> findFacilityRegistrationById(Long id);

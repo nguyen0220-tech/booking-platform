@@ -1,13 +1,17 @@
 package com.catholic.ac.kr.booking_platform.facility_package.web;
 
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
 import com.catholic.ac.kr.booking_platform.facility_package.core.FacilityPackageService;
 import com.catholic.ac.kr.booking_platform.facility_package.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.config.VirtualThreadExecutor;
+import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
 
@@ -27,8 +31,10 @@ public class FacilityPackageResolver {
     public ListResponse<FacilityPackageDTO> facilityPackages(
             @Argument Long facilityId,
             @Argument int page,
-            @Argument int size) {
-        return facilityPackageService.getFacilityPackages(facilityId, page, size);
+            @Argument int size,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        return facilityPackageService.getPackagesForManagement(userDetails, facilityId, page, size);
     }
 
     @BatchMapping(typeName = "FacilityPackage", field = "packageTarget")
@@ -112,5 +118,14 @@ public class FacilityPackageResolver {
                         rp -> rp,
                         rp -> map.get(rp.getId())
                 ));
+    }
+
+    @SchemaMapping(typeName = "Facility", field = "packages")
+    public ListResponse<FacilityPackageDTO> packages(
+            FacilityDTO facility,
+            @Argument int page,
+            @Argument int size) {
+
+        return facilityPackageService.getPublicPackages(facility.getId(), page, size);
     }
 }
