@@ -21,7 +21,7 @@ import java.time.LocalTime;
                 @Index(columnList = "user_id")
         },
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"user_id", "package_id", "usage_date"})
+                @UniqueConstraint(columnNames = {"user_id", "package_id", "usage_date","start_time"})
         }
 )
 @Entity
@@ -44,6 +44,9 @@ public class Booking {
 
     @Column(nullable = false)
     private BigDecimal amount;
+
+    @Column(nullable = false)
+    private BigDecimal basisPrice;
 
     @Column(nullable = false)
     private LocalDate usageDate;

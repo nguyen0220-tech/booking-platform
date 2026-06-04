@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -157,6 +158,18 @@ public class GlobalExceptionHandler {
                 message,
                 request.getDescription(false).replace("uri=", "")
         );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exception);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOptimisticLockingException(ObjectOptimisticLockingFailureException e, WebRequest request) {
+        ApiResponse<Void> exception = ApiResponse.exception(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                "이미 예약된 패키지: " + e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception);
     }
 

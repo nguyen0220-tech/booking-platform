@@ -12,15 +12,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class KakaoPayment extends AbstractPaymentHandler {
-    public KakaoPayment(BookingRepository bookingRepository, UserRepository userRepository,
+public class ApplePayment extends AbstractPaymentHandler{
+    public ApplePayment(BookingRepository bookingRepository, UserRepository userRepository,
                         FacilityPackageRepository packageRepository, PackageAvailabilityRepository availabilityRepository) {
         super(bookingRepository, userRepository, packageRepository, availabilityRepository);
     }
 
     @Override
     public PayMethod getPayMethod() {
-        return PayMethod.KAKAO_PAY;
+        return PayMethod.APPLE_PAY;
     }
 
     @Override
@@ -38,6 +38,6 @@ public class KakaoPayment extends AbstractPaymentHandler {
 
     @Override
     public double discountWithPayMethod() {
-        return 0.1;
+        return 0.2;
     }
 }
