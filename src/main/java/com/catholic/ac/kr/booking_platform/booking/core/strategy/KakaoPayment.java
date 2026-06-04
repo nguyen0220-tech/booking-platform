@@ -1,0 +1,41 @@
+package com.catholic.ac.kr.booking_platform.booking.core.strategy;
+
+import com.catholic.ac.kr.booking_platform.booking.constant.PayMethod;
+import com.catholic.ac.kr.booking_platform.booking.data.Booking;
+import com.catholic.ac.kr.booking_platform.booking.data.BookingRepository;
+import com.catholic.ac.kr.booking_platform.booking.dto.BookingRequest;
+import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackageRepository;
+import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
+import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@Component
+public class KakaoPayment extends AbstractPaymentHandler {
+    public KakaoPayment(BookingRepository bookingRepository, UserRepository userRepository, FacilityPackageRepository packageRepository) {
+        super(bookingRepository, userRepository, packageRepository);
+    }
+
+    @Override
+    public PayMethod getPayMethod() {
+        return PayMethod.KAKAO_PAY;
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse<String> processPayment(Long userId, BookingRequest request) {
+        Booking booking = new Booking();
+
+        setBasisBooking(booking, userId, request.getPackageId(), request.getUsageDate(),request.getStartTime());
+        booking.setPayMethod(getPayMethod());
+
+        bookingRepository.save(booking);
+
+        return buildResponseSuccess(getPayMethod());
+    }
+
+    @Override
+    public double discountWithPayMethod() {
+        return 0.1;
+    }
+}

@@ -1,5 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility_package.data;
 
+import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Table(
         name = "facility_package",
@@ -61,4 +63,10 @@ public abstract class FacilityPackage {
         this.totalCount = 0;
         this.active = true;
     }
+
+    public abstract LocalTime getPackageStartTime();
+
+    public abstract LocalTime getPackageEndTime();
+
+    public abstract void applyTimeToBooking(Booking booking, LocalTime requestStartTime);
 }
