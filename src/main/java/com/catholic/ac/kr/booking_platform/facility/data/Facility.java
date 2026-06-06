@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Table(
         name = "facility",
@@ -88,4 +89,6 @@ public abstract class Facility {
         if (address != null) this.address = address;
     }
 
+    public void validateOperatingHours(LocalTime startTime) {
+    }
 }

@@ -13,7 +13,6 @@ import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage
 import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackageRepository;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.AlreadyExistsException;
-import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
@@ -22,7 +21,6 @@ import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
     protected final BookingRepository bookingRepository;
@@ -42,7 +40,10 @@ public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
     protected void setBasisBooking(Booking booking, Long userId, BookingRequest request) {
         FacilityPackage facilityPackage = packageRepository.findById(request.getPackageId())
                 .orElseThrow(() -> new ResourceNotFoundException("Package not found"));
-        validatePackage(facilityPackage);
+        facilityPackage.validationPackage();
+
+        Facility facility = facilityPackage.getFacility();
+        facility.validateOperatingHours(request.getStartTime());
 
         PackageAvailability availability = getOrCreatePackageAvailability(
                 request.getPackageId(), request.getUsageDate(), facilityPackage);
@@ -73,14 +74,6 @@ public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
 
         facilityPackage.setTotalCount(facilityPackage.getTotalCount() + 1);
     }
-
-    private void validatePackage(FacilityPackage facilityPackage) {
-        if (!facilityPackage.isActive()) {
-            throw new BadRequestException("비활성한 패키지입니다");
-        }
-    }
-
-
 
     private PackageAvailability getOrCreatePackageAvailability(Long packageId, LocalDate targetDate, FacilityPackage facilityPackage) {
         try {

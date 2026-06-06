@@ -32,16 +32,6 @@ public class MotelPackage extends FacilityPackage {
     private LocalTime checkOut;
 
     @Override
-    public LocalTime getPackageStartTime() {
-        return this.checkIn;
-    }
-
-    @Override
-    public LocalTime getPackageEndTime() {
-        return this.checkOut;
-    }
-
-    @Override
     public void applyTimeToBooking(Booking booking, LocalTime requestStartTime) {
         booking.setStartTime(this.getCheckIn());
         booking.setEndTime(this.getCheckOut());

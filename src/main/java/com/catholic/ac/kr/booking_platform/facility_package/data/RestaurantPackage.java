@@ -35,16 +35,6 @@ public class RestaurantPackage extends FacilityPackage{
     private Set<RestaurantMenu> menus;
 
     @Override
-    public LocalTime getPackageStartTime() {
-        return null;
-    }
-
-    @Override
-    public LocalTime getPackageEndTime() {
-        return null;
-    }
-
-    @Override
     public void applyTimeToBooking(Booking booking, LocalTime requestStartTime) {
         if (requestStartTime == null) {
             throw new BadRequestException("예약 시간이 없습니다");

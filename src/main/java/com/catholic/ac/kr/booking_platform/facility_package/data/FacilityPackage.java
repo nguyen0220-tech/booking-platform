@@ -3,6 +3,7 @@ package com.catholic.ac.kr.booking_platform.facility_package.data;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -64,9 +65,11 @@ public abstract class FacilityPackage {
         this.active = true;
     }
 
-    public abstract LocalTime getPackageStartTime();
-
-    public abstract LocalTime getPackageEndTime();
-
     public abstract void applyTimeToBooking(Booking booking, LocalTime requestStartTime);
+
+    public void validationPackage(){
+        if (!this.isActive()){
+            throw new BadRequestException("비활성한 패키지입니다");
+        }
+    }
 }

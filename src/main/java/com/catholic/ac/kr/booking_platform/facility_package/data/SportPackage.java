@@ -28,16 +28,6 @@ public class SportPackage extends FacilityPackage {
     private LocalTime endTime;
 
     @Override
-    public LocalTime getPackageStartTime() {
-        return this.startTime;
-    }
-
-    @Override
-    public LocalTime getPackageEndTime() {
-        return this.endTime;
-    }
-
-    @Override
     public void applyTimeToBooking(Booking booking, LocalTime requestStartTim) {
         booking.setStartTime(this.getStartTime());
         booking.setEndTime(null);
