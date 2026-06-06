@@ -67,7 +67,7 @@ public abstract class FacilityPackage {
 
     public abstract void applyTimeToBooking(Booking booking, LocalTime requestStartTime);
 
-    public void validationPackage(){
+    public void validatePackage(){
         if (!this.isActive()){
             throw new BadRequestException("비활성한 패키지입니다");
         }

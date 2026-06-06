@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface FacilityPackageRepository extends JpaRepository<FacilityPackage, Long> {
     @Query("""
@@ -22,4 +24,9 @@ public interface FacilityPackageRepository extends JpaRepository<FacilityPackage
             WHERE fp.facility.id = :facilityId AND fp.active = :active
             """)
     Page<FacilityPackage> findByFacilityIdAndActive(Long facilityId, boolean active, Pageable pageable);
+
+    @Query("SELECT fp FROM FacilityPackage fp " +
+            "JOIN FETCH fp.facility f " +
+            "WHERE fp.id = :id")
+    Optional<FacilityPackage> findByIdWithFacility(@Param("id") Long id);
 }

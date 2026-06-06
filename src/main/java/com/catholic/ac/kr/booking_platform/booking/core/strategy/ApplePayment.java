@@ -1,9 +1,9 @@
 package com.catholic.ac.kr.booking_platform.booking.core.strategy;
 
 import com.catholic.ac.kr.booking_platform.booking.constant.PayMethod;
+import com.catholic.ac.kr.booking_platform.booking.core.PackageAvailabilityService;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingRepository;
-import com.catholic.ac.kr.booking_platform.booking.data.PackageAvailabilityRepository;
 import com.catholic.ac.kr.booking_platform.booking.dto.BookingRequest;
 import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackageRepository;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class ApplePayment extends AbstractPaymentHandler{
     public ApplePayment(BookingRepository bookingRepository, UserRepository userRepository,
-                        FacilityPackageRepository packageRepository, PackageAvailabilityRepository availabilityRepository) {
-        super(bookingRepository, userRepository, packageRepository, availabilityRepository);
+                        FacilityPackageRepository packageRepository, PackageAvailabilityService availabilityService) {
+        super(bookingRepository, userRepository, packageRepository, availabilityService);
     }
 
     @Override

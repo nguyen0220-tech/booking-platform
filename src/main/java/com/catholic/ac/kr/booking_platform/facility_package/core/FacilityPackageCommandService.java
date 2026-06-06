@@ -1,6 +1,7 @@
 package com.catholic.ac.kr.booking_platform.facility_package.core;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
+import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility_package.constant.FacilityPackageAct;
 import com.catholic.ac.kr.booking_platform.facility_package.core.strategy.FacilityPackageHandler;
 import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage;
@@ -45,12 +46,15 @@ public class FacilityPackageCommandService {
 
     @Transactional
     public ApiResponse<String> updateStatusPackage(Long userId, FacilityPackageUpdateRequest request) {
-        FacilityPackage facilityPackage = facilityPackageRepository.findById(request.getPackageId())
+        FacilityPackage facilityPackage = facilityPackageRepository.findByIdWithFacility(request.getPackageId())
                 .orElseThrow(() -> new ResourceNotFoundException("Facility package not found"));
 
         if (!facilityPackage.getFacility().getOwner().getId().equals(userId)) {
             throw new AccessDeniedException("소유자가 아닙니다");
         }
+
+        Facility facility = facilityPackage.getFacility();
+        facility.validateFacility();
 
         FacilityPackageAct act = request.getAct();
 
@@ -63,7 +67,6 @@ public class FacilityPackageCommandService {
             }
             default -> throw new BadRequestException("유효하지 않은 메서드입니다. " + act.name());
         }
-
     }
 
     private ApiResponse<String> activatePackage(FacilityPackage facilityPackage, FacilityPackageAct act) {

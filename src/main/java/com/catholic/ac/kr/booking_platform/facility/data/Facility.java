@@ -89,6 +89,12 @@ public abstract class Facility {
         if (address != null) this.address = address;
     }
 
+    public void validateFacility() {
+        if (this.isSuspended){
+            throw new IllegalStateException("정지된 시설입니다");
+        }
+    }
+
     public void validateOperatingHours(LocalTime startTime) {
     }
 }

@@ -2,61 +2,42 @@ package com.catholic.ac.kr.booking_platform.booking.core.strategy;
 
 import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
 import com.catholic.ac.kr.booking_platform.booking.constant.PayMethod;
+import com.catholic.ac.kr.booking_platform.booking.core.PackageAvailabilityService;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingRepository;
-import com.catholic.ac.kr.booking_platform.booking.data.PackageAvailability;
-import com.catholic.ac.kr.booking_platform.booking.data.PackageAvailabilityRepository;
 import com.catholic.ac.kr.booking_platform.booking.dto.BookingRequest;
-import com.catholic.ac.kr.booking_platform.facility.constant.FacilityType;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage;
 import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackageRepository;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
-import com.catholic.ac.kr.booking_platform.infrastructure.exception.AlreadyExistsException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
-import org.springframework.dao.DataIntegrityViolationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@RequiredArgsConstructor
 public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
     protected final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final FacilityPackageRepository packageRepository;
-    private final PackageAvailabilityRepository packageAvailabilityRepository;
-
-    public AbstractPaymentHandler(BookingRepository bookingRepository, UserRepository userRepository,
-                                  FacilityPackageRepository packageRepository, PackageAvailabilityRepository packageAvailabilityRepository) {
-        this.bookingRepository = bookingRepository;
-        this.userRepository = userRepository;
-        this.packageRepository = packageRepository;
-        this.packageAvailabilityRepository = packageAvailabilityRepository;
-
-    }
+    private final PackageAvailabilityService packageAvailabilityService;
 
     protected void setBasisBooking(Booking booking, Long userId, BookingRequest request) {
-        FacilityPackage facilityPackage = packageRepository.findById(request.getPackageId())
+        validateTargetUsageDate(request.getUsageDate());
+
+        FacilityPackage facilityPackage = packageRepository.findByIdWithFacility(request.getPackageId())
                 .orElseThrow(() -> new ResourceNotFoundException("Package not found"));
-        facilityPackage.validationPackage();
+        facilityPackage.validatePackage();
 
         Facility facility = facilityPackage.getFacility();
-        facility.validateOperatingHours(request.getStartTime());
+        facility.validateFacility();
+        facility.validateOperatingHours(request.getStartTime()); //only RESTAURANT
 
-        PackageAvailability availability = getOrCreatePackageAvailability(
-                request.getPackageId(), request.getUsageDate(), facilityPackage);
-
-        if (!facilityPackage.getFacilityType().equals(FacilityType.RESTAURANT)) {
-            if (availability.getBookedCount() >= 1) {
-                throw new AlreadyExistsException("예약된 패키지입니다");
-            }
-            availability.setBookedCount(availability.getBookedCount() + 1);
-            packageAvailabilityRepository.save(availability);
-        } else {
-            packageAvailabilityRepository.incrementBookedCount(request.getPackageId(), request.getUsageDate());
-        }
+        packageAvailabilityService.reserveSlot(facilityPackage, request.getUsageDate());
 
         //trả về một object giả (Proxy) chỉ chứa ID (name, email...trống rỗng.)
         User user = userRepository.getReferenceById(userId);
@@ -75,19 +56,10 @@ public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
         facilityPackage.setTotalCount(facilityPackage.getTotalCount() + 1);
     }
 
-    private PackageAvailability getOrCreatePackageAvailability(Long packageId, LocalDate targetDate, FacilityPackage facilityPackage) {
-        try {
-            return packageAvailabilityRepository.findByFacilityPackageIdAndTargetDate(packageId, targetDate)
-                    .orElseGet(() -> {
-                        PackageAvailability newAvailability = new PackageAvailability();
-                        newAvailability.setFacilityPackage(facilityPackage);
-                        newAvailability.setTargetDate(targetDate);
-                        newAvailability.setBookedCount(0);
-                        return packageAvailabilityRepository.saveAndFlush(newAvailability);
-                    });
-        } catch (DataIntegrityViolationException e) {
-            return packageAvailabilityRepository.findByFacilityPackageIdAndTargetDate(packageId, targetDate)
-                    .orElseThrow();
+    private void validateTargetUsageDate(LocalDate targetUsageDate) {
+        LocalDate now = LocalDate.now();
+        if (targetUsageDate.isBefore(now)) {
+            throw new IllegalStateException("선택한 날짜가 지난 날짜입니다. 오늘 (" + now + ")");
         }
     }
 
