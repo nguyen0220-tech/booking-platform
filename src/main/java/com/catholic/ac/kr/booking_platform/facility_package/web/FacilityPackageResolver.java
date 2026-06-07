@@ -37,6 +37,12 @@ public class FacilityPackageResolver {
         return facilityPackageService.getPackagesForManagement(userDetails, facilityId, page, size);
     }
 
+    @QueryMapping
+    public FacilityPackageDTO facilityPackage(@Argument Long packageId) {
+
+        return facilityPackageService.getFacilityPackage(packageId);
+    }
+
     @BatchMapping(typeName = "FacilityPackage", field = "packageTarget")
     public Mono<Map<FacilityPackageDTO, Object>> packageTarget(List<FacilityPackageDTO> facilityPackages) {
         Map<String, List<Long>> idsGroupByType = getUdsGroupByType(facilityPackages);

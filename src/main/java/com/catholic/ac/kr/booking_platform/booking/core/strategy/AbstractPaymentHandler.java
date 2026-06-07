@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @RequiredArgsConstructor
 public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
@@ -27,7 +26,7 @@ public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
     private final PackageAvailabilityService packageAvailabilityService;
 
     protected void setBasisBooking(Booking booking, Long userId, BookingRequest request) {
-        validateTargetUsageDate(request.getUsageDate());
+        booking.validateBookingTime(request.getUsageDate(), request.getStartTime());
 
         FacilityPackage facilityPackage = packageRepository.findByIdWithFacility(request.getPackageId())
                 .orElseThrow(() -> new ResourceNotFoundException("Package not found"));
@@ -54,13 +53,6 @@ public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
         booking.setBasisPrice(facilityPackage.getPrice());
 
         facilityPackage.setTotalCount(facilityPackage.getTotalCount() + 1);
-    }
-
-    private void validateTargetUsageDate(LocalDate targetUsageDate) {
-        LocalDate now = LocalDate.now();
-        if (targetUsageDate.isBefore(now)) {
-            throw new IllegalStateException("선택한 날짜가 지난 날짜입니다. 오늘 (" + now + ")");
-        }
     }
 
     private BigDecimal applyAmount(BigDecimal packageAmount) {

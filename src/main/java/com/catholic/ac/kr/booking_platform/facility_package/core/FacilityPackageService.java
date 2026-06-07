@@ -27,6 +27,14 @@ public class FacilityPackageService {
     private final MotelPackageRepository motelPackageRepository;
     private final RestaurantPackageRepository restaurantPackageRepository;
     private final FacilityRepository facilityRepository;
+
+    public FacilityPackageDTO getFacilityPackage(Long id) {
+        FacilityPackage facilityPackage = facilityPackageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Facility package not found"));
+
+        return FacilityPackageMapper.toFacilityPackageDTO(facilityPackage);
+    }
+
     public ListResponse<FacilityPackageDTO> getPackagesForManagement(
             UserDetailsImpl userDetails, Long facilityId, int page, int size) {
 

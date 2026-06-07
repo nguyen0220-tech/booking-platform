@@ -151,6 +151,7 @@ public class GlobalExceptionHandler {
         if (detail.contains("uni_username")) message = "사용중인 아이디입니다.";
         else if (detail.contains("uni_email")) message = "사용중인 이메일입니다.";
         else if (detail.contains("uni_phone")) message = "사용중인 휴대폰입니다.";
+        else if (detail.contains("unq_user_package_st")) message = "이 시간이 이미 예약되셨습니다.";
 
         ApiResponse<Void> exception = ApiResponse.exception(
                 HttpStatus.CONFLICT.value(),

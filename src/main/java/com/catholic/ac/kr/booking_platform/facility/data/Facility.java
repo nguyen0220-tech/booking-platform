@@ -90,8 +90,10 @@ public abstract class Facility {
     }
 
     public void validateFacility() {
-        if (this.isSuspended){
+        if (this.isSuspended) {
             throw new IllegalStateException("정지된 시설입니다");
+        } else if (!this.isActive()) {
+            throw new IllegalStateException("비활성한 시설입니다");
         }
     }
 

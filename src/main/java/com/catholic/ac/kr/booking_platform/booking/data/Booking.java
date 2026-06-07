@@ -21,7 +21,8 @@ import java.time.LocalTime;
                 @Index(columnList = "user_id")
         },
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"user_id", "package_id", "usage_date","start_time"})
+                @UniqueConstraint(columnNames = {"user_id", "package_id", "usage_date", "start_time"},
+                        name = "unq_user_package_st")
         }
 )
 @Entity
@@ -70,5 +71,21 @@ public class Booking {
     @PrePersist
     protected void create() {
         createdAt = LocalDateTime.now();
+    }
+
+    public void validateBookingTime(LocalDate targetUsageDate, LocalTime targetStartTime) {
+        LocalDate today = LocalDate.now();
+        if (targetUsageDate.isBefore(today)) {
+            throw new IllegalStateException("선택한 날짜가 지난 날짜입니다. 오늘 (" + today + ")");
+        }
+
+        if (targetStartTime != null) {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime requestDateTime = targetUsageDate.atTime(targetStartTime);
+
+            if (requestDateTime.isBefore(now)) {
+                throw new IllegalStateException("이미 지난 시간입니다.");
+            }
+        }
     }
 }

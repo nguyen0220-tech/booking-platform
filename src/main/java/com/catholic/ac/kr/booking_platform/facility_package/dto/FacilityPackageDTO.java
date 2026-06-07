@@ -14,9 +14,4 @@ public class FacilityPackageDTO {
     private String facilityType;
 
     private FacilityPackageInfoDetails infoDetails;
-
-    public FacilityPackageDTO(Long id, String facilityType) {
-        this.id = id;
-        this.facilityType = facilityType;
-    }
 }

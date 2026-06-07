@@ -1,5 +1,6 @@
 extend type Query {
     facilityPackages(facilityId:ID!, page:Int!, size:Int!):ListPackage
+    facilityPackage(packageId:ID!):FacilityPackage
 }
 
 type ListPackage{
@@ -12,6 +13,7 @@ type FacilityPackage{
     facilityType:String!
     infoDetails:PackageInfoDetails
     packageTarget:PackageTarget
+    selectedDate:[String]
 }
 
 type PackageInfoDetails{

@@ -21,11 +21,4 @@ public class BookingRequest {
 
     @NotNull(message = "입력 필수 항목입니다")
     private PayMethod payMethod;
-
-    public BookingRequest(Long packageId, LocalDate usageDate, LocalTime of, PayMethod payMethod) {
-        this.packageId = packageId;
-        this.usageDate = usageDate;
-        this.startTime = of;
-        this.payMethod = payMethod;
-    }
 }
