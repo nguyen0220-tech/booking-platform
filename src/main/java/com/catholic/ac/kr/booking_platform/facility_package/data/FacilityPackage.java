@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -65,7 +66,7 @@ public abstract class FacilityPackage {
         this.active = true;
     }
 
-    public abstract void applyTimeToBooking(Booking booking, LocalTime requestStartTime);
+    public abstract void applyTimeToBooking(Booking booking, LocalDate requestUsageDate, LocalTime requestStartTime);
 
     public void validatePackage(){
         if (!this.isActive()){

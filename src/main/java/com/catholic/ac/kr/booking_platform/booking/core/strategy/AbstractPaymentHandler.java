@@ -26,7 +26,7 @@ public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
     private final PackageAvailabilityService packageAvailabilityService;
 
     protected void setBasisBooking(Booking booking, Long userId, BookingRequest request) {
-        booking.validateBookingTime(request.getUsageDate(), request.getStartTime());
+        booking.validateUsageDate(request.getUsageDate());
 
         FacilityPackage facilityPackage = packageRepository.findByIdWithFacility(request.getPackageId())
                 .orElseThrow(() -> new ResourceNotFoundException("Package not found"));
@@ -43,7 +43,7 @@ public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
 
         booking.setUser(user);
         booking.setUsageDate(request.getUsageDate());
-        facilityPackage.applyTimeToBooking(booking, request.getStartTime());
+        facilityPackage.applyTimeToBooking(booking, request.getUsageDate(), request.getStartTime());
         booking.setFacilityPackage(facilityPackage);
         booking.setStatus(BookingStatus.PAID);
 

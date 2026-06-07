@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -32,8 +33,11 @@ public class MotelPackage extends FacilityPackage {
     private LocalTime checkOut;
 
     @Override
-    public void applyTimeToBooking(Booking booking, LocalTime requestStartTime) {
-        booking.setStartTime(this.getCheckIn());
+    public void applyTimeToBooking(Booking booking, LocalDate requestUsageDate, LocalTime requestStartTime) {
+        LocalTime actualStartTime = this.checkIn;
+        booking.validateBookingTime(requestUsageDate, actualStartTime);
+
+        booking.setStartTime(actualStartTime);
         booking.setEndTime(this.getCheckOut());
     }
 }

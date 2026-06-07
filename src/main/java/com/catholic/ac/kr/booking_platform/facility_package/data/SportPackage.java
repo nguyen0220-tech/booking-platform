@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -28,8 +29,11 @@ public class SportPackage extends FacilityPackage {
     private LocalTime endTime;
 
     @Override
-    public void applyTimeToBooking(Booking booking, LocalTime requestStartTim) {
-        booking.setStartTime(this.getStartTime());
-        booking.setEndTime(null);
+    public void applyTimeToBooking(Booking booking, LocalDate requestUsageDate, LocalTime requestStartTime) {
+        LocalTime actualStartTime = this.startTime;
+        booking.validateBookingTime(requestUsageDate, actualStartTime);
+
+        booking.setStartTime(actualStartTime);
+        booking.setEndTime(this.getEndTime());
     }
 }

@@ -73,19 +73,19 @@ public class Booking {
         createdAt = LocalDateTime.now();
     }
 
-    public void validateBookingTime(LocalDate targetUsageDate, LocalTime targetStartTime) {
+    public void validateUsageDate(LocalDate targetDate){
         LocalDate today = LocalDate.now();
-        if (targetUsageDate.isBefore(today)) {
+        if (targetDate.isBefore(today)) {
             throw new IllegalStateException("선택한 날짜가 지난 날짜입니다. 오늘 (" + today + ")");
         }
+    }
 
-        if (targetStartTime != null) {
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime requestDateTime = targetUsageDate.atTime(targetStartTime);
+    public void validateBookingTime(LocalDate targetUsageDate, LocalTime targetStartTime) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime requestDateTime = targetUsageDate.atTime(targetStartTime);
 
-            if (requestDateTime.isBefore(now)) {
-                throw new IllegalStateException("이미 지난 시간입니다.");
-            }
+        if (requestDateTime.isBefore(now)) {
+            throw new IllegalStateException("이미 지난 시간입니다. 마감 시간: "+targetStartTime);
         }
     }
 }

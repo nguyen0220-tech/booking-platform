@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -35,10 +36,12 @@ public class RestaurantPackage extends FacilityPackage{
     private Set<RestaurantMenu> menus;
 
     @Override
-    public void applyTimeToBooking(Booking booking, LocalTime requestStartTime) {
+    public void applyTimeToBooking(Booking booking, LocalDate requestUsageDate, LocalTime requestStartTime) {
         if (requestStartTime == null) {
             throw new BadRequestException("예약 시간이 없습니다");
         }
+        booking.validateBookingTime(requestUsageDate, requestStartTime);
         booking.setStartTime(requestStartTime);
+        booking.setEndTime(null);
     }
 }
