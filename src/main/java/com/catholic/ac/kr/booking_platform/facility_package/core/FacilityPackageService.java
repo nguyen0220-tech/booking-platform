@@ -77,6 +77,10 @@ public class FacilityPackageService {
         return new ListResponse<>(rs, new PageInfo(page, size, projections.hasNext()));
     }
 
+    public List<FacilityPackage> getAllPackages(List<Long> ids){
+        return  facilityPackageRepository.findAllById(ids);
+    }
+
     public List<SportPackageDTO> getSportPackages(List<Long> packageIds) {
         return sportPackageRepository.findAllByIds(packageIds);
     }

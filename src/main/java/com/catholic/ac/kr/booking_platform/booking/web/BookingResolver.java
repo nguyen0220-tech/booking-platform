@@ -1,13 +1,29 @@
 package com.catholic.ac.kr.booking_platform.booking.web;
 
+import com.catholic.ac.kr.booking_platform.booking.core.BookingQueryService;
 import com.catholic.ac.kr.booking_platform.booking.core.BookingService;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
+import com.catholic.ac.kr.booking_platform.booking.data.BookingDTO;
+import com.catholic.ac.kr.booking_platform.facility_package.core.FacilityPackageService;
+import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage;
 import com.catholic.ac.kr.booking_platform.facility_package.dto.FacilityPackageDTO;
+import com.catholic.ac.kr.booking_platform.facility_package.mapper.FacilityPackageMapper;
+import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
+import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
+import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
+import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
+import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
+import java.security.Principal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,6 +32,73 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingResolver {
     private final BookingService bookingService;
+    private final BookingQueryService bookingQueryService;
+    private final FacilityPackageService facilityPackageService;
+
+    @QueryMapping
+    public ListResponse<BookingDTO> bookings(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Argument RoleName roleName,
+            @Argument int page,
+            @Argument int size) {
+        return bookingQueryService.getBookingsWithRole(userDetails.getId(),roleName, page, size);
+    }
+
+    @SchemaMapping(typeName = "Booking")
+    public UserDTO user(@AuthenticationPrincipal UserDetailsImpl userDetails, BookingDTO booking) {
+
+        if (!hasPermission(userDetails, booking)) {
+            return null;
+        }
+
+        return new UserDTO(booking.getUserId());
+    }
+
+    private boolean hasPermission(UserDetailsImpl userDetails, BookingDTO booking) {
+        Long currentUserId = userDetails.getId();
+        boolean myBooking = currentUserId.equals(booking.getUserId());
+        boolean isAdmin = SecurityUtils.isAdmin(userDetails);
+        boolean facilityOwner = currentUserId.equals(booking.getFacilityPackageOwnerId());
+
+        return myBooking || isAdmin || facilityOwner;
+    }
+
+
+    @BatchMapping(typeName = "Booking")
+    public Map<BookingDTO, FacilityPackageDTO> packageInfo(Principal principal, List<BookingDTO> bookings) {
+        UserDetailsImpl userDetails = SecurityUtils.getUserDetails(principal);
+
+        if (userDetails == null) {
+            return null;
+        }
+
+        List<Long> packageIdsAuthorized = bookings.stream()
+                .filter(b -> hasPermission(userDetails, b))
+                .map(BookingDTO::getFacilityPackageId)
+                .toList();
+
+        Map<Long, FacilityPackageDTO> facilityPackageMap = new HashMap<>();
+
+        if (!packageIdsAuthorized.isEmpty()) {
+            List<FacilityPackage> packages = facilityPackageService.getAllPackages(packageIdsAuthorized);
+            facilityPackageMap = packages.stream()
+                    .collect(Collectors.toMap(
+                            FacilityPackage::getId,
+                            FacilityPackageMapper::toFacilityPackageDTO
+                    ));
+
+        }
+
+        Map<BookingDTO, FacilityPackageDTO> result = new HashMap<>();
+        for (BookingDTO booking : bookings) {
+            if (hasPermission(userDetails, booking)) {
+                result.put(booking, facilityPackageMap.get(booking.getFacilityPackageId()));
+            } else
+                result.put(booking, null);
+        }
+
+        return result;
+    }
 
     @BatchMapping(typeName = "FacilityPackage", field = "selectedDate")
     public Map<FacilityPackageDTO, List<LocalDate>> selectedDate(List<FacilityPackageDTO> facilityPackages) {

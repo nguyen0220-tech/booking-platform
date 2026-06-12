@@ -7,13 +7,14 @@ import lombok.NonNull;
 import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 public class GraphqlExceptionHandler extends DataFetcherExceptionResolverAdapter {
-    private final Map<Class<? extends Throwable>, ExceptionResolverStrategy<?>> strategyMap;
+    private final Map<Class<? extends Serializable>, ExceptionResolverStrategy<?>> strategyMap;
     public GraphqlExceptionHandler(List<ExceptionResolverStrategy<?>> strategies) {
         this.strategyMap = strategies.stream()
                 .collect(Collectors.toMap(

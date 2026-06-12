@@ -8,7 +8,7 @@ import org.springframework.graphql.execution.ErrorType;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConstraintViolationExceptionGraphqlException implements ExceptionResolverStrategy<ConstraintViolationException> {
+public class ConstraintViolationExceptionGraphql implements ExceptionResolverStrategy<ConstraintViolationException> {
     @Override
     public GraphQLError resolve(ConstraintViolationException ex, DataFetchingEnvironment env) {
         String message = ex.getConstraintViolations().stream()

@@ -1,0 +1,24 @@
+extend type Query {
+    bookings(roleName:RoleName, page:Int!, size:Int!):ListBooking
+
+}
+
+type ListBooking{
+    data:[Booking]
+    pageInfo:PageInfo
+}
+
+type Booking{
+    id:ID!
+    amount: BigDecimal!
+    basisPrice: BigDecimal!
+    usageDate: String!
+    startTime: String!
+    endTime: String
+    status: String!
+    payMethod: String!
+    createdAt: String!
+
+    user:User
+    packageInfo:FacilityPackage
+}

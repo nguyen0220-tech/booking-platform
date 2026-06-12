@@ -1,26 +1,26 @@
 package com.catholic.ac.kr.booking_platform.infrastructure.exception.graphql.strategy;
 
 import graphql.GraphQLError;
-import graphql.GraphQLException;
 import graphql.GraphqlErrorBuilder;
 import graphql.schema.DataFetchingEnvironment;
 import org.springframework.graphql.execution.ErrorType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GraphQLExceptionGraphqlException implements ExceptionResolverStrategy<GraphQLException> {
+public class AccessDeniedExceptionGraphql implements ExceptionResolverStrategy<AccessDeniedException> {
     @Override
-    public GraphQLError resolve(GraphQLException ex, DataFetchingEnvironment env) {
+    public GraphQLError resolve(AccessDeniedException ex, DataFetchingEnvironment env) {
         return GraphqlErrorBuilder.newError()
-                .errorType(ErrorType.BAD_REQUEST)
-                .message(ex.getMessage())
+                .errorType(ErrorType.FORBIDDEN)
+                .message("접속 권한이 없습니다." + ex.getMessage())
                 .path(env.getExecutionStepInfo().getPath())
-                .location(env.getField().getSourceLocation())
                 .build();
     }
 
     @Override
-    public Class<GraphQLException> getExceptionClass() {
-        return GraphQLException.class;
+    public Class<AccessDeniedException> getExceptionClass() {
+        return AccessDeniedException.class;
     }
+
 }
