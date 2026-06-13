@@ -45,4 +45,18 @@ public class SecurityUtils {
         } else
             return false;
     }
+
+    public static boolean isProvider(Principal principal) {
+        UserDetailsImpl userDetails;
+
+        if (principal instanceof UsernamePasswordAuthenticationToken token
+                && token.getPrincipal() instanceof UserDetailsImpl) {
+            userDetails = (UserDetailsImpl) token.getPrincipal();
+
+            return userDetails.getAuthorities().stream()
+                    .anyMatch(authority
+                            -> Objects.equals(authority.getAuthority(), "ROLE_PROVIDER"));
+        }
+        return false;
+    }
 }

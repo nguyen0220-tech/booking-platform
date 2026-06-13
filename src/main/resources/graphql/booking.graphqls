@@ -1,6 +1,6 @@
 extend type Query {
     bookings(roleName:RoleName, page:Int!, size:Int!):ListBooking
-
+    booking(bookingId:ID!):Booking
 }
 
 type ListBooking{
@@ -21,4 +21,5 @@ type Booking{
 
     user:User
     packageInfo:FacilityPackage
+    facility:Facility
 }

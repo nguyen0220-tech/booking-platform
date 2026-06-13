@@ -7,6 +7,7 @@ import com.catholic.ac.kr.booking_platform.booking.data.BookingRepository;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,19 @@ public class BookingQueryService {
     );
     private final BookingRepository bookingRepository;
 
+    public BookingDTO getBookingById(Long userId, Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("booking not found"));
+
+        //dự kiến sẽ phân quyền chỗ này: nếu là admin/ chủ của cơ sở cũng sẽ xem được chi tiết booking: sẽ cần id cua chủ
+        // bằng cách lấy từ booking
+        if (!userId.equals(booking.getUser().getId())) {
+            throw new AccessDeniedException("본 예약의 해당자가 아닙니다");
+        }
+
+        return BookingMapper.toBookingDTO(booking);
+    }
+
     public ListResponse<BookingDTO> getBookingsWithRole(Long entityId, RoleName roleName, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
@@ -46,6 +60,12 @@ public class BookingQueryService {
     }
 
     private ListResponse<BookingDTO> getBookingsByFacilityOwnerId(Long facilityOwnerId, Pageable pageable) {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        boolean isOwner = SecurityUtils.isProvider(principal);
+        if (!isOwner) {
+            throw new AccessDeniedException("제공자의 데이터입니다");
+        }
+
         Page<Booking> bookingPage = bookingRepository
                 .findByOwnerIdWithPackageAndFacility(facilityOwnerId, pageable);
 
@@ -58,7 +78,7 @@ public class BookingQueryService {
         if (!isAdmin) {
             throw new AccessDeniedException("관리자의 데이터입니다");
         }
-        
+
         Page<Booking> bookingPage = bookingRepository.findAll(pageable);
 
         return toListResponse(bookingPage, pageable);

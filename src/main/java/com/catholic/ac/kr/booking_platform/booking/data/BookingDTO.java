@@ -17,6 +17,7 @@ public class BookingDTO {
     private Long userId;
     private Long facilityPackageId;
     private Long facilityPackageOwnerId;
+    private Long facilityId;
 
     private BigDecimal amount;
     private BigDecimal basisPrice;

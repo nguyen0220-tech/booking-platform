@@ -9,6 +9,15 @@ import com.catholic.ac.kr.booking_platform.facility.projection.FacilityRegistrat
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
 
 public class FacilityMapper {
+    public static FacilityDTO toFacilityDTO(Facility facility) {
+
+        return new FacilityDTO(
+                facility.getId(),
+                facility.getFacilityType().name(),
+                facility.getOwner().getId()
+        );
+    }
+
     public static FacilityDTO toFacilityDTO(FacilitySummaryProjection facilitySummaryProjection) {
 
         return new FacilityDTO(

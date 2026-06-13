@@ -4,6 +4,10 @@ import com.catholic.ac.kr.booking_platform.booking.core.BookingQueryService;
 import com.catholic.ac.kr.booking_platform.booking.core.BookingService;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingDTO;
+import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
+import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
+import com.catholic.ac.kr.booking_platform.facility.data.Facility;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
 import com.catholic.ac.kr.booking_platform.facility_package.core.FacilityPackageService;
 import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage;
 import com.catholic.ac.kr.booking_platform.facility_package.dto.FacilityPackageDTO;
@@ -34,6 +38,7 @@ public class BookingResolver {
     private final BookingService bookingService;
     private final BookingQueryService bookingQueryService;
     private final FacilityPackageService facilityPackageService;
+    private final FacilityQueryService facilityQueryService;
 
     @QueryMapping
     public ListResponse<BookingDTO> bookings(
@@ -41,7 +46,12 @@ public class BookingResolver {
             @Argument RoleName roleName,
             @Argument int page,
             @Argument int size) {
-        return bookingQueryService.getBookingsWithRole(userDetails.getId(),roleName, page, size);
+        return bookingQueryService.getBookingsWithRole(userDetails.getId(), roleName, page, size);
+    }
+
+    @QueryMapping
+    public BookingDTO booking(@AuthenticationPrincipal UserDetailsImpl userDetails,@Argument Long bookingId){
+        return bookingQueryService.getBookingById(userDetails.getId(), bookingId);
     }
 
     @SchemaMapping(typeName = "Booking")
@@ -98,6 +108,27 @@ public class BookingResolver {
         }
 
         return result;
+    }
+
+    @BatchMapping(typeName = "Booking")
+    public Map<BookingDTO, FacilityDTO> facility(List<BookingDTO> bookings) {
+        List<Long> facilityIds = bookings.stream()
+                .map(BookingDTO::getFacilityId)
+                .toList();
+
+        List<Facility> facilities = facilityQueryService.getFacilityByIds(facilityIds);
+
+        Map<Long, FacilityDTO> map = facilities.stream()
+                .collect(Collectors.toMap(
+                        Facility::getId,
+                        FacilityMapper::toFacilityDTO
+                ));
+
+        return bookings.stream()
+                .collect(Collectors.toMap(
+                        b->b,
+                        b-> map.get(b.getFacilityId())
+                ));
     }
 
     @BatchMapping(typeName = "FacilityPackage", field = "selectedDate")
