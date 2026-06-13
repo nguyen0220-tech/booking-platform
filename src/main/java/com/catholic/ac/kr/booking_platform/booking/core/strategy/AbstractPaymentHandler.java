@@ -42,6 +42,8 @@ public abstract class AbstractPaymentHandler implements PaymentGatewayHandler {
         User user = userRepository.getReferenceById(userId);
 
         booking.setUser(user);
+        booking.setFacilityOwnerId(facility.getOwner().getId());
+        booking.setFacilityId(facility.getId());
         booking.setUsageDate(request.getUsageDate());
         facilityPackage.applyTimeToBooking(booking, request.getUsageDate(), request.getStartTime());
         booking.setFacilityPackage(facilityPackage);

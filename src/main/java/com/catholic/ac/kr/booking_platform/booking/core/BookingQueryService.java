@@ -34,17 +34,23 @@ public class BookingQueryService {
     );
     private final BookingRepository bookingRepository;
 
-    public BookingDTO getBookingById(Long userId, Long bookingId) {
+    public BookingDTO getBookingById(Long currentUserId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("booking not found"));
 
-        //dự kiến sẽ phân quyền chỗ này: nếu là admin/ chủ của cơ sở cũng sẽ xem được chi tiết booking: sẽ cần id cua chủ
-        // bằng cách lấy từ booking
-        if (!userId.equals(booking.getUser().getId())) {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = SecurityUtils.isAdmin(principal);
+        boolean isFacilityOwner = currentUserId.equals(booking.getFacilityOwnerId());
+
+        if (!currentUserId.equals(booking.getUser().getId()) &&  !isAdmin && !isFacilityOwner) {
             throw new AccessDeniedException("본 예약의 해당자가 아닙니다");
         }
 
         return BookingMapper.toBookingDTO(booking);
+    }
+
+    public List<Booking> getAllByPackageIds( List<Long> packageIds) {
+        return bookingRepository.findByFacilityPackageIds(packageIds);
     }
 
     public ListResponse<BookingDTO> getBookingsWithRole(Long entityId, RoleName roleName, int page, int size) {
@@ -54,7 +60,7 @@ public class BookingQueryService {
     }
 
     private ListResponse<BookingDTO> getBookingsByUserId(Long userId, Pageable pageable) {
-        Page<Booking> bookingPage = bookingRepository.findByUserIdWithPackageAndFacility(userId, pageable);
+        Page<Booking> bookingPage = bookingRepository.findByUserId(userId, pageable);
 
         return toListResponse(bookingPage, pageable);
     }
@@ -67,7 +73,7 @@ public class BookingQueryService {
         }
 
         Page<Booking> bookingPage = bookingRepository
-                .findByOwnerIdWithPackageAndFacility(facilityOwnerId, pageable);
+                .findByFacilityOwnerId(facilityOwnerId, pageable);
 
         return toListResponse(bookingPage, pageable);
     }
@@ -90,6 +96,7 @@ public class BookingQueryService {
 
     private ListResponse<BookingDTO> toListResponse(Page<Booking> bookingPage, Pageable pageable) {
         List<BookingDTO> bookings = bookingPage.map(BookingMapper::toBookingDTO).getContent();
+
         return new ListResponse<>(bookings,
                 new PageInfo(pageable.getPageNumber(), pageable.getPageSize(),
                         bookingPage.hasNext(), bookingPage.getTotalElements(), bookingPage.getTotalPages()));

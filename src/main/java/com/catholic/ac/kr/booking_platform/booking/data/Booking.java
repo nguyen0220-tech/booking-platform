@@ -18,7 +18,8 @@ import java.time.LocalTime;
 @Table(
         name = "bookings",
         indexes = {
-                @Index(columnList = "user_id")
+                @Index(columnList = "user_id"),
+                @Index(columnList = "facility_owner_id")
         },
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"user_id", "package_id", "usage_date", "start_time"},
@@ -42,6 +43,12 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "package_id", nullable = false)
     private FacilityPackage facilityPackage;
+
+    @Column(nullable = false)
+    private Long facilityOwnerId; //Chuẩn hóa ngược (Denormalization)
+
+    @Column(nullable = false)
+    private Long facilityId; //Denormalization
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -73,7 +80,7 @@ public class Booking {
         createdAt = LocalDateTime.now();
     }
 
-    public void validateUsageDate(LocalDate targetDate){
+    public void validateUsageDate(LocalDate targetDate) {
         LocalDate today = LocalDate.now();
         if (targetDate.isBefore(today)) {
             throw new IllegalStateException("선택한 날짜가 지난 날짜입니다. 오늘 (" + today + ")");
@@ -85,7 +92,7 @@ public class Booking {
         LocalDateTime requestDateTime = targetUsageDate.atTime(targetStartTime);
 
         if (requestDateTime.isBefore(now)) {
-            throw new IllegalStateException("이미 지난 시간입니다. 마감 시간: "+targetStartTime);
+            throw new IllegalStateException("이미 지난 시간입니다. 마감 시간: " + targetStartTime);
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.catholic.ac.kr.booking_platform.booking.web;
 
 import com.catholic.ac.kr.booking_platform.booking.core.BookingQueryService;
-import com.catholic.ac.kr.booking_platform.booking.core.BookingService;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingDTO;
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 public class BookingResolver {
-    private final BookingService bookingService;
     private final BookingQueryService bookingQueryService;
     private final FacilityPackageService facilityPackageService;
     private final FacilityQueryService facilityQueryService;
@@ -68,7 +66,7 @@ public class BookingResolver {
         Long currentUserId = userDetails.getId();
         boolean myBooking = currentUserId.equals(booking.getUserId());
         boolean isAdmin = SecurityUtils.isAdmin(userDetails);
-        boolean facilityOwner = currentUserId.equals(booking.getFacilityPackageOwnerId());
+        boolean facilityOwner = currentUserId.equals(booking.getFacilityOwnerId());
 
         return myBooking || isAdmin || facilityOwner;
     }
@@ -138,7 +136,7 @@ public class BookingResolver {
                 .toList();
 
         System.out.println("packageIds " + packageIds);
-        List<Booking> bookings = bookingService.getAllByPackageIds(packageIds);
+        List<Booking> bookings = bookingQueryService.getAllByPackageIds(packageIds);
 
         Map<Long, List<LocalDate>> map = bookings.stream()
                 .collect(Collectors.groupingBy(

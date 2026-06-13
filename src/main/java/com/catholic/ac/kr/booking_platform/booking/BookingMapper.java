@@ -10,11 +10,8 @@ public class BookingMapper {
         bookingDTO.setId(booking.getId());
         bookingDTO.setUserId(booking.getUser().getId());
         bookingDTO.setFacilityPackageId(booking.getFacilityPackage().getId());
-
-        Long owner = booking.getFacilityPackage().getFacility().getOwner().getId();
-        bookingDTO.setFacilityPackageOwnerId(owner);
-
-        bookingDTO.setFacilityId(booking.getFacilityPackage().getFacility().getId());
+        bookingDTO.setFacilityOwnerId(booking.getFacilityOwnerId());
+        bookingDTO.setFacilityId(booking.getFacilityId());
         bookingDTO.setAmount(booking.getAmount());
         bookingDTO.setBasisPrice(booking.getBasisPrice());
         bookingDTO.setUsageDate(booking.getUsageDate());

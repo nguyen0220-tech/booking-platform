@@ -18,17 +18,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByFacilityPackageIds(@Param("facilityPackageId") List<Long> facilityPackageId);
 
     @Query(value = "SELECT b FROM Booking b " +
-            "JOIN FETCH b.facilityPackage fp " +
-            "JOIN FETCH fp.facility f " +
             "WHERE b.user.id = :userId",
             countQuery = "SELECT count(b) FROM Booking b WHERE b.user.id = :userId")
-    Page<Booking> findByUserIdWithPackageAndFacility(@Param("userId") Long userId, Pageable pageable);
+    Page<Booking> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
     @Query(value = "SELECT b FROM Booking b " +
-            "JOIN FETCH b.facilityPackage fp " +
-            "JOIN FETCH fp.facility f " +
-            "WHERE f.owner.id = :facilityOwnerId")
-    Page<Booking> findByOwnerIdWithPackageAndFacility(@Param("facilityOwnerId") Long facilityOwnerId, Pageable pageable);
-
-
+            "WHERE b.facilityOwnerId = :facilityOwnerId")
+    Page<Booking> findByFacilityOwnerId(@Param("facilityOwnerId") Long facilityOwnerId, Pageable pageable);
 }
