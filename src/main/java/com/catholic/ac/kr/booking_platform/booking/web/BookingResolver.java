@@ -135,7 +135,6 @@ public class BookingResolver {
                 .map(FacilityPackageDTO::getId)
                 .toList();
 
-        System.out.println("packageIds " + packageIds);
         List<Booking> bookings = bookingQueryService.getAllByPackageIds(packageIds);
 
         Map<Long, List<LocalDate>> map = bookings.stream()

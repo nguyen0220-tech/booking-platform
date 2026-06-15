@@ -7,10 +7,7 @@ import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.U
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("booking")
@@ -22,7 +19,14 @@ public class BookingController {
     @PostMapping
     public ApiResponse<String> createBooking(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody @Valid BookingRequest bookingRequest){
+            @RequestBody @Valid BookingRequest bookingRequest) {
         return bookingService.createBooking(userDetails.getId(), bookingRequest);
+    }
+
+    @PutMapping
+    public ApiResponse<String> cancelBooking(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam Long bookingId) {
+        return bookingService.cancelBooking(userDetails.getId(), bookingId);
     }
 }

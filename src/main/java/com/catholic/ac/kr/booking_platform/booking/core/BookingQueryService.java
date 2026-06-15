@@ -1,6 +1,7 @@
 package com.catholic.ac.kr.booking_platform.booking.core;
 
 import com.catholic.ac.kr.booking_platform.booking.BookingMapper;
+import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingDTO;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingRepository;
@@ -50,7 +51,7 @@ public class BookingQueryService {
     }
 
     public List<Booking> getAllByPackageIds( List<Long> packageIds) {
-        return bookingRepository.findByFacilityPackageIds(packageIds);
+        return bookingRepository.findByFacilityPackageIdsAndStatus(packageIds, BookingStatus.PAID);
     }
 
     public ListResponse<BookingDTO> getBookingsWithRole(Long entityId, RoleName roleName, int page, int size) {

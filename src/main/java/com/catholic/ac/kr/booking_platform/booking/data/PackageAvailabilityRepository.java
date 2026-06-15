@@ -18,4 +18,6 @@ public interface PackageAvailabilityRepository extends JpaRepository<PackageAvai
             "WHERE p.facilityPackage.id = :packageId AND p.targetDate = :targetDate")
     void incrementBookedCount(@Param("packageId") Long packageId, @Param("targetDate") LocalDate targetDate);
 
+    @Modifying
+    void deleteByFacilityPackageIdAndTargetDate(Long facilityPackageId, LocalDate targetDate);
 }
