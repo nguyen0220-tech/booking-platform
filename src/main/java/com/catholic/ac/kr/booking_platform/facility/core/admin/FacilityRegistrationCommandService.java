@@ -82,10 +82,10 @@ public class FacilityRegistrationCommandService {
     @PreAuthorize("hasRole('ADMIN')")
     @CacheEvict(value = "registrationStatus", allEntries = true)
     public ApiResponse<String> handleFacilityRegistration(Long adminId, FacilityRegistrationRequest request) {
-        User admin = userRepository.findById(adminId)
-                .orElseThrow(() -> new ResourceNotFoundException("admin not found"));
+        User admin = userRepository.getReferenceById(adminId);
 
-        FacilityRegistration registration = facilityRegistrationRepository.findById(request.getId())
+        FacilityRegistration registration = facilityRegistrationRepository
+                .findByFacilityIdWithFacilityWithOwner(request.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Facility Approval Not Found"));
 
         FacilityRegistrationState state = registrationStateMap.get(registration.getStatus());
