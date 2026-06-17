@@ -42,4 +42,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("targetStatus") BookingStatus targetStatus,
             @Param("today") LocalDate today,
             @Param("bookingStatus") BookingStatus bookingStatus);
+
+    @Query("""
+            SELECT b
+            FROM Booking b
+            WHERE b.user.id = :userId AND b.usageDate <= :threeDaysLater
+            AND b.usageDate >= :today AND b.status = :status
+            """)
+    List<Booking> findAllWithinNext3Days(@Param("userId") Long userId, @Param("threeDaysLater") LocalDate threeDaysLater,
+                                         @Param("today") LocalDate today, @Param("status") BookingStatus status);
 }

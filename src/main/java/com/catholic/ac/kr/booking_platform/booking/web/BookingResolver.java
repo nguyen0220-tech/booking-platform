@@ -48,7 +48,14 @@ public class BookingResolver {
     }
 
     @QueryMapping
-    public BookingDTO booking(@AuthenticationPrincipal UserDetailsImpl userDetails,@Argument Long bookingId){
+    public ListResponse<BookingDTO> upcomingBookings(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Argument long daysLatter) {
+        return bookingQueryService.getUpcomingBookings(userDetails.getId(), daysLatter);
+    }
+
+    @QueryMapping
+    public BookingDTO booking(@AuthenticationPrincipal UserDetailsImpl userDetails, @Argument Long bookingId) {
         return bookingQueryService.getBookingById(userDetails.getId(), bookingId);
     }
 
@@ -124,8 +131,8 @@ public class BookingResolver {
 
         return bookings.stream()
                 .collect(Collectors.toMap(
-                        b->b,
-                        b-> map.get(b.getFacilityId())
+                        b -> b,
+                        b -> map.get(b.getFacilityId())
                 ));
     }
 

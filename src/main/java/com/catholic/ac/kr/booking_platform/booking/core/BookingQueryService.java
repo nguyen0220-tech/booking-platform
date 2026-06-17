@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -43,14 +44,14 @@ public class BookingQueryService {
         boolean isAdmin = SecurityUtils.isAdmin(principal);
         boolean isFacilityOwner = currentUserId.equals(booking.getFacilityOwnerId());
 
-        if (!currentUserId.equals(booking.getUser().getId()) &&  !isAdmin && !isFacilityOwner) {
+        if (!currentUserId.equals(booking.getUser().getId()) && !isAdmin && !isFacilityOwner) {
             throw new AccessDeniedException("본 예약의 해당자가 아닙니다");
         }
 
         return BookingMapper.toBookingDTO(booking);
     }
 
-    public List<Booking> getAllByPackageIds( List<Long> packageIds) {
+    public List<Booking> getAllByPackageIds(List<Long> packageIds) {
         return bookingRepository.findByFacilityPackageIdsAndStatus(packageIds, BookingStatus.PAID);
     }
 
@@ -101,5 +102,18 @@ public class BookingQueryService {
         return new ListResponse<>(bookings,
                 new PageInfo(pageable.getPageNumber(), pageable.getPageSize(),
                         bookingPage.hasNext(), bookingPage.getTotalElements(), bookingPage.getTotalPages()));
+    }
+
+    public ListResponse<BookingDTO> getUpcomingBookings(Long userId, long daysLater) {
+        LocalDate today = LocalDate.now();
+        LocalDate threeDaysLater = LocalDate.now().plusDays(daysLater);
+
+        List<BookingDTO> result = bookingRepository
+                .findAllWithinNext3Days(userId, threeDaysLater, today, BookingStatus.PAID)
+                .stream()
+                .map(BookingMapper::toBookingDTO)
+                .toList();
+
+        return new ListResponse<>(result);
     }
 }

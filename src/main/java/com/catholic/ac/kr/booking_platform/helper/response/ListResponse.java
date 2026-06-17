@@ -14,6 +14,10 @@ public class ListResponse<T> {
     private List<T> data;
     private PageInfo pageInfo;
 
+    public ListResponse(List<T> data){
+        this.data = data;
+    }
+
     public ListResponse(List<T> data, PageInfo pageInfo) {
         this.data = data;
         this.pageInfo = pageInfo;

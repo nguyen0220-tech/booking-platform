@@ -1,5 +1,6 @@
 extend type Query {
     bookings(roleName:RoleName, page:Int!, size:Int!):ListBooking
+    upcomingBookings(daysLatter:Int!):ListBooking
     booking(bookingId:ID!):Booking
 }
 
