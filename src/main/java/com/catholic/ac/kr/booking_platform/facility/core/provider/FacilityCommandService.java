@@ -41,8 +41,7 @@ public class FacilityCommandService {
     @PreAuthorize("hasRole('PROVIDER')")
     @CacheEvict(value = "facilityPage", allEntries = true)
     public ApiResponse<String> createFacility(Long ownerId, FacilityRequest request) {
-        User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new ResourceNotFoundException("user not found"));
+        User owner = userRepository.getReferenceById(ownerId);
 
         FacilityHandler<?> handler = facilityHandlers.get(request.getType());
         if (handler == null) {

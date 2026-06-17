@@ -134,7 +134,7 @@ public class Booking {
                 && now.isBefore(startDateTime);
 
         if (!isBeforeDeadline && !isSameDayBooking) {
-            throw new IllegalStateException("이용날짜 1일 전에 취소 가능 (이용날짜 " + this.usageDate + ")" +
+            throw new IllegalStateException("이용날짜 1일 전에 취소 가능 (이용날짜 " + this.usageDate + ")." +
                     "당일 예약은 시작시간 전에 취소 가능");
         }
 

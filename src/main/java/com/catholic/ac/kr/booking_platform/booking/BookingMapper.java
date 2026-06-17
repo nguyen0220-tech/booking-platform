@@ -2,6 +2,9 @@ package com.catholic.ac.kr.booking_platform.booking;
 
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingDTO;
+import com.catholic.ac.kr.booking_platform.booking.core.event.BookingCancelledEvent;
+
+import java.time.LocalDate;
 
 public class BookingMapper {
     public static BookingDTO toBookingDTO(Booking booking) {
@@ -22,5 +25,16 @@ public class BookingMapper {
         bookingDTO.setCreatedAt(booking.getCreatedAt());
 
         return bookingDTO;
+    }
+
+    public static BookingCancelledEvent toBookingCancelledEvent(Booking booking) {
+        BookingCancelledEvent event = new BookingCancelledEvent();
+
+        event.setUserId(booking.getUser().getId());
+        event.setAmount(booking.getAmount());
+        event.setUsageDate(booking.getUsageDate());
+        event.setCancelDate(LocalDate.now());
+
+        return event;
     }
 }

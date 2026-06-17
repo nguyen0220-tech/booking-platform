@@ -1,5 +1,6 @@
 package com.catholic.ac.kr.booking_platform.booking.core;
 
+import com.catholic.ac.kr.booking_platform.booking.BookingMapper;
 import com.catholic.ac.kr.booking_platform.booking.constant.PayMethod;
 import com.catholic.ac.kr.booking_platform.booking.core.strategy.PaymentGatewayHandler;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
@@ -10,6 +11,7 @@ import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.UnsupportedStrategyException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +26,17 @@ public class BookingService {
     private final Map<PayMethod, PaymentGatewayHandler> gatewayHandlers;
     private final BookingRepository bookingRepository;
     private final PackageAvailabilityRepository packageAvailabilityRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public BookingService(List<PaymentGatewayHandler> gatewayList, BookingRepository bookingRepository, PackageAvailabilityRepository packageAvailabilityRepository) {
+    public BookingService(List<PaymentGatewayHandler> gatewayList, BookingRepository bookingRepository,
+                          PackageAvailabilityRepository packageAvailabilityRepository, ApplicationEventPublisher publisher) {
         this.gatewayHandlers = gatewayList.stream()
                 .collect(Collectors.toMap(
                         PaymentGatewayHandler::getPayMethod, g -> g
                 ));
         this.bookingRepository = bookingRepository;
         this.packageAvailabilityRepository = packageAvailabilityRepository;
+        this.publisher = publisher;
     }
 
     public ApiResponse<String> createBooking(Long userId, BookingRequest request) {
@@ -56,6 +61,8 @@ public class BookingService {
         Long facilityPackageId = facilityPackage.getId();
         LocalDate usageDate = booking.getUsageDate();
         packageAvailabilityRepository.deleteByFacilityPackageIdAndTargetDate(facilityPackageId, usageDate);
+
+        publisher.publishEvent(BookingMapper.toBookingCancelledEvent(booking));
 
         return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                 "예약이 취소되었습니다");
