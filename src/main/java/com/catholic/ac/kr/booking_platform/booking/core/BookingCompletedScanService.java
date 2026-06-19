@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class BookingCompletedScanService {
     private final BookingRepository bookingRepository;
 
-    @Scheduled(cron = "0 47 12 * * ?")
+    @Scheduled(cron = "01 03 01 * * ?")
     public void processBookingCompletedScan() {
         LocalDate today = LocalDate.now();
         bookingRepository.completeBooking(BookingStatus.COMPLETED, today, BookingStatus.PAID);

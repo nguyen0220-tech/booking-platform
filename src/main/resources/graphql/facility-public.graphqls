@@ -1,3 +1,4 @@
 extend type Query {
     facilitiesWithKeyword(keyword:String!, page:Int!, size:Int!):ListFacility
+    facilitiesSuggestion:ListFacility
 }

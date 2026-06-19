@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -58,4 +60,27 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
             @Param("status") FacilityStatus status,
             Pageable pageable
     );
+
+    @Query(value = """
+            ( -- Query 1: recently
+                SELECT f.id, f.facility_type, f.owner_id, 1 as priority
+                FROM facility f JOIN bookings b ON f.id = b.facility_id
+                WHERE b.user_id = :userId AND b.usage_date < :today AND b.status = :status AND f.is_suspended = false
+                GROUP BY f.id, f.facility_type, f.owner_id
+                ORDER BY MAX(b.usage_date) DESC LIMIT 3
+            )
+            UNION ALL
+            ( -- Query 2: selling
+                SELECT f.id, f.facility_type, f.owner_id, 2 as priority
+                FROM facility f JOIN facility_package fp ON f.id = fp.facility_id
+                WHERE f.is_suspended = false
+                GROUP BY f.id, f.facility_type, f.owner_id
+                ORDER BY MAX(fp.total_count) DESC LIMIT 3
+            )
+            ORDER BY priority;
+            """, nativeQuery = true)
+    List<FacilitySummaryProjection> findFacilitiesRecentlyAndTopSelling(
+            @Param("userId") Long userId,
+            @Param("today") LocalDate today,
+            @Param("status") String status);
 }
