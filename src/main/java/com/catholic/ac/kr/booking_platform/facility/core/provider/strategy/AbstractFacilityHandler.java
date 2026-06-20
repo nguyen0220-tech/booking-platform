@@ -25,7 +25,6 @@ public abstract class AbstractFacilityHandler<D, R extends FacilityRequest> impl
         facility.setDescription(request.getDescription());
         facility.setAddress(request.getAddress());
         facility.setInstruction(request.getInstruction());
-        facility.setActive(request.isActive());
         facility.setCarPark(request.isCarPark());
         facility.setHasWifi(request.isHasWifi());
     }

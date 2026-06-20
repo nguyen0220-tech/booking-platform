@@ -111,8 +111,8 @@ public class FacilityUpdateService {
                 .orElseThrow(() -> new ResourceNotFoundException("facility registration not found"));
 
         FacilityStatus status = facilityRegistration.getStatus();
-        if (status == FacilityStatus.CANCELLED || status == FacilityStatus.REJECTED) {
-            throw new BadRequestException("취소되거나 거절된 시설은 정보 수정을 할 수 없습니다");
+        if (!status.equals(FacilityStatus.APPROVED)) {
+            throw new BadRequestException("허용받은 시설만 정보을 변경할 수 있습니다. 현재 상태: "+status.getDisplayStatus());
         }
 
         return facilityRegistration.getFacility();

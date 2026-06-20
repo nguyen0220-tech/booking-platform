@@ -1,6 +1,5 @@
 package com.catholic.ac.kr.booking_platform.facility.data;
 
-import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,20 +45,14 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
     @Query("""
             SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
             FROM Facility f
-            JOIN FacilityRegistration fr ON fr.facility = f
             WHERE (
                 LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
                 OR LOWER(f.address) LIKE LOWER(CONCAT('%', :keyword, '%'))
                 OR LOWER(f.facilityType) LIKE LOWER(CONCAT('%', :keyword, '%'))
             )
             AND f.active = true
-            AND fr.status = :status
             """)
-    Page<FacilitySummaryProjection> findByKeyword(
-            @Param("keyword") String keyword,
-            @Param("status") FacilityStatus status,
-            Pageable pageable
-    );
+    Page<FacilitySummaryProjection> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     @Query(value = """
             ( -- Query 1: recently
@@ -83,4 +76,12 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
             @Param("userId") Long userId,
             @Param("today") LocalDate today,
             @Param("status") String status);
+
+    @Query("""
+            SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
+            FROM Facility f
+            WHERE f.active = true
+              AND LOWER(f.address) LIKE LOWER(CONCAT('%', :address, '%'))
+            """)
+    Page<FacilitySummaryProjection> findAllByAddress(String address, Pageable pageable);
 }

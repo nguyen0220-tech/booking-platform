@@ -1,5 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
+import com.catholic.ac.kr.booking_platform.facility.constant.PopularDestination;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityPublicService;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
@@ -26,7 +27,16 @@ public class FacilityUserQueryResolver {
     }
 
     @QueryMapping
-    public ListResponse<FacilityDTO> facilitiesSuggestion(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ListResponse<FacilityDTO> facilitiesInPopularDestination(
+            @Argument PopularDestination destination,
+            @Argument int page,
+            @Argument int size
+    ) {
+        return facilityPublicService.getFacilitiesInPopularDestination(destination, page, size);
+    }
+
+    @QueryMapping
+    public ListResponse<FacilityDTO> facilitiesSuggestion(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return facilityPublicService.suggestFacilities(userDetails.getId());
     }
 }

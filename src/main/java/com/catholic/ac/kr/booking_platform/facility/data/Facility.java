@@ -74,6 +74,7 @@ public abstract class Facility {
     protected void create() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        active = false;
         isSuspended = false;
     }
 

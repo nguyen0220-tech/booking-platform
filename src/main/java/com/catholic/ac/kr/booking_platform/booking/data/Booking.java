@@ -109,7 +109,6 @@ public class Booking {
     }
 
     public void cancelBooking(Long userId) {
-        //khi hủy sẽ hoàn tiền
         if (!this.user.getId().equals(userId)) {
             throw new AccessDeniedException("본 예약의 예약자가 아닙니다");
         }

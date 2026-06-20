@@ -34,7 +34,6 @@ public abstract class FacilityRequest {
     @NotBlank(message = "입력 필수 항목입니다")
     private String description;
 
-    private boolean active;
 
     private boolean carPark;
 

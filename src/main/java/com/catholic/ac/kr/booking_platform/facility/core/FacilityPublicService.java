@@ -2,7 +2,7 @@ package com.catholic.ac.kr.booking_platform.facility.core;
 
 import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
 import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
-import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
+import com.catholic.ac.kr.booking_platform.facility.constant.PopularDestination;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
@@ -29,8 +29,23 @@ public class FacilityPublicService {
     public ListResponse<FacilityDTO> searchFacilitiesByKeyword(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").descending());
 
+        Page<FacilitySummaryProjection> projections = facilityRepository.findByKeyword(keyword, pageable);
+
+        Page<FacilityDTO> facilityDTOPage = projections.map(FacilityMapper::toFacilityDTO);
+
+        List<FacilityDTO> response = facilityDTOPage.getContent();
+
+        return new ListResponse<>(
+                response,
+                new PageInfo(page, size, projections.hasNext(), projections.getTotalElements(), projections.getTotalPages()));
+    }
+
+    public ListResponse<FacilityDTO> getFacilitiesInPopularDestination(
+            PopularDestination destination, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").descending());
+
         Page<FacilitySummaryProjection> projections = facilityRepository
-                .findByKeyword(keyword, FacilityStatus.APPROVED, pageable);
+                .findAllByAddress(destination.getKorName(), pageable);
 
         Page<FacilityDTO> facilityDTOPage = projections.map(FacilityMapper::toFacilityDTO);
 
@@ -62,6 +77,4 @@ public class FacilityPublicService {
         return new ListResponse<>(uniqueResults);
 
     }
-
-    //인기 관광지: 서울, 부산, 강늘...
 }

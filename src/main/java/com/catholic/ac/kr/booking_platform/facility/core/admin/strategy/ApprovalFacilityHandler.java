@@ -2,6 +2,7 @@ package com.catholic.ac.kr.booking_platform.facility.core.admin.strategy;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
 import com.catholic.ac.kr.booking_platform.facility.core.event.FacilityApprovalEvent;
+import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationRequest;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
@@ -25,8 +26,9 @@ public class ApprovalFacilityHandler extends AbstractFacilityRegistrationHandler
     @Transactional
     @Override
     public ApiResponse<String> handleFacilityRegistration(User admin, FacilityRegistration registration, FacilityRegistrationRequest request) {
-
         setHandleRegistration(admin, registration, request);
+        Facility facility = registration.getFacility();
+        facility.setActive(true);
 
         sendRegistrationApproval(registration);
 

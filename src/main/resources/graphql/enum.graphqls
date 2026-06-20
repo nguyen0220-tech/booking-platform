@@ -20,3 +20,11 @@ enum FacilityStatus{
     REJECTED,
     CANCELLED
 }
+
+enum PopularDestination{
+    SEOUL,
+    BUSAN,
+    JEJU,
+    GANGNEUNG
+
+}
