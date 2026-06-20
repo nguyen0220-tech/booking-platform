@@ -7,7 +7,7 @@ import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.user.constant.FilterUser;
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
 import com.catholic.ac.kr.booking_platform.user.constant.SearchType;
-import com.catholic.ac.kr.booking_platform.user.UserMapper;
+import com.catholic.ac.kr.booking_platform.user.dto.UserMapper;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.core.RoleService;
 import com.catholic.ac.kr.booking_platform.user.core.UserManageService;

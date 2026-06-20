@@ -1,9 +1,8 @@
-package com.catholic.ac.kr.booking_platform.facility;
+package com.catholic.ac.kr.booking_platform.facility.dto;
 
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.data.resraurant.RestaurantMenu;
-import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilityAdminProjection;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilityRegistrationProjection;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;

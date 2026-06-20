@@ -1,10 +1,7 @@
-package com.catholic.ac.kr.booking_platform.user;
+package com.catholic.ac.kr.booking_platform.user.dto;
 
 import com.catholic.ac.kr.booking_platform.profile.data.ProfileDTO;
 import com.catholic.ac.kr.booking_platform.user.projection.UserProjection;
-import com.catholic.ac.kr.booking_platform.user.dto.RoleForBatchDTO;
-import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
-import com.catholic.ac.kr.booking_platform.user.dto.UserInfoDetailsDTO;
 import com.catholic.ac.kr.booking_platform.helper.HelperUtils;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 

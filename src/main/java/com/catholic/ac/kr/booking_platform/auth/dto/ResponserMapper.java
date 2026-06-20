@@ -1,6 +1,5 @@
-package com.catholic.ac.kr.booking_platform.auth;
+package com.catholic.ac.kr.booking_platform.auth.dto;
 
-import com.catholic.ac.kr.booking_platform.auth.dto.LoginResponse;
 import com.catholic.ac.kr.booking_platform.user.dto.RoleDTO;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 

@@ -3,7 +3,7 @@ package com.catholic.ac.kr.booking_platform.facility_package.core;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility_package.data.*;
 import com.catholic.ac.kr.booking_platform.facility_package.dto.*;
-import com.catholic.ac.kr.booking_platform.facility_package.mapper.FacilityPackageMapper;
+import com.catholic.ac.kr.booking_platform.facility_package.dto.FacilityPackageMapper;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;

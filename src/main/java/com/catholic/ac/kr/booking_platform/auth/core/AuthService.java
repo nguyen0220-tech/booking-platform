@@ -8,7 +8,7 @@ import com.catholic.ac.kr.booking_platform.infrastructure.exception.AlreadyExist
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
 import com.catholic.ac.kr.booking_platform.helper.HelperUtils;
-import com.catholic.ac.kr.booking_platform.auth.ResponserMapper;
+import com.catholic.ac.kr.booking_platform.auth.dto.ResponserMapper;
 import com.catholic.ac.kr.booking_platform.user.data.Role;
 import com.catholic.ac.kr.booking_platform.auth.data.TokenVerify;
 import com.catholic.ac.kr.booking_platform.user.data.User;

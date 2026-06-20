@@ -1,7 +1,7 @@
 package com.catholic.ac.kr.booking_platform.facility.core;
 
 import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
-import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.constant.PopularDestination;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;

@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.booking.core;
 
-import com.catholic.ac.kr.booking_platform.booking.BookingMapper;
+import com.catholic.ac.kr.booking_platform.booking.dto.BookingMapper;
 import com.catholic.ac.kr.booking_platform.booking.constant.PayMethod;
 import com.catholic.ac.kr.booking_platform.booking.core.strategy.PaymentGatewayHandler;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;

@@ -1,6 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.core;
 
-import com.catholic.ac.kr.booking_platform.facility.FacilityMapper;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy.MotelFacilityHandler;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.strategy.RestaurantFacilityHandler;

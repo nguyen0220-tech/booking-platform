@@ -1,8 +1,6 @@
-package com.catholic.ac.kr.booking_platform.facility_package.mapper;
+package com.catholic.ac.kr.booking_platform.facility_package.dto;
 
 import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage;
-import com.catholic.ac.kr.booking_platform.facility_package.dto.FacilityPackageDTO;
-import com.catholic.ac.kr.booking_platform.facility_package.dto.FacilityPackageInfoDetails;
 
 public class FacilityPackageMapper {
     public static FacilityPackageDTO toFacilityPackageDTO(FacilityPackage entity) {

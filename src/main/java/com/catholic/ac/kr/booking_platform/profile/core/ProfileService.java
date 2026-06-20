@@ -9,7 +9,7 @@ import com.catholic.ac.kr.booking_platform.profile.core.strategy.ProfileStrategy
 import com.catholic.ac.kr.booking_platform.profile.data.PendingEmailUpdate;
 import com.catholic.ac.kr.booking_platform.profile.data.ProfileDTO;
 import com.catholic.ac.kr.booking_platform.profile.data.UpdateProfileRequest;
-import com.catholic.ac.kr.booking_platform.user.UserMapper;
+import com.catholic.ac.kr.booking_platform.user.dto.UserMapper;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
 import lombok.extern.slf4j.Slf4j;
