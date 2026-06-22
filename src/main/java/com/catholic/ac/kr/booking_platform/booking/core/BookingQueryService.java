@@ -3,7 +3,7 @@ package com.catholic.ac.kr.booking_platform.booking.core;
 import com.catholic.ac.kr.booking_platform.booking.dto.BookingMapper;
 import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
-import com.catholic.ac.kr.booking_platform.booking.data.BookingDTO;
+import com.catholic.ac.kr.booking_platform.booking.dto.BookingDTO;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingRepository;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;

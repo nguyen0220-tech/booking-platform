@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.booking.data;
+package com.catholic.ac.kr.booking_platform.booking.dto;
 
 import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
 import com.catholic.ac.kr.booking_platform.booking.constant.PayMethod;

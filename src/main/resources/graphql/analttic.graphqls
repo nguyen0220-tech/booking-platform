@@ -1,8 +1,0 @@
-extend type Query{
-    bookingAnalytic:UserBookingAnalytic
-}
-
-type UserBookingAnalytic{
-    totalBookings:Int!
-    totalMonthlyBookings:Int!
-}

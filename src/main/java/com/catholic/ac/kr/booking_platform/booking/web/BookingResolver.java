@@ -2,7 +2,7 @@ package com.catholic.ac.kr.booking_platform.booking.web;
 
 import com.catholic.ac.kr.booking_platform.booking.core.BookingQueryService;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
-import com.catholic.ac.kr.booking_platform.booking.data.BookingDTO;
+import com.catholic.ac.kr.booking_platform.booking.dto.BookingDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;

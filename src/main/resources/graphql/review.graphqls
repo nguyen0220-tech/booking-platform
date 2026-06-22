@@ -1,0 +1,12 @@
+type ListReview{
+    data:[Review]
+    pageInfo:PageInfo
+}
+
+type Review{
+    id:ID!
+    rating:Rating!
+    content:String!
+    createdAt:String!
+    reviewer:User!
+}

@@ -1,6 +1,5 @@
 package com.catholic.ac.kr.booking_platform.booking.data;
 
-import com.catholic.ac.kr.booking_platform.analytics.projection.BookingAnalyticProjection;
 import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -52,19 +51,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             """)
     List<Booking> findAllWithinNext3Days(@Param("userId") Long userId, @Param("threeDaysLater") LocalDate threeDaysLater,
                                          @Param("today") LocalDate today, @Param("status") BookingStatus status);
-
-
-        @Query(value = """
-                    SELECT
-                        COUNT(b.id) AS totalBookings,
-                        SUM(
-                            CASE
-                            WHEN EXTRACT(MONTH FROM b.created_at) = EXTRACT(MONTH FROM CURRENT_DATE)
-                             AND EXTRACT(YEAR  FROM b.created_at) = EXTRACT(YEAR  FROM CURRENT_DATE)
-                            THEN 1 ELSE 0 END) AS totalMonthlyBookings
-                    FROM bookings b
-                    WHERE b.user_id = :userId
-                """, nativeQuery = true)
-        BookingAnalyticProjection getPersonalAnalyticsRaw(@Param("userId") Long userId);
 
 }

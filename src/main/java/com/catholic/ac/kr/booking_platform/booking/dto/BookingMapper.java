@@ -1,7 +1,6 @@
 package com.catholic.ac.kr.booking_platform.booking.dto;
 
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
-import com.catholic.ac.kr.booking_platform.booking.data.BookingDTO;
 import com.catholic.ac.kr.booking_platform.booking.core.event.BookingCancelledEvent;
 
 import java.time.LocalDate;

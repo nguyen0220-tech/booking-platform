@@ -109,9 +109,7 @@ public class Booking {
     }
 
     public void cancelBooking(Long userId) {
-        if (!this.user.getId().equals(userId)) {
-            throw new AccessDeniedException("본 예약의 예약자가 아닙니다");
-        }
+        validateUser(userId);
 
         if (!CANCELLABLE_STATUSES.contains(this.status)) {
             throw new IllegalStateException("취소 불가능한 상태: " + this.status);
@@ -143,5 +141,39 @@ public class Booking {
     private void processCancel() {
         this.status = BookingStatus.CANCELLED;
         this.activeVersion = this.id;
+    }
+
+    private void validateUser(Long currentUserId) {
+        if (!this.user.getId().equals(currentUserId)) {
+            throw new AccessDeniedException("본 예약의 예약자가 아닙니다");
+        }
+    }
+
+    public void validateReviewEligibility(Long userId) {
+        validateUser(userId);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endDateTime = this.usageDate.atTime(this.endTime != null ? this.endTime : LocalTime.MAX);
+
+        boolean isExplicitlyCompleted = this.status.equals(BookingStatus.COMPLETED);
+        boolean isImplicitlyCompleted = this.status.equals(BookingStatus.PAID) && now.isAfter(endDateTime);
+
+        System.out.println("now: " + now);
+        System.out.println("end: " + endDateTime);
+
+        //Rule 1
+        if (!isExplicitlyCompleted && !isImplicitlyCompleted) {
+            throw new IllegalStateException("이용 완료된 예약만 리뷰를 작성할 수 있습니다.");
+        }
+
+        //Rule 2
+        if (now.isBefore(endDateTime)) {
+            throw new IllegalStateException("이용이 끝난 후에 리뷰를 작성할 수 있습니다.");
+        }
+
+        // Rule 3
+        if (now.isAfter(endDateTime.plusDays(3))) {
+            throw new IllegalStateException("리뷰 작성 기간(3일)이 만료되었습니다.");
+        }
     }
 }

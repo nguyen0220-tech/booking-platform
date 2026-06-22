@@ -28,3 +28,11 @@ enum PopularDestination{
     GANGNEUNG
 
 }
+
+enum Rating{
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE
+}

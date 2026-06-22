@@ -22,6 +22,7 @@ type Facility{
     owner:User
     approvalStatus:FacilityApproval
     packages(page:Int!, size:Int!):ListPackage
+    reviews(page:Int!, size:Int!):ListReview
 }
 
 type FacilityInfo{
