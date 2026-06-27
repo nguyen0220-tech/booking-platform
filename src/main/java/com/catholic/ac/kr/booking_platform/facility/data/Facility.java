@@ -64,6 +64,12 @@ public abstract class Facility {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isSuspended;
 
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer totalReviews;
+
+    @Column(nullable = false, columnDefinition = "float default 0.0")
+    private Double averageRating;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -72,10 +78,12 @@ public abstract class Facility {
 
     @PrePersist
     protected void create() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-        active = false;
-        isSuspended = false;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        this.active = false;
+        this.isSuspended = false;
+        this.totalReviews = 0;
+        this.averageRating = 0.0;
     }
 
     @PreUpdate
@@ -99,5 +107,9 @@ public abstract class Facility {
     }
 
     public void validateOperatingHours(LocalTime startTime) {
+    }
+
+    public Double calculateRunningAverageRating(int newRating) {
+        return (this.averageRating * this.totalReviews + newRating) / (this.totalReviews + 1);
     }
 }

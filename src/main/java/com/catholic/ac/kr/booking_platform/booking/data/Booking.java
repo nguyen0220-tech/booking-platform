@@ -158,9 +158,6 @@ public class Booking {
         boolean isExplicitlyCompleted = this.status.equals(BookingStatus.COMPLETED);
         boolean isImplicitlyCompleted = this.status.equals(BookingStatus.PAID) && now.isAfter(endDateTime);
 
-        System.out.println("now: " + now);
-        System.out.println("end: " + endDateTime);
-
         //Rule 1
         if (!isExplicitlyCompleted && !isImplicitlyCompleted) {
             throw new IllegalStateException("이용 완료된 예약만 리뷰를 작성할 수 있습니다.");
@@ -172,7 +169,7 @@ public class Booking {
         }
 
         // Rule 3
-        if (now.isAfter(endDateTime.plusDays(3))) {
+        if (now.isAfter(endDateTime.plusDays(30))) {
             throw new IllegalStateException("리뷰 작성 기간(3일)이 만료되었습니다.");
         }
     }

@@ -30,6 +30,8 @@ type FacilityInfo{
     description:String!
     address:String!
     instruction:String
+    averageRating:Float!
+    totalReviews:Int!
     active:Boolean!
     carPark:Boolean!
     hasWifi:Boolean!

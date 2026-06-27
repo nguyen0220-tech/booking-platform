@@ -1,4 +1,4 @@
-package com.catholic.ac.kr.booking_platform.facility.core.listener;
+package com.catholic.ac.kr.booking_platform.review.core;
 
 import com.catholic.ac.kr.booking_platform.facility.core.event.FacilityApprovalEvent;
 import com.catholic.ac.kr.booking_platform.facility.core.event.FacilityRejectionEvent;

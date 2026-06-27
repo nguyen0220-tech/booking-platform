@@ -42,6 +42,8 @@ public class FacilityMapper {
         facilityInfoDTO.setDescription(facility.getDescription());
         facilityInfoDTO.setAddress(facility.getAddress());
         facilityInfoDTO.setInstruction(facility.getInstruction() != null ? facility.getInstruction() : null);
+        facilityInfoDTO.setAverageRating(facility.getAverageRating());
+        facilityInfoDTO.setTotalReviews(facility.getTotalReviews());
         facilityInfoDTO.setActive(facility.isActive());
         facilityInfoDTO.setCarPark(facility.isCarPark());
         facilityInfoDTO.setHasWifi(facility.isHasWifi());

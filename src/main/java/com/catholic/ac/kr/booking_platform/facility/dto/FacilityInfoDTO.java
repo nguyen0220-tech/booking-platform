@@ -12,6 +12,8 @@ public class FacilityInfoDTO {
     private String description;
     private String instruction;
     private String address;
+    private Double averageRating;
+    private Integer totalReviews;
     private boolean active;
     private boolean carPark;
     private boolean hasWifi;

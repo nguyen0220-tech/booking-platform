@@ -12,8 +12,10 @@ import com.catholic.ac.kr.booking_platform.review.data.ReviewRepository;
 import com.catholic.ac.kr.booking_platform.review.dto.ReviewDTO;
 import com.catholic.ac.kr.booking_platform.review.dto.ReviewMapper;
 import com.catholic.ac.kr.booking_platform.review.dto.ReviewRequest;
+import com.catholic.ac.kr.booking_platform.review.core.event.NewReviewEvent;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewService {
 
+    private final ApplicationEventPublisher publisher;
     private final BookingRepository bookingRepository;
     private final ReviewRepository reviewRepository;
 
@@ -64,6 +67,7 @@ public class ReviewService {
         review.setContent(request.getContent());
 
         reviewRepository.save(review);
+        publisher.publishEvent(new NewReviewEvent(booking.getFacilityId(), request.getRating()));
 
         return ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
                 "소중한 시간을 내 리뷰를 작성하셔서 갑사합니다.");
