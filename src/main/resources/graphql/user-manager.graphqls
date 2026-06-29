@@ -20,8 +20,8 @@ type User{
 type InfoDetails{
     username:String!
     fullName:String!
-    phone:String!
-    email:String!
+    phone:String
+    email:String
     avatarUrl:String
     enabled:Boolean!
     blocked:Boolean!

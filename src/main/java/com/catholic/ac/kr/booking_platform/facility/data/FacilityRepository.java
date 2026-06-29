@@ -1,6 +1,5 @@
 package com.catholic.ac.kr.booking_platform.facility.data;
 
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,28 +21,28 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
     Optional<Long> findOwnerIdByFacilityId(@Param("id") Long id);
 
     @Query("""
-            SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
+            SELECT f
             FROM Facility f WHERE f.id = :id
             """)
-    Optional<FacilitySummaryProjection> findFacilityById(@Param("id") Long id);
+    Optional<Facility> findFacilityById(@Param("id") Long id);
 
     @Query("""
-            SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
+            SELECT f
             FROM Facility f WHERE f.owner.id = :ownerId
             """)
-    Page<FacilitySummaryProjection> findByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable);
+    Page<Facility> findByOwnerId(@Param("ownerId") Long ownerId, Pageable pageable);
 
     @Query("""
-            SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
+            SELECT f
             FROM Facility f WHERE f.owner.id = :ownerId AND f.name LIKE CONCAT('%', :keyword, '%')
             """)
-    Page<FacilitySummaryProjection> findByOwnerIdAndKeyword(
+    Page<Facility> findByOwnerIdAndKeyword(
             @Param("ownerId") Long ownerId,
             @Param("keyword") String keyword,
             Pageable pageable);
 
     @Query("""
-            SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
+            SELECT f
             FROM Facility f
             WHERE (
                 LOWER(f.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -52,36 +51,40 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
             )
             AND f.active = true
             """)
-    Page<FacilitySummaryProjection> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    Page<Facility> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     @Query(value = """
-            ( -- Query 1: recently
-                SELECT f.id, f.facility_type, f.owner_id, 1 as priority
-                FROM facility f JOIN bookings b ON f.id = b.facility_id
-                WHERE b.user_id = :userId AND b.usage_date < :today AND b.status = :status AND f.is_suspended = false
-                GROUP BY f.id, f.facility_type, f.owner_id
-                ORDER BY MAX(b.usage_date) DESC LIMIT 3
+            WITH RankedFacilities AS (
+                ( -- Query 1: recently
+                    SELECT f.id, 1 as priority
+                    FROM facility f JOIN bookings b ON f.id = b.facility_id
+                    WHERE b.user_id = :userId AND b.usage_date < :today AND b.status = :status AND f.is_suspended = false
+                    GROUP BY f.id
+                    ORDER BY MAX(b.usage_date) DESC LIMIT 3
+                )
+                UNION ALL
+                ( -- Query 2: selling
+                    SELECT f.id, 2 as priority
+                    FROM facility f JOIN facility_package fp ON f.id = fp.facility_id
+                    WHERE f.is_suspended = false
+                    GROUP BY f.id
+                    ORDER BY MAX(fp.total_count) DESC LIMIT 3
+                )
             )
-            UNION ALL
-            ( -- Query 2: selling
-                SELECT f.id, f.facility_type, f.owner_id, 2 as priority
-                FROM facility f JOIN facility_package fp ON f.id = fp.facility_id
-                WHERE f.is_suspended = false
-                GROUP BY f.id, f.facility_type, f.owner_id
-                ORDER BY MAX(fp.total_count) DESC LIMIT 3
-            )
-            ORDER BY priority;
+            SELECT f.* FROM facility f
+            INNER JOIN RankedFacilities rf ON f.id = rf.id
+            ORDER BY rf.priority
             """, nativeQuery = true)
-    List<FacilitySummaryProjection> findFacilitiesRecentlyAndTopSelling(
+    List<Facility> findFacilitiesRecentlyAndTopSelling(
             @Param("userId") Long userId,
             @Param("today") LocalDate today,
             @Param("status") String status);
 
     @Query("""
-            SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId
+            SELECT f
             FROM Facility f
             WHERE f.active = true
               AND LOWER(f.address) LIKE LOWER(CONCAT('%', :address, '%'))
             """)
-    Page<FacilitySummaryProjection> findAllByAddress(String address, Pageable pageable);
+    Page<Facility> findAllByAddress(String address, Pageable pageable);
 }

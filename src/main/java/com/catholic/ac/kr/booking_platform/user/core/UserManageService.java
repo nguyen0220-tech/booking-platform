@@ -1,20 +1,21 @@
 package com.catholic.ac.kr.booking_platform.user.core;
 
-import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
-import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
+import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
+import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
+import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
+import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 import com.catholic.ac.kr.booking_platform.user.constant.AdminActive;
 import com.catholic.ac.kr.booking_platform.user.constant.FilterUser;
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
 import com.catholic.ac.kr.booking_platform.user.constant.SearchType;
 import com.catholic.ac.kr.booking_platform.user.core.event.UserBlockedEvent;
-import com.catholic.ac.kr.booking_platform.infrastructure.exception.BadRequestException;
-import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
-import com.catholic.ac.kr.booking_platform.user.dto.UserMapper;
 import com.catholic.ac.kr.booking_platform.user.data.User;
-import com.catholic.ac.kr.booking_platform.user.projection.UserProjection;
 import com.catholic.ac.kr.booking_platform.user.data.UserRepository;
+import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
+import com.catholic.ac.kr.booking_platform.user.dto.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -27,7 +28,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,66 +39,88 @@ public class UserManageService {
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    public Map<Long, UserDTO> batchLoaderUsers(List<Long> userIds, Principal principal) {
+        List<User> users = getAllByUserIds(userIds, principal);
+        return users.stream()
+                .collect(Collectors.toMap(
+                        User::getId,
+                        UserMapper::toUserDTO
+                ));
+    }
+
+    private List<User> getAllByUserIds(List<Long> userIds, Principal principal) {
+        List<User> users = userRepository.findAllById(userIds);
+
+        UserDetailsImpl userDetails = SecurityUtils.getUserDetails(principal);
+        boolean isAdmin = SecurityUtils.isAdmin(principal);
+        if (userDetails == null || !isAdmin) {
+
+            return users.stream()
+                    .peek(u -> {
+                        u.setEmail(null);
+                        u.setPhone(null);
+                    })
+                    .toList();
+        }
+
+        return users;
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @Cacheable(value = "userPage", key = "{#page, #size}")
     public ListResponse<UserDTO> getUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
-        Page<UserProjection> userProjections = userRepository.findAllUser(pageable);
+        Page<User> userPage = userRepository.findAll(pageable);
 
-        Page<UserDTO> userDTOS = userProjections.map(UserMapper::userDTO);
+        Page<UserDTO> userDTOS = userPage.map(UserMapper::toUserDTO);
 
         List<UserDTO> rs = userDTOS.getContent();
 
         return new ListResponse<>(
                 rs,
-                new PageInfo(page, size, userProjections.hasNext()));
-    }
-
-    @Cacheable(value = "userInfos", key = "#ids")
-    public List<User> getAllByIds(List<Long> ids) {
-        return userRepository.findAllById(ids);
+                new PageInfo(page, size, userPage.hasNext()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserDTO getUserWithType(SearchType type, String keyword) {
-        UserProjection projection = null;
+        User user = new User();
         switch (type) {
-            case USERNAME -> projection = userRepository.findUserByUsername(keyword);
+            case USERNAME -> user = userRepository.findUserByUsername(keyword);
 
-            case EMAIL -> projection = userRepository.findUserByEmail(keyword);
+            case EMAIL -> user = userRepository.findUserByEmail(keyword);
         }
 
-        if (projection == null) {
+        if (user == null) {
             return null;
         }
 
-        return UserMapper.userDTO(projection);
+        return UserMapper.toUserDTO(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public ListResponse<UserDTO> filterUser(int page, int size, FilterUser filter, boolean is) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-        Page<UserProjection> userProjections = null;
+        Page<User> userPage = null;
         switch (filter) {
-            case ENABLED -> userProjections = userRepository.filterUserEnabled(pageable, is);
-            case BLOCKED -> userProjections = userRepository.filterUserBlocked(pageable, is);
+            case ENABLED -> userPage = userRepository.filterUserEnabled(pageable, is);
+            case BLOCKED -> userPage = userRepository.filterUserBlocked(pageable, is);
         }
 
-        Page<UserDTO> userDTOS = userProjections.map(UserMapper::userDTO);
+        Page<UserDTO> userDTOS = userPage.map(UserMapper::toUserDTO);
 
         List<UserDTO> rs = userDTOS.getContent();
 
-        return new ListResponse<>(rs, new PageInfo(page, size, userProjections.hasNext()));
+        return new ListResponse<>(rs, new PageInfo(page, size, userDTOS.hasNext()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public ListResponse<UserDTO> filterUserByRole(int page, int size, RoleName name) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
-        Page<UserProjection> userProjections = userRepository.findByRoleName(name, pageable);
+        Page<User> userProjections = userRepository.findByRoleName(name, pageable);
 
-        Page<UserDTO> userDTOS = userProjections.map(UserMapper::userDTO);
+        Page<UserDTO> userDTOS = userProjections.map(UserMapper::toUserDTO);
 
         List<UserDTO> rs = userDTOS.getContent();
 

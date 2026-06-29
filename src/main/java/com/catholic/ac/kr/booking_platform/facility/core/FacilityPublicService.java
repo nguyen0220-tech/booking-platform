@@ -1,11 +1,11 @@
 package com.catholic.ac.kr.booking_platform.facility.core;
 
 import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
+import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.constant.PopularDestination;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
 import lombok.RequiredArgsConstructor;
@@ -29,43 +29,43 @@ public class FacilityPublicService {
     public ListResponse<FacilityDTO> searchFacilitiesByKeyword(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").descending());
 
-        Page<FacilitySummaryProjection> projections = facilityRepository.findByKeyword(keyword, pageable);
+        Page<Facility> facilityPage = facilityRepository.findByKeyword(keyword, pageable);
 
-        Page<FacilityDTO> facilityDTOPage = projections.map(FacilityMapper::toFacilityDTO);
+        Page<FacilityDTO> facilityDTOPage = facilityPage.map(FacilityMapper::toFacilityDTO);
 
         List<FacilityDTO> response = facilityDTOPage.getContent();
 
         return new ListResponse<>(
                 response,
-                new PageInfo(page, size, projections.hasNext(), projections.getTotalElements(), projections.getTotalPages()));
+                new PageInfo(page, size, facilityPage.hasNext(), facilityPage.getTotalElements(), facilityPage.getTotalPages()));
     }
 
     public ListResponse<FacilityDTO> getFacilitiesInPopularDestination(
             PopularDestination destination, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").descending());
 
-        Page<FacilitySummaryProjection> projections = facilityRepository
+        Page<Facility> facilityPage = facilityRepository
                 .findAllByAddress(destination.getKorName(), pageable);
 
-        Page<FacilityDTO> facilityDTOPage = projections.map(FacilityMapper::toFacilityDTO);
+        Page<FacilityDTO> facilityDTOPage = facilityPage.map(FacilityMapper::toFacilityDTO);
 
         List<FacilityDTO> response = facilityDTOPage.getContent();
 
         return new ListResponse<>(
                 response,
-                new PageInfo(page, size, projections.hasNext(), projections.getTotalElements(), projections.getTotalPages()));
+                new PageInfo(page, size, facilityPage.hasNext(), facilityPage.getTotalElements(), facilityPage.getTotalPages()));
     }
 
     public ListResponse<FacilityDTO> suggestFacilities(Long userId) {
         LocalDate today = LocalDate.now();
 
-        List<FacilitySummaryProjection> projections = facilityRepository
+        List<Facility> projections = facilityRepository
                 .findFacilitiesRecentlyAndTopSelling(userId, today, BookingStatus.COMPLETED.name());
 
         List<FacilityDTO> uniqueResults = projections.stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(
-                        FacilitySummaryProjection::getId, // Key để phân biệt trùng lặp
+                        Facility::getId, // Key để phân biệt trùng lặp
                         FacilityMapper::toFacilityDTO,
                         (existing, replacement) -> existing, // Nếu trùng thì giữ cái đầu tiên
                         LinkedHashMap::new // Giữ nguyên thứ tự ưu tiên (gần đây trước, bán chạy sau)

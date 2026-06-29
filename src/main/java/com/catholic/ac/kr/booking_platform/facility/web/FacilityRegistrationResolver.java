@@ -1,21 +1,22 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
+import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
 import com.catholic.ac.kr.booking_platform.facility.core.admin.FacilityRegistrationCommandService;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationStatusDTO;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
+import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FacilityRegistrationResolver {
     private final FacilityRegistrationCommandService facilityRegistrationCommandService;
+    private final UserManageService userManageService;
+    private final FacilityQueryService facilityQueryService;
 
     @QueryMapping
     public ListResponse<FacilityDTO> facilityRegistrationList(
@@ -42,17 +45,40 @@ public class FacilityRegistrationResolver {
         return facilityRegistrationCommandService.getFacilityRegistration(id);
     }
 
-    @SchemaMapping(typeName = "FacilityRegistration", field = "facility")
-    public FacilityDTO facility(FacilityRegistrationDTO registration) {
-        return new FacilityDTO(registration.getFacilityId(), registration.getFacilityType(), registration.getOwnerId(), registration.getId());
+    @BatchMapping(typeName = "FacilityRegistration", field = "facility")
+    public Map<FacilityRegistrationDTO, FacilityDTO> facility(List<FacilityRegistrationDTO> registrations) {
+        List<Long> facilityIds = getFacilityIds(registrations);
+
+        Map<Long, FacilityDTO> facilityOMap = facilityQueryService.batchLoaderFacility(facilityIds);
+
+        return registrations.stream()
+                .collect(Collectors.toMap(
+                        r -> r,
+                        r -> facilityOMap.get(r.getFacilityId())
+                ));
     }
 
-    @SchemaMapping(typeName = "FacilityRegistration", field = "reviewer")
-    public UserDTO reviewer(FacilityRegistrationDTO registration) {
-        if (registration.getReviewerId() == null) {
-            return null;
-        }
-        return new UserDTO(registration.getReviewerId());
+    private List<Long> getFacilityIds(List<FacilityRegistrationDTO> registrations) {
+        return registrations.stream()
+                .map(FacilityRegistrationDTO::getFacilityId)
+                .toList();
+    }
+
+    @BatchMapping(typeName = "FacilityRegistration", field = "reviewer")
+    public Map<FacilityRegistrationDTO, UserDTO> reviewer(
+            List<FacilityRegistrationDTO> registrations,
+            Principal principal) {
+        List<Long> reviewerIds = registrations.stream()
+                .map(FacilityRegistrationDTO::getReviewerId)
+                .toList();
+
+        Map<Long, UserDTO> userMap = userManageService.batchLoaderUsers(reviewerIds, principal);
+
+        return registrations.stream()
+                .collect(Collectors.toMap(
+                        r -> r,
+                        r -> userMap.get(r.getReviewerId())
+                ));
     }
 
     @BatchMapping(typeName = "Facility", field = "approvalStatus")

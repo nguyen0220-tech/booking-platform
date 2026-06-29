@@ -2,13 +2,11 @@ package com.catholic.ac.kr.booking_platform.user.web;
 
 import com.catholic.ac.kr.booking_platform.user.dto.RoleForBatchDTO;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
-import com.catholic.ac.kr.booking_platform.user.dto.UserInfoDetailsDTO;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.user.constant.FilterUser;
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
 import com.catholic.ac.kr.booking_platform.user.constant.SearchType;
 import com.catholic.ac.kr.booking_platform.user.dto.UserMapper;
-import com.catholic.ac.kr.booking_platform.user.data.User;
 import com.catholic.ac.kr.booking_platform.user.core.RoleService;
 import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
 import lombok.RequiredArgsConstructor;
@@ -60,25 +58,6 @@ public class UserManageResolver {
             @Argument RoleName name
             ) {
         return userManageService.filterUserByRole(page, size,name);
-    }
-
-    @BatchMapping(typeName = "User", field = "infoDetails")
-    public Map<UserDTO, UserInfoDetailsDTO> infoDetails(List<UserDTO> users) {
-        List<Long> userIds = getUserIds(users);
-
-        List<User> userList = userManageService.getAllByIds(userIds);
-
-        Map<Long, UserInfoDetailsDTO> map = userList.stream()
-                .collect(Collectors.toMap(
-                        User::getId,
-                        UserMapper::convertToUserInFfo
-                ));
-
-        return users.stream()
-                .collect(Collectors.toMap(
-                        u -> u,
-                        u -> map.get(u.getId())
-                ));
     }
 
     @BatchMapping(typeName = "User", field = "roles")

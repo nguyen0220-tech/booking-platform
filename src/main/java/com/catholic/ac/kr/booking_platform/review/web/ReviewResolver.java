@@ -27,8 +27,8 @@ public class ReviewResolver {
         return reviewService.getAllByFacilityId(facilityDTO.getId(), page, size);
     }
 
-    @SchemaMapping(typeName = "Review", field = "reviewer")
-    public UserDTO reviewer(ReviewDTO reviewDTO) {
-        return new UserDTO(reviewDTO.getUserId());
-    }
+//    @SchemaMapping(typeName = "Review", field = "reviewer")
+//    public UserDTO reviewer(ReviewDTO reviewDTO) {
+//        return new UserDTO(reviewDTO.getUserId());
+//    }
 }

@@ -15,9 +15,12 @@ public class FacilityDTO {
     private Long ownerId;
     private Long facilityRegistrationId;
 
-    public FacilityDTO(Long id, String facilityType, Long ownerId) {
+    private FacilityInfoDTO facilityInfo;
+
+    public FacilityDTO(Long id, String facilityType, Long ownerId,FacilityInfoDTO facilityInfo) {
         this.id = id;
         this.facilityType = facilityType;
         this.ownerId = ownerId;
+        this.facilityInfo = facilityInfo;
     }
 }

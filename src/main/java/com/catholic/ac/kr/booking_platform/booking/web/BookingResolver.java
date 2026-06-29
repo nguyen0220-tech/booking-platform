@@ -15,12 +15,10 @@ import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
-import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
@@ -59,15 +57,15 @@ public class BookingResolver {
         return bookingQueryService.getBookingById(userDetails.getId(), bookingId);
     }
 
-    @SchemaMapping(typeName = "Booking")
-    public UserDTO user(@AuthenticationPrincipal UserDetailsImpl userDetails, BookingDTO booking) {
-
-        if (!hasPermission(userDetails, booking)) {
-            return null;
-        }
-
-        return new UserDTO(booking.getUserId());
-    }
+//    @SchemaMapping(typeName = "Booking")
+//    public UserDTO user(@AuthenticationPrincipal UserDetailsImpl userDetails, BookingDTO booking) {
+//
+//        if (!hasPermission(userDetails, booking)) {
+//            return null;
+//        }
+//
+//        return new UserDTO(booking.getUserId());
+//    }
 
     private boolean hasPermission(UserDetailsImpl userDetails, BookingDTO booking) {
         Long currentUserId = userDetails.getId();
@@ -121,13 +119,7 @@ public class BookingResolver {
                 .map(BookingDTO::getFacilityId)
                 .toList();
 
-        List<Facility> facilities = facilityQueryService.getFacilityByIds(facilityIds);
-
-        Map<Long, FacilityDTO> map = facilities.stream()
-                .collect(Collectors.toMap(
-                        Facility::getId,
-                        FacilityMapper::toFacilityDTO
-                ));
+        Map<Long, FacilityDTO> map = facilityQueryService.batchLoaderFacility(facilityIds);
 
         return bookings.stream()
                 .collect(Collectors.toMap(

@@ -1,26 +1,24 @@
 package com.catholic.ac.kr.booking_platform.facility.web;
 
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityImageService;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
 import com.catholic.ac.kr.booking_platform.facility.core.provider.RestaurantMenuCommandService;
-import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.resraurant.RestaurantMenu;
 import com.catholic.ac.kr.booking_platform.facility.dto.*;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.config.VirtualThreadExecutor;
-import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
+import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
 
+import java.security.Principal;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +33,7 @@ public class FacilityResolver {
     private final FacilityImageService facilityImageService;
     private final FacilityQueryService facilityQueryService;
     private final RestaurantMenuCommandService restaurantMenuCommandService;
+    private final UserManageService userManageService;
 
     @QueryMapping
     public FacilityDTO facility(@Argument Long id) {
@@ -57,27 +56,6 @@ public class FacilityResolver {
             @Argument int size
     ) {
         return facilityQueryService.searchFacilityByKeyword(userDetails.getId(), keyword, page, size);
-    }
-
-    @BatchMapping(typeName = "Facility", field = "facilityInfo")
-    public Map<FacilityDTO, FacilityInfoDTO> facilityInfo(List<FacilityDTO> facilities) {
-        List<Long> facilityIds = facilities.stream()
-                .map(FacilityDTO::getId)
-                .toList();
-
-        List<Facility> facilityList = facilityQueryService.getFacilityByIds(facilityIds);
-
-        Map<Long, FacilityInfoDTO> map = facilityList.stream()
-                .collect(Collectors.toMap(
-                        Facility::getId,
-                        FacilityMapper::convertToFacilityInFfo
-                ));
-
-        return facilities.stream()
-                .collect(Collectors.toMap(
-                        f -> f,
-                        f -> map.get(f.getId())
-                ));
     }
 
     @BatchMapping(typeName = "Facility", field = "imageUrls")
@@ -182,24 +160,25 @@ public class FacilityResolver {
                 ));
     }
 
-    @SchemaMapping(typeName = "Facility", field = "owner")
-    public UserDTO owner(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            FacilityDTO facility) {
+    @BatchMapping(typeName = "Facility", field = "owner")
+    public Map<FacilityDTO, UserDTO> owner(
+            Principal principal,
+            List<FacilityDTO> facilities) {
+        List<Long> ownerIds = getOwnerIds(facilities);
 
-        if (userDetails == null) {
-            return null;
-        }
+        Map<Long, UserDTO> map = userManageService.batchLoaderUsers(ownerIds, principal);
 
-        boolean isAdmin = SecurityUtils.isAdmin(userDetails);
-        Long currentId = userDetails.getId();
-        Long ownerId = facility.getOwnerId();
+        return facilities.stream()
+                .collect(Collectors.toMap(
+                        f -> f,
+                        f -> map.get(f.getOwnerId())
+                ));
+    }
 
-        if (!isAdmin && !currentId.equals(ownerId)) {
-            return null;
-        }
-
-        return new UserDTO(ownerId);
+    private List<Long> getOwnerIds(List<FacilityDTO> facilities) {
+        return facilities.stream()
+                .map(FacilityDTO::getOwnerId)
+                .toList();
     }
 
 }

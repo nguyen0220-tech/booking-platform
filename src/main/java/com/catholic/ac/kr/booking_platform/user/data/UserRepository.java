@@ -1,7 +1,6 @@
 package com.catholic.ac.kr.booking_platform.user.data;
 
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
-import com.catholic.ac.kr.booking_platform.user.projection.UserProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,43 +15,38 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    @Query("""
-            SELECT u.id AS id
-            FROM User u
-            """)
-    Page<UserProjection> findAllUser(Pageable pageable);
 
     @Query("""
-            SELECT u.id AS id
+            SELECT u
             FROM User u WHERE u.username = :username
             """)
-    UserProjection findUserByUsername(@Param("username") String username);
+    User findUserByUsername(@Param("username") String username);
 
     @Query("""
-            SELECT u.id AS id
+            SELECT u
             FROM User u WHERE u.email = :email
             """)
-    UserProjection findUserByEmail(@Param("email") String email);
+    User findUserByEmail(@Param("email") String email);
 
     @Query("""
-            SELECT u.id AS id
+            SELECT u
             FROM User u WHERE u.enabled = :is
             """)
-    Page<UserProjection> filterUserEnabled(Pageable pageable, @Param("is") boolean is);
+    Page<User> filterUserEnabled(Pageable pageable, @Param("is") boolean is);
 
     @Query("""
-            SELECT u.id AS id
+            SELECT u
             FROM User u WHERE u.blocked = :is
             """)
-    Page<UserProjection> filterUserBlocked(Pageable pageable, @Param("is") boolean is);
+    Page<User> filterUserBlocked(Pageable pageable, @Param("is") boolean is);
 
     @Query("""
-            SELECT u.id AS id
+            SELECT u
             FROM User u
             JOIN u.roles r
             WHERE r.name = :name
             """)
-    Page<UserProjection> findByRoleName(@Param("name") RoleName name, Pageable pageable);
+    Page<User> findByRoleName(@Param("name") RoleName name, Pageable pageable);
 
     Optional<User> findByUsername(String username);
 

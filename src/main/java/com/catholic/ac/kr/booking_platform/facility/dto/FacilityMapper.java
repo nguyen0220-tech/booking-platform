@@ -3,55 +3,51 @@ package com.catholic.ac.kr.booking_platform.facility.dto;
 import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistration;
 import com.catholic.ac.kr.booking_platform.facility.data.resraurant.RestaurantMenu;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilityAdminProjection;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilityRegistrationProjection;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilitySummaryProjection;
 
 public class FacilityMapper {
-    public static FacilityDTO toFacilityDTO(Facility facility) {
+
+    public static FacilityDTO toFacilityDTO(Facility entity) {
+        FacilityInfoDTO infos = getFacilityInfo(entity);
+
+        return new FacilityDTO(
+                entity.getId(),
+                entity.getFacilityType().name(),
+                entity.getOwner().getId(),
+                infos
+        );
+    }
+
+    public static FacilityDTO toFacilityDTO(FacilityRegistration registrationEntity) {
+        Facility facility = registrationEntity.getFacility();
+        FacilityInfoDTO infos = getFacilityInfo(facility);
+
 
         return new FacilityDTO(
                 facility.getId(),
                 facility.getFacilityType().name(),
-                facility.getOwner().getId()
+                facility.getOwner().getId(),
+                registrationEntity.getId(),
+                infos
         );
     }
 
-    public static FacilityDTO toFacilityDTO(FacilitySummaryProjection facilitySummaryProjection) {
+    private static FacilityInfoDTO getFacilityInfo(Facility entity) {
+        FacilityInfoDTO infos = new FacilityInfoDTO();
 
-        return new FacilityDTO(
-                facilitySummaryProjection.getId(),
-                facilitySummaryProjection.getFacilityType(),
-                facilitySummaryProjection.getOwnerId()
-        );
-    }
+        infos.setName(entity.getName());
+        infos.setDescription(entity.getDescription());
+        infos.setAddress(entity.getAddress());
+        infos.setInstruction(entity.getInstruction() != null ? entity.getInstruction() : null);
+        infos.setAverageRating(entity.getAverageRating());
+        infos.setTotalReviews(entity.getTotalReviews());
+        infos.setActive(entity.isActive());
+        infos.setCarPark(entity.isCarPark());
+        infos.setHasWifi(entity.isHasWifi());
+        infos.setSuspended(entity.isSuspended());
+        infos.setCreatedAt(entity.getCreatedAt());
+        infos.setUpdatedAt(entity.getUpdatedAt());
 
-    public static FacilityDTO toFacilityDTO(FacilityAdminProjection facilityAdminProjection) {
-        FacilityDTO facilityDTO = new FacilityDTO();
-        facilityDTO.setId(facilityAdminProjection.getId());
-        facilityDTO.setFacilityType(facilityAdminProjection.getFacilityType());
-        facilityDTO.setOwnerId(facilityAdminProjection.getOwnerId());
-        facilityDTO.setFacilityRegistrationId(facilityAdminProjection.getFacilityRegistrationId());
-        return facilityDTO;
-    }
-
-    public static FacilityInfoDTO convertToFacilityInFfo(Facility facility) {
-        FacilityInfoDTO facilityInfoDTO = new FacilityInfoDTO();
-
-        facilityInfoDTO.setName(facility.getName());
-        facilityInfoDTO.setDescription(facility.getDescription());
-        facilityInfoDTO.setAddress(facility.getAddress());
-        facilityInfoDTO.setInstruction(facility.getInstruction() != null ? facility.getInstruction() : null);
-        facilityInfoDTO.setAverageRating(facility.getAverageRating());
-        facilityInfoDTO.setTotalReviews(facility.getTotalReviews());
-        facilityInfoDTO.setActive(facility.isActive());
-        facilityInfoDTO.setCarPark(facility.isCarPark());
-        facilityInfoDTO.setHasWifi(facility.isHasWifi());
-        facilityInfoDTO.setSuspended(facility.isSuspended());
-        facilityInfoDTO.setCreatedAt(facility.getCreatedAt());
-        facilityInfoDTO.setUpdatedAt(facility.getUpdatedAt());
-
-        return facilityInfoDTO;
+        return infos;
     }
 
     public static String convertToFacilityImageUrl(FacilityImageDTO facilityImage) {
@@ -68,17 +64,17 @@ public class FacilityMapper {
         return facilityRegistrationStatusDTO;
     }
 
-    public static FacilityRegistrationDTO convertToFacilityRegistrationDTO(FacilityRegistrationProjection projection) {
+    public static FacilityRegistrationDTO toFacilityRegistrationDTO(FacilityRegistration entity) {
         FacilityRegistrationDTO facilityRegistrationDTO = new FacilityRegistrationDTO();
 
-        facilityRegistrationDTO.setId(projection.getId());
-        facilityRegistrationDTO.setFacilityId(projection.getFacilityId());
-        facilityRegistrationDTO.setFacilityType(projection.getFacilityType());
-        facilityRegistrationDTO.setStatus(projection.getStatus());
-        facilityRegistrationDTO.setNote(projection.getNote());
-        facilityRegistrationDTO.setOwnerId(projection.getOwnerId());
-        facilityRegistrationDTO.setReviewerId(projection.getReviewerId());
-        facilityRegistrationDTO.setLastUpdateAt(projection.getLastUpdateAt());
+        facilityRegistrationDTO.setId(entity.getId());
+        facilityRegistrationDTO.setFacilityId(entity.getFacility().getId());
+        facilityRegistrationDTO.setFacilityType(entity.getFacility().getFacilityType().name());
+        facilityRegistrationDTO.setStatus(entity.getStatus().name());
+        facilityRegistrationDTO.setNote(entity.getNote());
+        facilityRegistrationDTO.setOwnerId(entity.getFacility().getOwner().getId());
+        facilityRegistrationDTO.setReviewerId(entity.getReviewer().getId());
+        facilityRegistrationDTO.setLastUpdateAt(entity.getLastUpdatedAt());
 
         return facilityRegistrationDTO;
     }

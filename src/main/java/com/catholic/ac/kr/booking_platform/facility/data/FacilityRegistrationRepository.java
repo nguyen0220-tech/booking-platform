@@ -1,8 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.data;
 
 import com.catholic.ac.kr.booking_platform.facility.constant.FacilityStatus;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilityAdminProjection;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilityRegistrationProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,23 +17,20 @@ public interface FacilityRegistrationRepository extends JpaRepository<FacilityRe
     List<FacilityRegistration> findAllByFacilityIdIn(@Param("facilityIds") List<Long> facilityIds);
 
     @Query("""
-            SELECT f.id AS id, f.facilityType AS facilityType, f.owner.id AS ownerId,fr.id AS facilityRegistrationId
+            SELECT fr
             FROM FacilityRegistration fr
             JOIN Facility f ON fr.facility = f
             WHERE fr.status = :status
             """)
-    Page<FacilityAdminProjection> findFacilityRegistrationByStatus(@Param("status") FacilityStatus status, Pageable pageable);
+    Page<FacilityRegistration> findFacilityRegistrationByStatus(@Param("status") FacilityStatus status, Pageable pageable);
 
     @Query("""
-            SELECT fr.id AS id, f.id AS facilityId,
-                   f.facilityType AS facilityType,
-                   fr.status AS status, fr.note AS note,
-                   f.owner.id AS ownerId, fr.reviewer.id AS reviewerId, fr.lastUpdatedAt AS lastUpdateAt
+            SELECT fr
             FROM FacilityRegistration fr
             JOIN Facility f ON fr.facility = f
             WHERE fr.id = :id
             """)
-    Optional<FacilityRegistrationProjection> findFacilityRegistrationById(Long id);
+    Optional<FacilityRegistration> findFacilityRegistrationById(Long id);
 
     @Query("SELECT fr FROM FacilityRegistration fr " +
             "JOIN FETCH fr.facility f " +

@@ -9,8 +9,6 @@ import com.catholic.ac.kr.booking_platform.facility.data.FacilityRegistrationRep
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationDTO;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityRegistrationRequest;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilityAdminProjection;
-import com.catholic.ac.kr.booking_platform.facility.projection.FacilityRegistrationProjection;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
@@ -56,13 +54,13 @@ public class FacilityRegistrationCommandService {
     public ListResponse<FacilityDTO> getFacilityRegistrations(FacilityStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        Page<FacilityAdminProjection> projections = facilityRegistrationRepository.findFacilityRegistrationByStatus(status, pageable);
+        Page<FacilityRegistration> facilityPage = facilityRegistrationRepository.findFacilityRegistrationByStatus(status, pageable);
 
-        Page<FacilityDTO> facilityDTOS = projections.map(FacilityMapper::toFacilityDTO);
+        Page<FacilityDTO> facilityDTOS = facilityPage.map(FacilityMapper::toFacilityDTO);
 
         List<FacilityDTO> rs = facilityDTOS.getContent();
 
-        return new ListResponse<>(rs, new PageInfo(page, size, projections.hasNext()));
+        return new ListResponse<>(rs, new PageInfo(page, size, facilityPage.hasNext()));
     }
 
     @Cacheable(value = "registrationStatus", key = "{#ids}")
@@ -72,10 +70,10 @@ public class FacilityRegistrationCommandService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public FacilityRegistrationDTO getFacilityRegistration(Long id) {
-        FacilityRegistrationProjection projection = facilityRegistrationRepository.findFacilityRegistrationById(id)
+        FacilityRegistration projection = facilityRegistrationRepository.findFacilityRegistrationById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Facility registration not found"));
 
-        return FacilityMapper.convertToFacilityRegistrationDTO(projection);
+        return FacilityMapper.toFacilityRegistrationDTO(projection);
     }
 
     @Transactional
