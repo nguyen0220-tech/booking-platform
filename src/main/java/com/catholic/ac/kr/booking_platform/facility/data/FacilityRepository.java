@@ -1,5 +1,6 @@
 package com.catholic.ac.kr.booking_platform.facility.data;
 
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilitySuggestionProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -71,11 +72,18 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
                     ORDER BY MAX(fp.total_count) DESC LIMIT 3
                 )
             )
-            SELECT f.* FROM facility f
+            SELECT f.id AS id,
+                   f.facility_type AS facilityType,
+                   f.name AS name,
+                   f.address AS address,
+                   f.total_reviews AS totalReviews,
+                   f.average_rating AS averageRating
+            
+            FROM facility f
             INNER JOIN RankedFacilities rf ON f.id = rf.id
             ORDER BY rf.priority
             """, nativeQuery = true)
-    List<Facility> findFacilitiesRecentlyAndTopSelling(
+    List<FacilitySuggestionProjection> findFacilitiesRecentlyAndTopSelling(
             @Param("userId") Long userId,
             @Param("today") LocalDate today,
             @Param("status") String status);

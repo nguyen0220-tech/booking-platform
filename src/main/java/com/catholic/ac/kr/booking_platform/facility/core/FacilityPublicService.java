@@ -1,11 +1,12 @@
 package com.catholic.ac.kr.booking_platform.facility.core;
 
 import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
-import com.catholic.ac.kr.booking_platform.facility.data.Facility;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.constant.PopularDestination;
+import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.data.FacilityRepository;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
+import com.catholic.ac.kr.booking_platform.facility.dto.FacilitySuggestionProjection;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
 import lombok.RequiredArgsConstructor;
@@ -59,13 +60,13 @@ public class FacilityPublicService {
     public ListResponse<FacilityDTO> suggestFacilities(Long userId) {
         LocalDate today = LocalDate.now();
 
-        List<Facility> projections = facilityRepository
+        List<FacilitySuggestionProjection> projections = facilityRepository
                 .findFacilitiesRecentlyAndTopSelling(userId, today, BookingStatus.COMPLETED.name());
 
         List<FacilityDTO> uniqueResults = projections.stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(
-                        Facility::getId, // Key để phân biệt trùng lặp
+                        FacilitySuggestionProjection::getId, // Key để phân biệt trùng lặp
                         FacilityMapper::toFacilityDTO,
                         (existing, replacement) -> existing, // Nếu trùng thì giữ cái đầu tiên
                         LinkedHashMap::new // Giữ nguyên thứ tự ưu tiên (gần đây trước, bán chạy sau)

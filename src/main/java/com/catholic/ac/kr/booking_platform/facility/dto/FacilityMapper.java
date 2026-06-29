@@ -17,6 +17,22 @@ public class FacilityMapper {
         );
     }
 
+    public static FacilityDTO toFacilityDTO(FacilitySuggestionProjection projection){
+        FacilityInfoDTO infos = new FacilityInfoDTO();
+        infos.setName(projection.getName());
+        infos.setAddress(projection.getAddress());
+        infos.setAverageRating(projection.getAverageRating());
+        infos.setTotalReviews(projection.getTotalReviews());
+
+
+        FacilityDTO  facilityDTO = new FacilityDTO();
+        facilityDTO.setId(projection.getId());
+        facilityDTO.setFacilityType(projection.getFacilityType());
+        facilityDTO.setFacilityInfo(infos);
+
+        return facilityDTO;
+    }
+
     public static FacilityDTO toFacilityDTO(FacilityRegistration registrationEntity) {
         Facility facility = registrationEntity.getFacility();
         FacilityInfoDTO infos = getFacilityInfo(facility);
