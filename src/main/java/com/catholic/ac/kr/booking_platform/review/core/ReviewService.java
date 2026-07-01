@@ -7,12 +7,13 @@ import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.AlreadyExistsException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
+import com.catholic.ac.kr.booking_platform.review.core.event.NewReviewEvent;
 import com.catholic.ac.kr.booking_platform.review.data.Review;
 import com.catholic.ac.kr.booking_platform.review.data.ReviewRepository;
+import com.catholic.ac.kr.booking_platform.review.dto.RatingGroupByProjection;
 import com.catholic.ac.kr.booking_platform.review.dto.ReviewDTO;
 import com.catholic.ac.kr.booking_platform.review.dto.ReviewMapper;
 import com.catholic.ac.kr.booking_platform.review.dto.ReviewRequest;
-import com.catholic.ac.kr.booking_platform.review.core.event.NewReviewEvent;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -75,5 +76,10 @@ public class ReviewService {
 
     private boolean existingReview(Long bookingId) {
         return reviewRepository.existsByBookingId(bookingId);
+    }
+
+    public List<RatingGroupByProjection> getReviewGroupByDTO(List<Long> facilityIds) {
+
+        return reviewRepository.groupByFacilityIdAndRating(facilityIds);
     }
 }

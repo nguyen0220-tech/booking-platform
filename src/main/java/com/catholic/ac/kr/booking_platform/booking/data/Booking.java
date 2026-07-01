@@ -169,7 +169,7 @@ public class Booking {
         }
 
         // Rule 3
-        if (now.isAfter(endDateTime.plusDays(30))) {
+        if (now.isAfter(endDateTime.plusDays(3))) {
             throw new IllegalStateException("리뷰 작성 기간(3일)이 만료되었습니다.");
         }
     }

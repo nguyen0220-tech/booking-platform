@@ -26,13 +26,4 @@ enum PopularDestination{
     BUSAN,
     JEJU,
     GANGNEUNG
-
-}
-
-enum Rating{
-    ONE,
-    TWO,
-    THREE,
-    FOUR,
-    FIVE
 }

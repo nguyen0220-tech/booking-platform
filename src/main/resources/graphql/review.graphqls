@@ -5,8 +5,13 @@ type ListReview{
 
 type Review{
     id:ID!
-    rating:Rating!
+    rating:Int!
     content:String!
     createdAt:String!
     reviewer:User!
+}
+
+type ReviewGroupBy{
+    rating:Int!
+    count:Int!
 }

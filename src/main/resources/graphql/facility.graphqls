@@ -23,6 +23,7 @@ type Facility{
     approvalStatus:FacilityApproval
     packages(page:Int!, size:Int!):ListPackage
     reviews(page:Int!, size:Int!):ListReview
+    ratingGroupBy:[ReviewGroupBy]
 }
 
 type FacilityInfo{

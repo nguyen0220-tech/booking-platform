@@ -3,9 +3,7 @@ package com.catholic.ac.kr.booking_platform.booking.web;
 import com.catholic.ac.kr.booking_platform.booking.core.BookingQueryService;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.booking.dto.BookingDTO;
-import com.catholic.ac.kr.booking_platform.facility.dto.FacilityMapper;
 import com.catholic.ac.kr.booking_platform.facility.core.FacilityQueryService;
-import com.catholic.ac.kr.booking_platform.facility.data.Facility;
 import com.catholic.ac.kr.booking_platform.facility.dto.FacilityDTO;
 import com.catholic.ac.kr.booking_platform.facility_package.core.FacilityPackageService;
 import com.catholic.ac.kr.booking_platform.facility_package.data.FacilityPackage;
@@ -15,6 +13,8 @@ import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
+import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
+import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
@@ -35,6 +35,7 @@ public class BookingResolver {
     private final BookingQueryService bookingQueryService;
     private final FacilityPackageService facilityPackageService;
     private final FacilityQueryService facilityQueryService;
+    private final UserManageService userManageService;
 
     @QueryMapping
     public ListResponse<BookingDTO> bookings(
@@ -57,15 +58,28 @@ public class BookingResolver {
         return bookingQueryService.getBookingById(userDetails.getId(), bookingId);
     }
 
-//    @SchemaMapping(typeName = "Booking")
-//    public UserDTO user(@AuthenticationPrincipal UserDetailsImpl userDetails, BookingDTO booking) {
-//
-//        if (!hasPermission(userDetails, booking)) {
-//            return null;
-//        }
-//
-//        return new UserDTO(booking.getUserId());
-//    }
+    @BatchMapping(typeName = "Booking")
+    public Map<BookingDTO, UserDTO> user(
+            Principal principal,
+            List<BookingDTO> bookings) {
+
+        UserDetailsImpl userDetails = SecurityUtils.getUserDetails(principal);
+        if (userDetails == null) {
+            return null;
+        }
+
+        List<Long> userIds = bookings.stream()
+                .map(BookingDTO::getUserId)
+                .toList();
+
+        Map<Long, UserDTO> userMap = userManageService.batchLoaderUsers(userIds, principal);
+
+        return bookings.stream()
+                .collect(Collectors.toMap(
+                        b -> b,
+                        b -> userMap.get(b.getUserId())
+                ));
+    }
 
     private boolean hasPermission(UserDetailsImpl userDetails, BookingDTO booking) {
         Long currentUserId = userDetails.getId();
