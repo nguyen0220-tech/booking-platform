@@ -12,6 +12,8 @@ import com.catholic.ac.kr.booking_platform.facility_package.dto.FacilityPackageM
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.SecurityUtils;
 import com.catholic.ac.kr.booking_platform.infrastructure.security.userdetails.UserDetailsImpl;
+import com.catholic.ac.kr.booking_platform.review.core.ReviewService;
+import com.catholic.ac.kr.booking_platform.review.dto.ReviewEligibility;
 import com.catholic.ac.kr.booking_platform.user.constant.RoleName;
 import com.catholic.ac.kr.booking_platform.user.core.UserManageService;
 import com.catholic.ac.kr.booking_platform.user.dto.UserDTO;
@@ -36,6 +38,7 @@ public class BookingResolver {
     private final FacilityPackageService facilityPackageService;
     private final FacilityQueryService facilityQueryService;
     private final UserManageService userManageService;
+    private final ReviewService reviewService;
 
     @QueryMapping
     public ListResponse<BookingDTO> bookings(
@@ -139,6 +142,17 @@ public class BookingResolver {
                 .collect(Collectors.toMap(
                         b -> b,
                         b -> map.get(b.getFacilityId())
+                ));
+    }
+
+    @BatchMapping(typeName = "Booking")
+    public Map<BookingDTO, ReviewEligibility> reviewEligibility(List<BookingDTO> bookings) {
+        Map<Long, ReviewEligibility> map = reviewService.reviewBatchLoader(bookings);
+
+        return bookings.stream()
+                .collect(Collectors.toMap(
+                        b -> b,
+                        b -> map.get(b.getId())
                 ));
     }
 

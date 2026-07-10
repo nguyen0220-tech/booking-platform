@@ -1,19 +1,19 @@
 package com.catholic.ac.kr.booking_platform.review.core;
 
+import com.catholic.ac.kr.booking_platform.booking.constant.BookingStatus;
 import com.catholic.ac.kr.booking_platform.booking.data.Booking;
 import com.catholic.ac.kr.booking_platform.booking.data.BookingRepository;
+import com.catholic.ac.kr.booking_platform.booking.dto.BookingDTO;
 import com.catholic.ac.kr.booking_platform.helper.response.ApiResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.ListResponse;
 import com.catholic.ac.kr.booking_platform.helper.response.PageInfo;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.AlreadyExistsException;
 import com.catholic.ac.kr.booking_platform.infrastructure.exception.ResourceNotFoundException;
+import com.catholic.ac.kr.booking_platform.review.constant.ReviewStatus;
 import com.catholic.ac.kr.booking_platform.review.core.event.NewReviewEvent;
 import com.catholic.ac.kr.booking_platform.review.data.Review;
 import com.catholic.ac.kr.booking_platform.review.data.ReviewRepository;
-import com.catholic.ac.kr.booking_platform.review.dto.RatingGroupByProjection;
-import com.catholic.ac.kr.booking_platform.review.dto.ReviewDTO;
-import com.catholic.ac.kr.booking_platform.review.dto.ReviewMapper;
-import com.catholic.ac.kr.booking_platform.review.dto.ReviewRequest;
+import com.catholic.ac.kr.booking_platform.review.dto.*;
 import com.catholic.ac.kr.booking_platform.user.data.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,7 +25,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,5 +86,43 @@ public class ReviewService {
     public List<RatingGroupByProjection> getReviewGroupByDTO(List<Long> facilityIds) {
 
         return reviewRepository.groupByFacilityIdAndRating(facilityIds);
+    }
+
+    public Map<Long, ReviewEligibility> reviewBatchLoader(List<BookingDTO> bookings) {
+        List<Long> bookingIds = bookings.stream()
+                .map(BookingDTO::getId)
+                .toList();
+
+        Set<Long> reviewedBookingIds = reviewRepository.findReviewedBookingIds(bookingIds);
+
+        return bookings.stream().collect(Collectors.toMap(
+                BookingDTO::getId,
+                booking -> {
+                    boolean hasReviewed = reviewedBookingIds.contains(booking.getId());
+                    return checkReviewEligibility(booking, hasReviewed);
+                }
+        ));
+    }
+
+    private ReviewEligibility checkReviewEligibility(BookingDTO booking, boolean hasReviewed) {
+        if (booking.getStatus() == BookingStatus.CANCELLED) {
+            return new ReviewEligibility(ReviewStatus.BOOKING_CANCELLED);
+        }
+        if (hasReviewed) {
+            return new ReviewEligibility(ReviewStatus.ALREADY_REVIEWED);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endDateTime = booking.getUsageDate()
+                .atTime(booking.getEndTime() != null ? booking.getEndTime() : LocalTime.MAX);
+
+        if (now.isBefore(endDateTime)) {
+            return new ReviewEligibility(ReviewStatus.NOT_YET_COMPLETED);
+        }
+        if (now.isAfter(endDateTime.plusDays(3))) {
+            return new ReviewEligibility(ReviewStatus.EXPIRED);
+        }
+
+        return new ReviewEligibility(ReviewStatus.ELIGIBLE);
     }
 }

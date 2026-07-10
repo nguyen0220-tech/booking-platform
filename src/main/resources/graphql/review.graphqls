@@ -15,3 +15,7 @@ type ReviewGroupBy{
     rating:Int!
     count:Int!
 }
+
+type ReviewEligibility{
+    reviewStatus:ReviewStatus
+}

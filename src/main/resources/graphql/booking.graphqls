@@ -23,4 +23,5 @@ type Booking{
     user:User
     packageInfo:FacilityPackage
     facility:Facility
+    reviewEligibility:ReviewEligibility
 }
